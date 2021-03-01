@@ -1,0 +1,13 @@
+name: Vouchers
+version: maven-version-number
+api-version: 1.16
+main: ca.tweetzy.vouchers.Vouchers
+description: Reedemable vouchers made simple
+authors: [Kiran Hart]
+
+commands:
+  voucher:
+    description: Main command for the voucher plugin
+    aliases: [vouchers]
+    default: true
+    usage: /voucher
