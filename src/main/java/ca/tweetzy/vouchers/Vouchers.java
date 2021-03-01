@@ -13,9 +13,11 @@ import java.util.List;
  */
 public class Vouchers extends TweetyPlugin {
 
+    private static Vouchers instance;
+
     @Override
     public void onPluginLoad() {
-
+        instance = this;
     }
 
     @Override
@@ -36,5 +38,9 @@ public class Vouchers extends TweetyPlugin {
     @Override
     public List<Config> getExtraConfig() {
         return null;
+    }
+
+    public static Vouchers getInstance() {
+        return instance;
     }
 }
