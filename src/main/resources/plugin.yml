@@ -6,8 +6,8 @@ description: Reedemable vouchers made simple
 authors: [Kiran Hart]
 
 commands:
-  voucher:
+  vouchers:
     description: Main command for the voucher plugin
-    aliases: [vouchers]
+    aliases: [voucher]
     default: true
-    usage: /voucher
+    usage: /vouchers
