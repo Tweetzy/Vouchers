@@ -1,0 +1,15 @@
+general:
+    prefix: "&8[&eVouchers&8]"
+    air: "&cSorry, but you cannot set the item to air o.O"
+    notanumber: "&cThe entry &4%value% &cis not a valid number!"
+    playeronly: "&cOnly players are allowed to use that command!"
+    playeroffline: "&cThe following player &4%player% &ccould not be found!"
+
+voucher:
+    create: "&aCreated a new voucher with the id: &2%voucher_id%"
+    remove: "&cRemoved the voucher with the id: &4%voucher_id%"
+    exists: "&cA voucher by the id &e%voucher_id% &4already exists!"
+    invalid: "&cCould not find any vouchers by the id: &4%voucher_id%"
+    give: "&aGave &2%player% &ax%amount% &2%voucher_id% &avoucher(s)"
+    giveall: "&aGave everyone x%amount% &2%voucher_id% &avoucher(s)"
+    received: "&aYou received x%amount% &2%voucher_id% &avoucher(s)"

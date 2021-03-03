@@ -5,10 +5,15 @@ import ca.tweetzy.core.TweetyPlugin;
 import ca.tweetzy.core.commands.CommandManager;
 import ca.tweetzy.core.compatibility.ServerVersion;
 import ca.tweetzy.core.configuration.Config;
+import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
+import ca.tweetzy.core.configuration.editor.ConfigEditorListEditorGui;
+import ca.tweetzy.core.gui.GuiManager;
 import ca.tweetzy.core.utils.Metrics;
 import ca.tweetzy.vouchers.commands.CommandCreate;
 import ca.tweetzy.vouchers.settings.Settings;
+import edu.emory.mathcs.backport.java.util.Collections;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +26,7 @@ public class Vouchers extends TweetyPlugin {
 
     private static Vouchers instance;
     private final Config data = new Config(this, "data.yml");
+    private final GuiManager guiManager = new GuiManager(this);
 
     protected Metrics metrics;
     private CommandManager commandManager;
@@ -51,7 +57,11 @@ public class Vouchers extends TweetyPlugin {
 
         // Commands
         this.commandManager = new CommandManager(this);
-        this.commandManager.addMainCommand("vouchers").addSubCommands(new CommandCreate());
+        this.commandManager.addMainCommand("vouchers").addSubCommands(
+                new CommandCreate()
+        );
+
+        this.guiManager.init();
 
         // Metrics
         if (Settings.METRICS.getBoolean()) {
@@ -66,12 +76,15 @@ public class Vouchers extends TweetyPlugin {
 
     @Override
     public void onConfigReload() {
-
+        this.data.load();
+        this.locale.reloadMessages();
     }
 
     @Override
     public List<Config> getExtraConfig() {
-        return null;
+        List<Config> configs = new ArrayList<>();
+        configs.add(data);
+        return configs;
     }
 
     public static Vouchers getInstance() {
@@ -80,5 +93,13 @@ public class Vouchers extends TweetyPlugin {
 
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    public GuiManager getGuiManager() {
+        return guiManager;
+    }
+
+    public Config getData() {
+        return data;
     }
 }
