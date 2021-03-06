@@ -1,12 +1,15 @@
 package ca.tweetzy.vouchers.managers;
 
+import ca.tweetzy.core.compatibility.CompatibleHand;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
+import ca.tweetzy.core.utils.PlayerUtils;
 import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,12 +24,12 @@ public class VoucherManager {
 
     private final HashMap<String, Voucher> vouchers = new HashMap<>();
 
-    public Voucher addVoucher(Voucher voucher) {
-        return vouchers.put(voucher.getId(), voucher);
+    public void addVoucher(Voucher voucher) {
+        vouchers.put(voucher.getId(), voucher);
     }
 
-    public Voucher removeVoucher(Voucher voucher) {
-        return vouchers.remove(voucher);
+    public void removeVoucher(Voucher voucher) {
+        vouchers.remove(voucher);
     }
 
     public Voucher getVoucher(String id) {
@@ -35,6 +38,10 @@ public class VoucherManager {
 
     public Collection<Voucher> getVouchers() {
         return vouchers.values();
+    }
+
+    public boolean isLoaded(String id) {
+        return vouchers.containsKey(id);
     }
 
     public void loadVouchers(boolean isReload) {
@@ -76,5 +83,9 @@ public class VoucherManager {
         });
 
         Vouchers.getInstance().getLocale().newMessage(String.format("&a%s &2%d &avoucher(s) in &2%d &ams", isReload ? "Reloaded" : "Loaded", vouchers.keySet().size(), System.currentTimeMillis() - start)).sendPrefixedMessage(Bukkit.getConsoleSender());
+    }
+
+    public void redeem(Player player, Voucher voucher) {
+        PlayerUtils.takeActiveItem(player, CompatibleHand.MAIN_HAND, 1);
     }
 }

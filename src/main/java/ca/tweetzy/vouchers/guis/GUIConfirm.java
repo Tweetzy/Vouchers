@@ -32,7 +32,7 @@ public class GUIConfirm extends Gui {
             });
         }
 
-        setItem(4, voucher.getItem(1));
+        setItem(4, voucher.getItem(1, false));
 
         for (int i = 5; i <= 8; i++) {
             setButton(i, new TItemBuilder(Objects.requireNonNull(XMaterial.matchXMaterial(Settings.GUI_CONFIRM_NO_MATERIAL.getString()).get().parseMaterial())).setName(Settings.GUI_CONFIRM_NO_NAME.getString()).setLore(Settings.GUI_CONFIRM_NO_LORE.getStringList().stream().map(TextUtils::formatText).collect(Collectors.toList())).toItemStack(), (e) -> {

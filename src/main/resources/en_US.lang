@@ -2,7 +2,6 @@ general:
     prefix: "&8[&eVouchers&8]"
     air: "&cSorry, but you cannot set the item to air o.O"
     notanumber: "&cThe entry &4%value% &cis not a valid number!"
-    playeronly: "&cOnly players are allowed to use that command!"
     playeroffline: "&cThe following player &4%player% &ccould not be found!"
 
 voucher:

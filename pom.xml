@@ -44,7 +44,7 @@
                     <file>${project.build.directory}/classes/plugin.yml</file>
                     <replacements>
                         <replacement>
-                            <token>maven-version-number</token>
+                            <token>plugin-version</token>
                             <value>${project.version}</value>
                         </replacement>
                     </replacements>

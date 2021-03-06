@@ -48,7 +48,7 @@ public class GUIVoucherList extends Gui {
 
         int slot = 0;
         for (Voucher voucher : data) {
-            setItem(slot, voucher.getItem(1));
+            setItem(slot, voucher.getItem(1, false));
             slot++;
         }
     }

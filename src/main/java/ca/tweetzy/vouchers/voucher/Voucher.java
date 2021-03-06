@@ -3,6 +3,7 @@ package ca.tweetzy.vouchers.voucher;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.core.utils.nms.NBTEditor;
+import ca.tweetzy.vouchers.Helpers;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +28,9 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Builder
-public class Voucher {
+public class Voucher implements Serializable {
+
+    private final static long serialVersionUID = 1L;
 
     private String id;
     private String displayName;
@@ -57,7 +61,7 @@ public class Voucher {
 
     private XMaterial material;
 
-    public ItemStack getItem(int amount) {
+    public ItemStack getItem(int amount, boolean itemToGive) {
         ItemStack item = this.material.parseItem();
         item.setAmount(amount);
         ItemMeta meta = item.getItemMeta();
@@ -76,7 +80,10 @@ public class Voucher {
         }
 
         item.setItemMeta(meta);
-        item = NBTEditor.set(item, id, "tweetzy:vouchers");
+        item = NBTEditor.set(item, id, "tweetzy:voucher:id");
+        if (itemToGive) {
+            item = NBTEditor.set(item, Helpers.toString(this), "tweetzy:voucher:voucher");
+        }
 
         if (this.unbreakable) {
             item = NBTEditor.set(item, (byte) 1, "Unbreakable");

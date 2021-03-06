@@ -15,6 +15,9 @@ public class VoucherAPI {
 
     private VoucherAPI(){}
 
+    /**
+     * @return An instance of the Voucher API
+     */
     public static VoucherAPI getInstance() {
         if (instance == null) {
             instance = new VoucherAPI();
@@ -22,10 +25,31 @@ public class VoucherAPI {
         return instance;
     }
 
+    /**
+     * Used to check if a voucher exists on the file
+     *
+     * @param id    The ID/Name used when creating a voucher
+     * @return true if the voucher is present on file.
+     */
     public boolean doesVoucherExists(String id) {
         return Vouchers.getInstance().getData().contains("vouchers." + id.toLowerCase());
     }
 
+    /**
+     * Used to remove a specific voucher from the file
+     *
+     * @param voucher   The ID/Name of the voucher being targeted
+     */
+    public void removeVoucher(String voucher) {
+        Vouchers.getInstance().getData().set("vouchers." + voucher.toLowerCase(), null);
+        Vouchers.getInstance().getData().save();
+    }
+
+    /**
+     * Used to create a new voucher
+     *
+     * @param voucher   An instance of {@link Voucher} class
+     */
     public void createVoucher(Voucher voucher) {
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".display name", voucher.getDisplayName());
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".permission", voucher.getPermission());
