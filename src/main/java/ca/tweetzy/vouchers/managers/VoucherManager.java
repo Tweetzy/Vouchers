@@ -3,9 +3,13 @@ package ca.tweetzy.vouchers.managers;
 import ca.tweetzy.core.compatibility.CompatibleHand;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
+import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.core.utils.PlayerUtils;
 import ca.tweetzy.core.utils.TextUtils;
+import ca.tweetzy.core.utils.nms.ActionBar;
+import ca.tweetzy.core.utils.nms.Title;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -13,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * The current file has been created by Kiran Hart
@@ -70,7 +75,6 @@ public class VoucherManager {
                     .broadcastMessages(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.broadcast messages"))
                     .playerMessages(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.player messages"))
                     .redeemSound(XSound.matchXSound(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".execution.redeem sound")).get().parseSound())
-                    .cooldown(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".execution.cool down"))
                     .title(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.title"))
                     .subTitle(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.subtitle"))
                     .actionbarMessage(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.actionbar"))
@@ -86,6 +90,37 @@ public class VoucherManager {
     }
 
     public void redeem(Player player, Voucher voucher) {
-        PlayerUtils.takeActiveItem(player, CompatibleHand.MAIN_HAND, 1);
+        VoucherRedeemEvent voucherRedeemEvent = new VoucherRedeemEvent(player, voucher);
+        Bukkit.getServer().getPluginManager().callEvent(voucherRedeemEvent);
+        if (voucherRedeemEvent.isCancelled()) return;
+
+       if (voucher.isSendTitle()) {
+           Title.send(player, Title.TitleType.TITLE, voucher.getTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
+           Title.send(player, Title.TitleType.SUBTITLE, voucher.getSubTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
+       }
+
+       if (voucher.getRedeemSound() != null) {
+           player.playSound(player.getLocation(), voucher.getRedeemSound(), 1.0F, 1.0F);
+       }
+
+       if (voucher.isSendActionbar()) {
+           ActionBar.send(player, voucher.getActionbarMessage());
+       }
+
+       if (voucher.getCommands().size() != 0) {
+           voucher.getCommands().stream().map(cmd -> cmd.replace("%player%", player.getName())).collect(Collectors.toList()).forEach(cmd -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd));
+       }
+
+       if (voucher.getBroadcastMessages().size() != 0) {
+           voucher.getBroadcastMessages().stream().map(cmd -> TextUtils.formatText(cmd.replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()).replace("%player%", player.getName()))).collect(Collectors.toList()).forEach(Bukkit::broadcastMessage);
+       }
+
+        if (voucher.getPlayerMessages().size() != 0) {
+            voucher.getPlayerMessages().stream().map(cmd -> TextUtils.formatText(cmd.replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()))).collect(Collectors.toList()).forEach(player::sendMessage);
+        }
+
+        if (voucher.isRemoveOnUse()) {
+            PlayerUtils.takeActiveItem(player, CompatibleHand.MAIN_HAND, 1);
+        }
     }
 }

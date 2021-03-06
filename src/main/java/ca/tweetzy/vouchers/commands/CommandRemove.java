@@ -39,6 +39,7 @@ public class CommandRemove extends AbstractCommand {
 
         VoucherAPI.getInstance().removeVoucher(voucherId);
         Vouchers.getInstance().getVoucherManager().removeVoucher(Vouchers.getInstance().getVoucherManager().getVoucher(voucherId));
+        Vouchers.getInstance().getVoucherManager().loadVouchers(true);
         Vouchers.getInstance().getLocale().getMessage("voucher.remove").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
     }

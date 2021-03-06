@@ -1,20 +1,17 @@
 package ca.tweetzy.vouchers.listener;
 
 import ca.tweetzy.core.compatibility.XMaterial;
-import ca.tweetzy.core.utils.PlayerUtils;
 import ca.tweetzy.core.utils.nms.NBTEditor;
 import ca.tweetzy.vouchers.Helpers;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.guis.GUIConfirm;
 import ca.tweetzy.vouchers.voucher.Voucher;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 /**
  * The current file has been created by Kiran Hart
@@ -36,7 +33,16 @@ public class PlayerListener implements Listener {
         String voucherId = NBTEditor.getString(heldItem, "tweetzy:voucher:id");
         // if there is a voucher loaded into the list, use that one instead of the one stored in nbt data
         Voucher voucher = Vouchers.getInstance().getVoucherManager().isLoaded(voucherId) ? Vouchers.getInstance().getVoucherManager().getVoucher(voucherId) : (Voucher) Helpers.fromString(NBTEditor.getString(heldItem, "tweetzy:voucher:voucher"));
-        Vouchers.getInstance().getCooldownManager().add(player.getUniqueId(), voucher);
-        Vouchers.getInstance().getVoucherManager().redeem(player, voucher);
+
+        if (!voucher.getPermission().isEmpty() && !player.hasPermission(voucher.getPermission())) {
+            Vouchers.getInstance().getLocale().getMessage("voucher.nopermission").sendPrefixedMessage(player);
+            return;
+        }
+
+        if (voucher.isAskConfirm()) {
+            Vouchers.getInstance().getGuiManager().showGUI(player, new GUIConfirm(voucher));
+        } else {
+            Vouchers.getInstance().getVoucherManager().redeem(player, voucher);
+        }
     }
 }

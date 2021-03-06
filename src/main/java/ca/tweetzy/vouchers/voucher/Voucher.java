@@ -57,7 +57,6 @@ public class Voucher implements Serializable {
     private int titleFadeOut;
 
     private Sound redeemSound;
-    private int cooldown;
 
     private XMaterial material;
 

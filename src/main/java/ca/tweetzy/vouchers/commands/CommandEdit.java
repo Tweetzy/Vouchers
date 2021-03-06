@@ -5,6 +5,7 @@ import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.core.configuration.editor.PluginConfigGui;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VoucherAPI;
+import ca.tweetzy.vouchers.guis.GUIVoucherEdit;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -43,30 +44,7 @@ public class CommandEdit extends AbstractCommand {
             return ReturnType.FAILURE;
         }
 
-        ConfigEditorGui configEditorGui = new ConfigEditorGui(
-                player,
-                Vouchers.getInstance(),
-                null,
-                "data.yml",
-                "&eEditing " + voucherId,
-                Vouchers.getInstance().getLocale().getMessage("general.prefix").getMessage(),
-                Vouchers.getInstance().getData(),
-                Objects.requireNonNull(Vouchers.getInstance().getData().getConfigurationSection("vouchers." + voucherId))
-        );
-
-        // override the save process
-        if (!(configEditorGui.getParent() instanceof ConfigEditorGui)) {
-            configEditorGui.setOnClose(e -> {
-                configEditorGui.save(Vouchers.getInstance().getLocale().getMessage("general.prefix").getMessage());
-                // reload vouchers
-                Vouchers.getInstance().getVoucherManager().loadVouchers(true); //TODO PROBABLY SHOULD FIND A BETTER WAY OF DOING THIS
-            });
-        } else {
-            configEditorGui.setOnClose(e -> ((ConfigEditorGui) configEditorGui.getParent()).edits |= configEditorGui.edits);
-        }
-
-        Vouchers.getInstance().getGuiManager().showGUI(player, configEditorGui);
-
+        Vouchers.getInstance().getGuiManager().showGUI(player, new GUIVoucherEdit(player, voucherId));
         return ReturnType.SUCCESS;
     }
 

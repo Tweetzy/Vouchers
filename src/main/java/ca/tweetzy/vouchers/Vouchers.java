@@ -9,7 +9,6 @@ import ca.tweetzy.core.gui.GuiManager;
 import ca.tweetzy.core.utils.Metrics;
 import ca.tweetzy.vouchers.commands.*;
 import ca.tweetzy.vouchers.listener.PlayerListener;
-import ca.tweetzy.vouchers.managers.CooldownManager;
 import ca.tweetzy.vouchers.managers.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
 
@@ -31,7 +30,6 @@ public class Vouchers extends TweetyPlugin {
     protected Metrics metrics;
     private CommandManager commandManager;
     private VoucherManager voucherManager;
-    private CooldownManager cooldownManager;
 
     @Override
     public void onPluginLoad() {
@@ -68,7 +66,6 @@ public class Vouchers extends TweetyPlugin {
         );
 
         this.voucherManager = new VoucherManager();
-        this.cooldownManager = new CooldownManager();
         this.voucherManager.loadVouchers(false);
         this.guiManager.init();
 
@@ -112,10 +109,6 @@ public class Vouchers extends TweetyPlugin {
 
     public VoucherManager getVoucherManager() {
         return voucherManager;
-    }
-
-    public CooldownManager getCooldownManager() {
-        return cooldownManager;
     }
 
     public Config getData() {

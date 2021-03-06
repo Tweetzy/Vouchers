@@ -43,8 +43,19 @@ public class Settings {
     public static final ConfigSetting DEFAULT_TITLE_STAY = new ConfigSetting(config, "defaults.title stay", 2, "Default stay time in seconds for a voucher");
     public static final ConfigSetting DEFAULT_TITLE_FADE_OUT = new ConfigSetting(config, "defaults.title fade out", 1, "Default fadein time in seconds for a voucher");
     public static final ConfigSetting DEFAULT_COMMANDS = new ConfigSetting(config, "defaults.commands", Collections.singletonList("heal %player%"), "Default commands to be ran on voucher redeem");
-    public static final ConfigSetting DEFAULT_BROADCAST_MESSAGES = new ConfigSetting(config, "defaults.broadcast messages", Collections.singletonList("&e%player% redeemed the %voucher_id% voucher"), "Default messages to be broadcast to the server", "If empty, nothing will be sent");
-    public static final ConfigSetting DEFAULT_PLAYER_MESSAGES = new ConfigSetting(config, "defaults.player messages", Collections.singletonList("&eYou redeemed the %voucher_id% voucher"), "Default messages to be sent to the player on voucher redeem", "If empty, nothing will be sent");
+    public static final ConfigSetting DEFAULT_BROADCAST_MESSAGES = new ConfigSetting(config, "defaults.broadcast messages", Collections.singletonList("&e%player% redeemed the %voucher_id% voucher"),
+            "Default messages to be broadcast to the server",
+            "If empty, nothing will be sent",
+            "%voucher_id%   -> the id of the voucher",
+            "%voucher_title%   -> the display name of the voucher"
+    );
+
+    public static final ConfigSetting DEFAULT_PLAYER_MESSAGES = new ConfigSetting(config, "defaults.player messages", Collections.singletonList("&eYou redeemed the %voucher_id% voucher"),
+            "Default messages to be sent to the player on voucher redeem",
+            "If empty, nothing will be sent",
+            "%voucher_id%   -> the id of the voucher",
+            "%voucher_title%   -> the display name of the voucher"
+    );
     public static final ConfigSetting DEFAULT_REDEEM_SOUND = new ConfigSetting(config, "defaults.redeem sound", XSound.ENTITY_EXPERIENCE_ORB_PICKUP.parseSound().name(), "The default sound to be played on redeem");
 
     public static final ConfigSetting GUI_BACK_BTN_ITEM = new ConfigSetting(config, "gui.back button.item", "ARROW", "Settings for the back button");
