@@ -1,11 +1,13 @@
 package ca.tweetzy.vouchers.settings;
 
+import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
 import ca.tweetzy.core.configuration.Config;
 import ca.tweetzy.core.configuration.ConfigSetting;
 import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.vouchers.Vouchers;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -45,16 +47,30 @@ public class Settings {
     public static final ConfigSetting DEFAULT_PLAYER_MESSAGES = new ConfigSetting(config, "defaults.player messages", Collections.singletonList("&eYou redeemed the %voucher_id% voucher"), "Default messages to be sent to the player on voucher redeem", "If empty, nothing will be sent");
     public static final ConfigSetting DEFAULT_REDEEM_SOUND = new ConfigSetting(config, "defaults.redeem sound", XSound.ENTITY_EXPERIENCE_ORB_PICKUP.parseSound().name(), "The default sound to be played on redeem");
 
-    public static final ConfigSetting GUI_CONFIRM_TITLE = new ConfigSetting(config, "gui.confirm gui.title", "&a&lConfirm Redeem?");
+    public static final ConfigSetting GUI_BACK_BTN_ITEM = new ConfigSetting(config, "gui.back button.item", "ARROW", "Settings for the back button");
+    public static final ConfigSetting GUI_BACK_BTN_NAME = new ConfigSetting(config, "gui.back button.name", "&e<< Back");
+    public static final ConfigSetting GUI_BACK_BTN_LORE = new ConfigSetting(config, "gui.back button.lore", Arrays.asList("&7Click the button to go", "&7back to the previous page."));
 
+    public static final ConfigSetting GUI_CLOSE_BTN_ITEM = new ConfigSetting(config, "gui.close button.item", "BARRIER", "Settings for the close button");
+    public static final ConfigSetting GUI_CLOSE_BTN_NAME = new ConfigSetting(config, "gui.close button.name", "&cClose");
+    public static final ConfigSetting GUI_CLOSE_BTN_LORE = new ConfigSetting(config, "gui.close button.lore", Collections.singletonList("&7Click to close this menu."));
+
+    public static final ConfigSetting GUI_NEXT_BTN_ITEM = new ConfigSetting(config, "gui.next button.item", "ARROW", "Settings for the next button");
+    public static final ConfigSetting GUI_NEXT_BTN_NAME = new ConfigSetting(config, "gui.next button.name", "&eNext >>");
+    public static final ConfigSetting GUI_NEXT_BTN_LORE = new ConfigSetting(config, "gui.next button.lore", Arrays.asList("&7Click the button to go", "&7to the next page."));
+
+    public static final ConfigSetting GUI_CONFIRM_TITLE = new ConfigSetting(config, "gui.confirm gui.title", "&a&lConfirm Redeem?");
     public static final ConfigSetting GUI_CONFIRM_YES_MATERIAL = new ConfigSetting(config, "gui.confirm gui.items.yes.material", "LIME_STAINED_GLASS_PANE");
     public static final ConfigSetting GUI_CONFIRM_YES_NAME = new ConfigSetting(config, "gui.confirm gui.items.yes.name", "&a&lRedeem");
     public static final ConfigSetting GUI_CONFIRM_YES_LORE = new ConfigSetting(config, "gui.confirm gui.items.yes.lore", Collections.singletonList("&7Click to redeem voucher"));
-
     public static final ConfigSetting GUI_CONFIRM_NO_MATERIAL = new ConfigSetting(config, "gui.confirm gui.items.no.material", "RED_STAINED_GLASS_PANE");
     public static final ConfigSetting GUI_CONFIRM_NO_NAME = new ConfigSetting(config, "gui.confirm gui.items.no.name", "&c&lCancel");
     public static final ConfigSetting GUI_CONFIRM_NO_LORE = new ConfigSetting(config, "gui.confirm gui.items.no.lore", Collections.singletonList("&7Click to cancel redeeming the voucher"));
 
+    public static final ConfigSetting GUI_LIST_TITLE = new ConfigSetting(config, "gui.list gui.title", "&eListing Vouchers");
+    public static final ConfigSetting GUI_LIST_BOTTOM_BAR_ITEM = new ConfigSetting(config, "gui.list gui.bottom bar.item", "LIGHT_GRAY_STAINED_GLASS_PANE", "Settings for the bottom bar");
+    public static final ConfigSetting GUI_LIST_BOTTOM_BAR_NAME = new ConfigSetting(config, "gui.list gui.bottom bar.name", "");
+    public static final ConfigSetting GUI_LIST_BOTTOM_BAR_LORE = new ConfigSetting(config, "gui.list gui.bottom bar.lore", Collections.singletonList(""));
 
 
     public static void setup() {

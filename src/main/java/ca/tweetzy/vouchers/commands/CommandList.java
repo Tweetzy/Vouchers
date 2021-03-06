@@ -1,7 +1,11 @@
 package ca.tweetzy.vouchers.commands;
 
 import ca.tweetzy.core.commands.AbstractCommand;
+import ca.tweetzy.core.utils.TextUtils;
+import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.guis.GUIVoucherList;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -14,12 +18,25 @@ import java.util.List;
 public class CommandList extends AbstractCommand {
 
     public CommandList() {
-        super(CommandType.CONSOLE_OK, "edit");
+        super(CommandType.CONSOLE_OK, "list");
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        return null;
+        if (Vouchers.getInstance().getVoucherManager().getVouchers().size() == 0) {
+            Vouchers.getInstance().getLocale().getMessage("voucher.novouchers").sendPrefixedMessage(sender);
+            return ReturnType.FAILURE;
+        }
+
+        if (!(sender instanceof Player)) {
+            Vouchers.getInstance().getVoucherManager().getVouchers().forEach(voucher -> {
+                sender.sendMessage(TextUtils.formatText(String.format("&e%s", voucher.getId())));
+            });
+        } else {
+            Player player = (Player) sender;
+            Vouchers.getInstance().getGuiManager().showGUI(player, new GUIVoucherList());
+        }
+        return ReturnType.SUCCESS;
     }
 
     @Override
@@ -29,16 +46,16 @@ public class CommandList extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return null;
+        return "vouchers.cmd.create";
     }
 
     @Override
     public String getSyntax() {
-        return null;
+        return "list";
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "List all the available vouchers";
     }
 }

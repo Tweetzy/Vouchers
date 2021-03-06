@@ -5,13 +5,13 @@ import ca.tweetzy.core.TweetyPlugin;
 import ca.tweetzy.core.commands.CommandManager;
 import ca.tweetzy.core.compatibility.ServerVersion;
 import ca.tweetzy.core.configuration.Config;
-import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
-import ca.tweetzy.core.configuration.editor.ConfigEditorListEditorGui;
 import ca.tweetzy.core.gui.GuiManager;
 import ca.tweetzy.core.utils.Metrics;
 import ca.tweetzy.vouchers.commands.CommandCreate;
+import ca.tweetzy.vouchers.commands.CommandEdit;
+import ca.tweetzy.vouchers.commands.CommandList;
+import ca.tweetzy.vouchers.managers.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,7 @@ public class Vouchers extends TweetyPlugin {
 
     protected Metrics metrics;
     private CommandManager commandManager;
+    private VoucherManager voucherManager;
 
     @Override
     public void onPluginLoad() {
@@ -58,9 +59,13 @@ public class Vouchers extends TweetyPlugin {
         // Commands
         this.commandManager = new CommandManager(this);
         this.commandManager.addMainCommand("vouchers").addSubCommands(
-                new CommandCreate()
+                new CommandCreate(),
+                new CommandList(),
+                new CommandEdit()
         );
 
+        this.voucherManager = new VoucherManager();
+        this.voucherManager.loadVouchers(false);
         this.guiManager.init();
 
         // Metrics
@@ -97,6 +102,10 @@ public class Vouchers extends TweetyPlugin {
 
     public GuiManager getGuiManager() {
         return guiManager;
+    }
+
+    public VoucherManager getVoucherManager() {
+        return voucherManager;
     }
 
     public Config getData() {

@@ -21,15 +21,15 @@ import java.util.stream.Collectors;
 public class CommandCreate extends AbstractCommand {
 
     public CommandCreate() {
-        super(CommandType.PLAYER_ONLY, "create");
+        super(CommandType.CONSOLE_OK, "create");
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        Player player = (Player) sender;
+        if (args.length != 1) return ReturnType.SYNTAX_ERROR;
 
         if (VoucherAPI.getInstance().doesVoucherExists(args[0])) {
-            Vouchers.getInstance().getLocale().getMessage("voucher.exists").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(player);
+            Vouchers.getInstance().getLocale().getMessage("voucher.exists").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
@@ -46,9 +46,9 @@ public class CommandCreate extends AbstractCommand {
                 .removeOnUse(Settings.DEFAULT_REMOVE_ON_USE.getBoolean())
                 .sendTitle(Settings.DEFAULT_SEND_TITLE.getBoolean())
                 .sendActionbar(Settings.DEFAULT_SEND_ACTIONBAR.getBoolean())
-                .commands(Settings.DEFAULT_COMMANDS.getStringList().stream().map(cmd -> cmd.replace("%player%", player.getName())).collect(Collectors.toList()))
-                .broadcastMessages(Settings.DEFAULT_BROADCAST_MESSAGES.getStringList().stream().map(cmd -> cmd.replace("%voucher_id%", args[0]).replace("%player%", player.getName())).collect(Collectors.toList()))
-                .playerMessages(Settings.DEFAULT_PLAYER_MESSAGES.getStringList().stream().map(msgs -> msgs.replace("%voucher_id%", args[0])).collect(Collectors.toList()))
+                .commands(Settings.DEFAULT_COMMANDS.getStringList())
+                .broadcastMessages(Settings.DEFAULT_BROADCAST_MESSAGES.getStringList())
+                .playerMessages(Settings.DEFAULT_PLAYER_MESSAGES.getStringList())
                 .actionbarMessage(Settings.DEFAULT_ACTIONBAR.getString())
                 .title(Settings.DEFAULT_TITLE.getString())
                 .subTitle(Settings.DEFAULT_SUBTITLE.getString())
@@ -59,7 +59,8 @@ public class CommandCreate extends AbstractCommand {
                 .build();
 
         VoucherAPI.getInstance().createVoucher(voucher);
-        Vouchers.getInstance().getLocale().getMessage("voucher.create").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(player);
+        Vouchers.getInstance().getVoucherManager().addVoucher(voucher);
+        Vouchers.getInstance().getLocale().getMessage("voucher.create").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
     }
 

@@ -6,6 +6,7 @@ general:
     playeroffline: "&cThe following player &4%player% &ccould not be found!"
 
 voucher:
+    novouchers: "&cThere are no vouchers created!"
     create: "&aCreated a new voucher with the id: &2%voucher_id%"
     remove: "&cRemoved the voucher with the id: &4%voucher_id%"
     exists: "&cA voucher by the id &e%voucher_id% &4already exists!"
