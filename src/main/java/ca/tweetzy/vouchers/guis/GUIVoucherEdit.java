@@ -3,7 +3,6 @@ package ca.tweetzy.vouchers.guis;
 import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.core.gui.Gui;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;

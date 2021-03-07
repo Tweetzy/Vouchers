@@ -62,7 +62,8 @@ public class Vouchers extends TweetyPlugin {
                 new CommandRemove(),
                 new CommandEdit(),
                 new CommandGive(),
-                new CommandList()
+                new CommandList(),
+                new CommandSettings()
         );
 
         this.voucherManager = new VoucherManager();
@@ -90,9 +91,7 @@ public class Vouchers extends TweetyPlugin {
 
     @Override
     public List<Config> getExtraConfig() {
-        List<Config> configs = new ArrayList<>();
-        configs.add(data);
-        return configs;
+        return null;
     }
 
     public static Vouchers getInstance() {

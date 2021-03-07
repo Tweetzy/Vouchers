@@ -104,7 +104,7 @@ public class VoucherManager {
        }
 
        if (voucher.isSendActionbar()) {
-           ActionBar.send(player, voucher.getActionbarMessage());
+           ActionBar.send(player, voucher.getActionbarMessage().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()));
        }
 
        if (voucher.getCommands().size() != 0) {

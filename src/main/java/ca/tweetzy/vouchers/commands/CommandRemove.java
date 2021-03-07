@@ -3,7 +3,9 @@ package ca.tweetzy.vouchers.commands;
 import ca.tweetzy.core.commands.AbstractCommand;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VoucherAPI;
+import ca.tweetzy.vouchers.events.VoucherRemoveEvent;
 import ca.tweetzy.vouchers.voucher.Voucher;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -36,6 +38,10 @@ public class CommandRemove extends AbstractCommand {
             Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
+
+        VoucherRemoveEvent removeEvent = new VoucherRemoveEvent(Vouchers.getInstance().getVoucherManager().getVoucher(voucherId));
+        Bukkit.getServer().getPluginManager().callEvent(removeEvent);
+        if (removeEvent.isCancelled()) return ReturnType.FAILURE;
 
         VoucherAPI.getInstance().removeVoucher(voucherId);
         Vouchers.getInstance().getVoucherManager().removeVoucher(Vouchers.getInstance().getVoucherManager().getVoucher(voucherId));

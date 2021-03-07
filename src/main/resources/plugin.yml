@@ -1,6 +1,6 @@
 name: Vouchers
 version: plugin-version
-api-version: 1.16
+api-version: 1.13
 main: ca.tweetzy.vouchers.Vouchers
 description: Reedemable vouchers made simple
 authors: [Kiran Hart]
@@ -11,3 +11,34 @@ commands:
     aliases: [voucher]
     default: true
     usage: /vouchers
+
+permissions:
+  vouchers.*:
+    vouchers.cmd.create: true
+    vouchers.cmd.remove: true
+    vouchers.cmd.edit: true
+    vouchers.cmd.give: true
+    vouchers.cmd.list: true
+    vouchers.cmd.settings: true
+    vouchers.admin: true
+  vouchers.cmd.create:
+    description: Allows access to the voucher create command
+    default: op
+  vouchers.cmd.remove:
+    description: Allows access to the voucher remove command
+    default: op
+  vouchers.cmd.edit:
+    description: Allows access to the voucher edit command
+    default: op
+  vouchers.cmd.give:
+    description: Allows access to the voucher give command
+    default: op
+  vouchers.cmd.list:
+    description: Allows access to the voucher list command
+    default: op
+  vouchers.cmd.settings:
+    description: Allows access to the voucher settings command
+    default: op
+  vouchers.admin:
+    description: Gives admin access to the voucher plugin.
+    default: op

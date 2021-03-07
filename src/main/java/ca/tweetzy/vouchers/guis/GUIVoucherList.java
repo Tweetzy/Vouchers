@@ -40,7 +40,7 @@ public class GUIVoucherList extends Gui {
         reset();
         pages = (int) Math.max(1, Math.ceil(vouchers.size() / ((double) 45)));
 
-        setItems(45, 53, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
+        setItems(45, 53, new TItemBuilder(Objects.requireNonNull(XMaterial.matchXMaterial(Settings.GUI_LIST_BOTTOM_BAR_ITEM.getString()).orElse(XMaterial.GRAY_STAINED_GLASS_PANE).parseMaterial())).setName(Settings.GUI_LIST_BOTTOM_BAR_NAME.getString()).setLore(Settings.GUI_LIST_BOTTOM_BAR_LORE.getStringList()).toItemStack());
         setButton(5, 3, new TItemBuilder(Objects.requireNonNull(XMaterial.matchXMaterial(Settings.GUI_BACK_BTN_ITEM.getString()).orElse(XMaterial.ARROW).parseMaterial())).setName(Settings.GUI_BACK_BTN_NAME.getString()).setLore(Settings.GUI_BACK_BTN_LORE.getStringList()).toItemStack(), e -> e.gui.prevPage());
         setButton(5, 4, new TItemBuilder(Objects.requireNonNull(XMaterial.matchXMaterial(Settings.GUI_CLOSE_BTN_ITEM.getString()).orElse(XMaterial.BARRIER).parseMaterial())).setName(Settings.GUI_CLOSE_BTN_NAME.getString()).setLore(Settings.GUI_CLOSE_BTN_LORE.getStringList()).toItemStack(), e -> e.player.closeInventory());
         setButton(5, 5, new TItemBuilder(Objects.requireNonNull(XMaterial.matchXMaterial(Settings.GUI_NEXT_BTN_ITEM.getString()).orElse(XMaterial.ARROW).parseMaterial())).setName(Settings.GUI_NEXT_BTN_NAME.getString()).setLore(Settings.GUI_NEXT_BTN_LORE.getStringList()).toItemStack(), e -> e.gui.nextPage());

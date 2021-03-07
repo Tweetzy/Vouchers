@@ -21,10 +21,8 @@ public class Settings {
     static final Config config = Vouchers.getInstance().getCoreConfig();
 
     public static final ConfigSetting LANG = new ConfigSetting(config, "lang", "en_US", "Default language file");
-    public static final ConfigSetting UPDATE_CHECKER = new ConfigSetting(config, "update checker", true, "Should vouchers check for updates?");
     public static final ConfigSetting METRICS = new ConfigSetting(config, "metrics", true, "Should the plugin use metrics?", "It simply allows me to see how many servers", "are currently using the vouchers plugin.");
 
-    public static final ConfigSetting DEFAULT_COOLDOWN_DELAY = new ConfigSetting(config, "defaults.cooldown delay", 5, "The default cooldown time (in secs) for a voucher");
     public static final ConfigSetting DEFAULT_MATERIAL = new ConfigSetting(config, "defaults.material", "PAPER", "The default material to be used for the voucher");
     public static final ConfigSetting DEFAULT_PERMISSION = new ConfigSetting(config, "defaults.permission", "vouchers.use.%voucher_id%", "The default permission for a voucher");
     public static final ConfigSetting DEFAULT_DISPLAYNAME = new ConfigSetting(config, "defaults.display name", "&e%voucher_id%", "The default display name for a voucher");

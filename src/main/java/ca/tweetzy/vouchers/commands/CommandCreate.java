@@ -4,8 +4,10 @@ import ca.tweetzy.core.commands.AbstractCommand;
 import ca.tweetzy.core.compatibility.XSound;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VoucherAPI;
+import ca.tweetzy.vouchers.events.VoucherCreateEvent;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -57,6 +59,10 @@ public class CommandCreate extends AbstractCommand {
                 .titleFadeOut(Settings.DEFAULT_TITLE_FADE_OUT.getInt())
                 .redeemSound(XSound.matchXSound(Settings.DEFAULT_REDEEM_SOUND.getString()).get().parseSound())
                 .build();
+
+        VoucherCreateEvent createEvent = new VoucherCreateEvent(voucher);
+        Bukkit.getServer().getPluginManager().callEvent(createEvent);
+        if (createEvent.isCancelled()) return ReturnType.FAILURE;
 
         VoucherAPI.getInstance().createVoucher(voucher);
         Vouchers.getInstance().getVoucherManager().addVoucher(voucher);

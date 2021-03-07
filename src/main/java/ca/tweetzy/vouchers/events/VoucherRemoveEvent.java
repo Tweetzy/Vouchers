@@ -16,14 +16,14 @@ import org.bukkit.event.HandlerList;
 
 @Getter
 @Setter
-public class VoucherCreateEvent extends Event implements Cancellable {
+public class VoucherRemoveEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
     private Voucher voucher;
 
-    public VoucherCreateEvent(Voucher voucher) {
+    public VoucherRemoveEvent(Voucher voucher) {
         this.voucher = voucher;
     }
 
