@@ -14,3 +14,4 @@ voucher:
     give: "&aGave &2%player% &ax%amount% &2%voucher_id% &avoucher(s)"
     giveall: "&aGave everyone x%amount% &2%voucher_id% &avoucher(s)"
     received: "&aYou received x%amount% &2%voucher_id% &avoucher(s)"
+    reload: "&aYou reloaded the data.yml (vouchers updated)"

@@ -11,6 +11,7 @@ import ca.tweetzy.vouchers.commands.*;
 import ca.tweetzy.vouchers.listener.PlayerListener;
 import ca.tweetzy.vouchers.managers.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,8 @@ public class Vouchers extends TweetyPlugin {
                 new CommandEdit(),
                 new CommandGive(),
                 new CommandList(),
-                new CommandSettings()
+                new CommandSettings(),
+                new CommandReload()
         );
 
         this.voucherManager = new VoucherManager();
@@ -85,8 +87,10 @@ public class Vouchers extends TweetyPlugin {
 
     @Override
     public void onConfigReload() {
-        this.data.load();
+        setLocale(Settings.LANG.getString(), true);
         this.locale.reloadMessages();
+        this.data.load();
+        this.voucherManager.loadVouchers(true);
     }
 
     @Override

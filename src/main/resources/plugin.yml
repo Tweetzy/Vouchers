@@ -20,6 +20,7 @@ permissions:
     vouchers.cmd.give: true
     vouchers.cmd.list: true
     vouchers.cmd.settings: true
+    vouchers.cmd.reload: true
     vouchers.admin: true
   vouchers.cmd.create:
     description: Allows access to the voucher create command
@@ -38,6 +39,9 @@ permissions:
     default: op
   vouchers.cmd.settings:
     description: Allows access to the voucher settings command
+    default: op
+  vouchers.cmd.reload:
+    description: Allows access to the voucher reload command
     default: op
   vouchers.admin:
     description: Gives admin access to the voucher plugin.

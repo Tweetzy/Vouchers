@@ -50,7 +50,10 @@ public class VoucherManager {
     }
 
     public void loadVouchers(boolean isReload) {
-        if (isReload) vouchers.clear();
+        if (isReload) {
+            vouchers.clear();
+            Vouchers.getInstance().getData().load();
+        }
 
         ConfigurationSection section = Vouchers.getInstance().getData().getConfigurationSection("vouchers");
         if (section == null || section.getKeys(false).size() == 0) return;
@@ -94,26 +97,26 @@ public class VoucherManager {
         Bukkit.getServer().getPluginManager().callEvent(voucherRedeemEvent);
         if (voucherRedeemEvent.isCancelled()) return;
 
-       if (voucher.isSendTitle()) {
-           Title.send(player, Title.TitleType.TITLE, voucher.getTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
-           Title.send(player, Title.TitleType.SUBTITLE, voucher.getSubTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
-       }
+        if (voucher.isSendTitle()) {
+            Title.send(player, Title.TitleType.TITLE, voucher.getTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
+            Title.send(player, Title.TitleType.SUBTITLE, voucher.getSubTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
+        }
 
-       if (voucher.getRedeemSound() != null) {
-           player.playSound(player.getLocation(), voucher.getRedeemSound(), 1.0F, 1.0F);
-       }
+        if (voucher.getRedeemSound() != null) {
+            player.playSound(player.getLocation(), voucher.getRedeemSound(), 1.0F, 1.0F);
+        }
 
-       if (voucher.isSendActionbar()) {
-           ActionBar.send(player, voucher.getActionbarMessage().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()));
-       }
+        if (voucher.isSendActionbar()) {
+            ActionBar.send(player, voucher.getActionbarMessage().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()));
+        }
 
-       if (voucher.getCommands().size() != 0) {
-           voucher.getCommands().stream().map(cmd -> cmd.replace("%player%", player.getName())).collect(Collectors.toList()).forEach(cmd -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd));
-       }
+        if (voucher.getCommands().size() != 0) {
+            voucher.getCommands().stream().map(cmd -> cmd.replace("%player%", player.getName())).collect(Collectors.toList()).forEach(cmd -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd));
+        }
 
-       if (voucher.getBroadcastMessages().size() != 0) {
-           voucher.getBroadcastMessages().stream().map(cmd -> TextUtils.formatText(cmd.replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()).replace("%player%", player.getName()))).collect(Collectors.toList()).forEach(Bukkit::broadcastMessage);
-       }
+        if (voucher.getBroadcastMessages().size() != 0) {
+            voucher.getBroadcastMessages().stream().map(cmd -> TextUtils.formatText(cmd.replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()).replace("%player%", player.getName()))).collect(Collectors.toList()).forEach(Bukkit::broadcastMessage);
+        }
 
         if (voucher.getPlayerMessages().size() != 0) {
             voucher.getPlayerMessages().stream().map(cmd -> TextUtils.formatText(cmd.replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()))).collect(Collectors.toList()).forEach(player::sendMessage);
