@@ -5,6 +5,8 @@ import ca.tweetzy.core.utils.NumberUtils;
 import ca.tweetzy.core.utils.PlayerUtils;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VoucherAPI;
+import ca.tweetzy.vouchers.guis.GUIVoucherEdit;
+import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -39,20 +41,38 @@ public class CommandGive extends AbstractCommand {
             return ReturnType.FAILURE;
         }
 
-        if (!VoucherAPI.getInstance().doesVoucherExists(voucherId)) {
-            Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        }
-
-        if (args.length == 3) {
-            if (!NumberUtils.isInt(args[2])) {
-                Vouchers.getInstance().getLocale().getMessage("voucher.notanumber").processPlaceholder("value", args[2]).sendPrefixedMessage(sender);
+        if (Settings.DATABASE_USE.getBoolean()) {
+            Vouchers.getInstance().getDataManager().getVouchers(vouchers -> {
+                if (vouchers.stream().anyMatch(voucher -> voucher.getId().equalsIgnoreCase(voucherId))) {
+                    if (args.length == 3) {
+                        if (!NumberUtils.isInt(args[2])) {
+                            Vouchers.getInstance().getLocale().getMessage("voucher.notanumber").processPlaceholder("value", args[2]).sendPrefixedMessage(sender);
+                        } else {
+                            giveVoucher(sender, target, voucherId, Integer.parseInt(args[2]));
+                        }
+                    } else {
+                        giveVoucher(sender, target, voucherId, 1);
+                    }
+                } else {
+                    Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
+                }
+            });
+        } else {
+            if (!VoucherAPI.getInstance().doesVoucherExists(voucherId)) {
+                Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
-            amountToGive = Integer.parseInt(args[2]);
-        }
 
-        giveVoucher(sender, target, voucherId, amountToGive);
+            if (args.length == 3) {
+                if (!NumberUtils.isInt(args[2])) {
+                    Vouchers.getInstance().getLocale().getMessage("voucher.notanumber").processPlaceholder("value", args[2]).sendPrefixedMessage(sender);
+                    return ReturnType.FAILURE;
+                }
+                amountToGive = Integer.parseInt(args[2]);
+            }
+
+            return giveVoucher(sender, target, voucherId, amountToGive);
+        }
         return ReturnType.SUCCESS;
     }
 

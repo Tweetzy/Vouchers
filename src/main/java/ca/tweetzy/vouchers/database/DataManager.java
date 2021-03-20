@@ -3,6 +3,7 @@ package ca.tweetzy.vouchers.database;
 import ca.tweetzy.core.database.DataManagerAbstract;
 import ca.tweetzy.core.database.DatabaseConnector;
 import ca.tweetzy.vouchers.Helpers;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.plugin.Plugin;
 
@@ -34,6 +35,18 @@ public class DataManager extends DataManagerAbstract {
                 int status = statement.executeUpdate();
                 this.sync(() -> result.accept(status == 0));
             }
+        }));
+    }
+
+    public void updateVoucher(Voucher voucher) {
+        this.async(() -> this.databaseConnector.connect(connection -> {
+            String updateVoucher = "UPDATE " + this.getTablePrefix() + "vouchers SET voucher_content = ? WHERE voucher_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(updateVoucher)) {
+                statement.setString(1, Helpers.toString(voucher));
+                statement.setString(2, voucher.getId());
+                statement.executeUpdate();
+            }
+            this.async(() -> Vouchers.getInstance().getVoucherManager().loadVouchers(true, true));
         }));
     }
 

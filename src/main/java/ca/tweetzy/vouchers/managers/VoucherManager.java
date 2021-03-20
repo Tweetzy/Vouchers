@@ -65,36 +65,38 @@ public class VoucherManager {
             long start = System.currentTimeMillis();
 
             section.getKeys(false).forEach(voucherId -> {
-                Voucher voucher = Voucher.builder()
-                        .id(voucherId)
-                        .displayName(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".display name"))
-                        .permission(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".permission"))
-                        .material(XMaterial.matchXMaterial(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".material")).get())
-                        .lore(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".lore"))
-                        .glowing(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.glowing"))
-                        .askConfirm(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.ask to confirm"))
-                        .unbreakable(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.unbreakable"))
-                        .hideAttributes(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.hide attributes"))
-                        .removeOnUse(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.remove on use"))
-                        .sendTitle(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.send title"))
-                        .sendActionbar(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.send actionbar"))
-                        .commands(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.commands"))
-                        .broadcastMessages(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.broadcast messages"))
-                        .playerMessages(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.player messages"))
-                        .redeemSound(XSound.matchXSound(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".execution.redeem sound")).get().parseSound())
-                        .title(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.title"))
-                        .subTitle(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.subtitle"))
-                        .actionbarMessage(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.actionbar"))
-                        .titleFadeIn(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.fade in"))
-                        .titleStay(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.stay"))
-                        .titleFadeOut(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.fade out"))
-                        .build();
-
-                addVoucher(voucher);
+                addVoucher(buildVoucher(voucherId));
             });
 
             Vouchers.getInstance().getLocale().newMessage(String.format("&a%s &2%d &avoucher(s) in &2%d &ams", isReload ? "Reloaded" : "Loaded", vouchers.keySet().size(), System.currentTimeMillis() - start)).sendPrefixedMessage(Bukkit.getConsoleSender());
         }
+    }
+
+    public Voucher buildVoucher(String voucherId) {
+        return Voucher.builder()
+                .id(voucherId)
+                .displayName(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".display name"))
+                .permission(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".permission"))
+                .material(XMaterial.matchXMaterial(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".material")).get())
+                .lore(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".lore"))
+                .glowing(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.glowing"))
+                .askConfirm(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.ask to confirm"))
+                .unbreakable(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.unbreakable"))
+                .hideAttributes(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.hide attributes"))
+                .removeOnUse(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.remove on use"))
+                .sendTitle(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.send title"))
+                .sendActionbar(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.send actionbar"))
+                .commands(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.commands"))
+                .broadcastMessages(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.broadcast messages"))
+                .playerMessages(Vouchers.getInstance().getData().getStringList("vouchers." + voucherId + ".execution.player messages"))
+                .redeemSound(XSound.matchXSound(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".execution.redeem sound")).get().parseSound())
+                .title(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.title"))
+                .subTitle(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.subtitle"))
+                .actionbarMessage(Vouchers.getInstance().getData().getString("vouchers." + voucherId + ".titles.actionbar"))
+                .titleFadeIn(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.fade in"))
+                .titleStay(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.stay"))
+                .titleFadeOut(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.fade out"))
+                .build();
     }
 
     public void redeem(Player player, Voucher voucher) {

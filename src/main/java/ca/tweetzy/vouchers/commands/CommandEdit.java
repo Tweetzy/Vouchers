@@ -6,6 +6,7 @@ import ca.tweetzy.core.configuration.editor.PluginConfigGui;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VoucherAPI;
 import ca.tweetzy.vouchers.guis.GUIVoucherEdit;
+import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -34,17 +35,30 @@ public class CommandEdit extends AbstractCommand {
         Player player = (Player) sender;
         String voucherId = args[0].toLowerCase();
 
-        if (Vouchers.getInstance().getVoucherManager().getVouchers().size() == 0) {
-            Vouchers.getInstance().getLocale().getMessage("voucher.novouchers").sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
+        if (Settings.DATABASE_USE.getBoolean()) {
+            Vouchers.getInstance().getDataManager().getVouchers(vouchers -> {
+                if (vouchers.stream().anyMatch(voucher -> voucher.getId().equalsIgnoreCase(voucherId))) {
+                    VoucherAPI.getInstance().createVoucher(vouchers.stream().filter(voucher -> voucher.getId().equalsIgnoreCase(voucherId)).findFirst().get());
+                    Vouchers.getInstance().getGuiManager().showGUI(player, new GUIVoucherEdit(player, voucherId));
+                } else {
+                    Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
+                }
+            });
+        } else {
+            if (Vouchers.getInstance().getVoucherManager().getVouchers().size() == 0) {
+                Vouchers.getInstance().getLocale().getMessage("voucher.novouchers").sendPrefixedMessage(sender);
+                return ReturnType.FAILURE;
+            }
+
+            if (!VoucherAPI.getInstance().doesVoucherExists(voucherId)) {
+                Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
+                return ReturnType.FAILURE;
+            }
+
+            Vouchers.getInstance().getGuiManager().showGUI(player, new GUIVoucherEdit(player, voucherId));
         }
 
-        if (!VoucherAPI.getInstance().doesVoucherExists(voucherId)) {
-            Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        }
 
-        Vouchers.getInstance().getGuiManager().showGUI(player, new GUIVoucherEdit(player, voucherId));
         return ReturnType.SUCCESS;
     }
 
