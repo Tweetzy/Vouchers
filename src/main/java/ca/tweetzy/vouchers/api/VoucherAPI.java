@@ -1,7 +1,10 @@
 package ca.tweetzy.vouchers.api;
 
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The current file has been created by Kiran Hart

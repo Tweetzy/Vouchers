@@ -5,9 +5,14 @@ import ca.tweetzy.core.TweetyPlugin;
 import ca.tweetzy.core.commands.CommandManager;
 import ca.tweetzy.core.compatibility.ServerVersion;
 import ca.tweetzy.core.configuration.Config;
+import ca.tweetzy.core.database.DataMigrationManager;
+import ca.tweetzy.core.database.DatabaseConnector;
+import ca.tweetzy.core.database.MySQLConnector;
 import ca.tweetzy.core.gui.GuiManager;
 import ca.tweetzy.core.utils.Metrics;
 import ca.tweetzy.vouchers.commands.*;
+import ca.tweetzy.vouchers.database.DataManager;
+import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
 import ca.tweetzy.vouchers.listener.PlayerListener;
 import ca.tweetzy.vouchers.managers.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
@@ -31,6 +36,9 @@ public class Vouchers extends TweetyPlugin {
     protected Metrics metrics;
     private CommandManager commandManager;
     private VoucherManager voucherManager;
+
+    private DatabaseConnector databaseConnector;
+    private DataManager dataManager;
 
     @Override
     public void onPluginLoad() {
@@ -69,7 +77,15 @@ public class Vouchers extends TweetyPlugin {
         );
 
         this.voucherManager = new VoucherManager();
-        this.voucherManager.loadVouchers(false);
+
+        if (Settings.DATABASE_USE.getBoolean()) {
+            this.databaseConnector = new MySQLConnector(this, Settings.DATABASE_HOST.getString(), Settings.DATABASE_PORT.getInt(), Settings.DATABASE_NAME.getString(), Settings.DATABASE_USERNAME.getString(), Settings.DATABASE_PASSWORD.getString(), Settings.DATABASE_USE_SSL.getBoolean());
+            this.dataManager = new DataManager(this.databaseConnector, this);
+            DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager, new _1_InitialMigration());
+            dataMigrationManager.runMigrations();
+        }
+
+        this.voucherManager.loadVouchers(false, Settings.DATABASE_USE.getBoolean());
         this.guiManager.init();
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
@@ -90,7 +106,7 @@ public class Vouchers extends TweetyPlugin {
         setLocale(Settings.LANG.getString(), true);
         this.locale.reloadMessages();
         this.data.load();
-        this.voucherManager.loadVouchers(true);
+        this.voucherManager.loadVouchers(true, Settings.DATABASE_USE.getBoolean());
     }
 
     @Override
@@ -116,5 +132,13 @@ public class Vouchers extends TweetyPlugin {
 
     public Config getData() {
         return data;
+    }
+
+    public DatabaseConnector getDatabaseConnector() {
+        return databaseConnector;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
     }
 }

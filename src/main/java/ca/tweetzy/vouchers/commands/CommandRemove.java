@@ -4,6 +4,7 @@ import ca.tweetzy.core.commands.AbstractCommand;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VoucherAPI;
 import ca.tweetzy.vouchers.events.VoucherRemoveEvent;
+import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -29,24 +30,37 @@ public class CommandRemove extends AbstractCommand {
 
         String voucherId = args[0].toLowerCase();
 
-        if (Vouchers.getInstance().getVoucherManager().getVouchers().size() == 0) {
-            Vouchers.getInstance().getLocale().getMessage("voucher.novouchers").sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        }
-
-        if (!VoucherAPI.getInstance().doesVoucherExists(voucherId)) {
-            Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        }
-
         VoucherRemoveEvent removeEvent = new VoucherRemoveEvent(Vouchers.getInstance().getVoucherManager().getVoucher(voucherId));
         Bukkit.getServer().getPluginManager().callEvent(removeEvent);
         if (removeEvent.isCancelled()) return ReturnType.FAILURE;
 
-        VoucherAPI.getInstance().removeVoucher(voucherId);
-        Vouchers.getInstance().getVoucherManager().removeVoucher(Vouchers.getInstance().getVoucherManager().getVoucher(voucherId));
-        Vouchers.getInstance().getVoucherManager().loadVouchers(true);
-        Vouchers.getInstance().getLocale().getMessage("voucher.remove").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+        if (Settings.DATABASE_USE.getBoolean()) {
+            Vouchers.getInstance().getDataManager().removeVoucher(voucherId, failure -> {
+                if (failure) {
+                    Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
+                } else {
+                    Vouchers.getInstance().getVoucherManager().removeVoucher(Vouchers.getInstance().getVoucherManager().getVoucher(voucherId));
+                    Vouchers.getInstance().getVoucherManager().loadVouchers(true, true);
+                    Vouchers.getInstance().getLocale().getMessage("voucher.remove").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+                }
+            });
+        } else {
+            if (Vouchers.getInstance().getVoucherManager().getVouchers().size() == 0) {
+                Vouchers.getInstance().getLocale().getMessage("voucher.novouchers").sendPrefixedMessage(sender);
+                return ReturnType.FAILURE;
+            }
+
+            if (!VoucherAPI.getInstance().doesVoucherExists(voucherId)) {
+                Vouchers.getInstance().getLocale().getMessage("voucher.invalid").processPlaceholder("voucher_id", voucherId).sendPrefixedMessage(sender);
+                return ReturnType.FAILURE;
+            }
+
+            VoucherAPI.getInstance().removeVoucher(voucherId);
+            Vouchers.getInstance().getVoucherManager().removeVoucher(Vouchers.getInstance().getVoucherManager().getVoucher(voucherId));
+            Vouchers.getInstance().getVoucherManager().loadVouchers(true, false);
+            Vouchers.getInstance().getLocale().getMessage("voucher.remove").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+        }
+
         return ReturnType.SUCCESS;
     }
 

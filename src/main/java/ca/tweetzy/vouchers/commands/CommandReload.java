@@ -1,6 +1,7 @@
 package ca.tweetzy.vouchers.commands;
 
 import ca.tweetzy.core.commands.AbstractCommand;
+import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.vouchers.Vouchers;
@@ -34,6 +35,7 @@ public class CommandReload extends AbstractCommand {
             Vouchers.getInstance().reloadConfig();
             Vouchers.getInstance().getLocale().getMessage("voucher.reload").sendPrefixedMessage(sender);
         }
+
         return ReturnType.SUCCESS;
     }
 

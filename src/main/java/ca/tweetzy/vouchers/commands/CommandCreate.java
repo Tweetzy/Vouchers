@@ -30,11 +30,6 @@ public class CommandCreate extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (args.length != 1) return ReturnType.SYNTAX_ERROR;
 
-        if (VoucherAPI.getInstance().doesVoucherExists(args[0])) {
-            Vouchers.getInstance().getLocale().getMessage("voucher.exists").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        }
-
         Voucher voucher = Voucher.builder()
                 .id(args[0])
                 .material(Settings.DEFAULT_MATERIAL.getMaterial())
@@ -64,9 +59,28 @@ public class CommandCreate extends AbstractCommand {
         Bukkit.getServer().getPluginManager().callEvent(createEvent);
         if (createEvent.isCancelled()) return ReturnType.FAILURE;
 
-        VoucherAPI.getInstance().createVoucher(voucher);
-        Vouchers.getInstance().getVoucherManager().addVoucher(voucher);
-        Vouchers.getInstance().getLocale().getMessage("voucher.create").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+        if (Settings.DATABASE_USE.getBoolean()) {
+            Vouchers.getInstance().getDataManager().createVoucher(voucher, failure -> {
+                if (failure) {
+                    Vouchers.getInstance().getLocale().getMessage("voucher.exists").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+                } else {
+                    Vouchers.getInstance().getVoucherManager().addVoucher(voucher);
+                    Vouchers.getInstance().getLocale().getMessage("voucher.create").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+                    Vouchers.getInstance().getVoucherManager().loadVouchers(true, true);
+                }
+            });
+        } else {
+            if (VoucherAPI.getInstance().doesVoucherExists(args[0])) {
+                Vouchers.getInstance().getLocale().getMessage("voucher.exists").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+                return ReturnType.FAILURE;
+            }
+
+            VoucherAPI.getInstance().createVoucher(voucher);
+            Vouchers.getInstance().getVoucherManager().addVoucher(voucher);
+            Vouchers.getInstance().getVoucherManager().loadVouchers(true, false);
+            Vouchers.getInstance().getLocale().getMessage("voucher.create").processPlaceholder("voucher_id", args[0]).sendPrefixedMessage(sender);
+        }
+
         return ReturnType.SUCCESS;
     }
 

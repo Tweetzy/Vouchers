@@ -3,6 +3,7 @@ package ca.tweetzy.vouchers.guis;
 import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.core.gui.Gui;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.settings.Settings;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -22,7 +23,7 @@ public class GUIVoucherEdit extends ConfigEditorGui {
         if (!(this.getParent() instanceof ConfigEditorGui)) {
             this.setOnClose(e -> {
                 this.save(Vouchers.getInstance().getLocale().getMessage("general.prefix").getMessage());
-                Vouchers.getInstance().getVoucherManager().loadVouchers(true);
+                Vouchers.getInstance().getVoucherManager().loadVouchers(true, Settings.DATABASE_USE.getBoolean());
             });
         } else {
             this.setOnClose(e -> ((ConfigEditorGui) this.getParent()).edits |= this.edits);

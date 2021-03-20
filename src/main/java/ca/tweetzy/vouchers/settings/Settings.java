@@ -23,6 +23,14 @@ public class Settings {
     public static final ConfigSetting LANG = new ConfigSetting(config, "lang", "en_US", "Default language file");
     public static final ConfigSetting METRICS = new ConfigSetting(config, "metrics", true, "Should the plugin use metrics?", "It simply allows me to see how many servers", "are currently using the vouchers plugin.");
 
+    public static final ConfigSetting DATABASE_USE = new ConfigSetting(config, "database.enabled", true, "Should vouchers use a database to store created vouchers?");
+    public static final ConfigSetting DATABASE_HOST = new ConfigSetting(config, "database.host", "localhost", "The host of the database");
+    public static final ConfigSetting DATABASE_PORT = new ConfigSetting(config, "database.port", 3306, "Database port, by default its 3306");
+    public static final ConfigSetting DATABASE_NAME = new ConfigSetting(config, "database.name", "plugin_dev", "The name of the actual database you're connecting to");
+    public static final ConfigSetting DATABASE_USERNAME = new ConfigSetting(config, "database.username", "root", "The username used to login to the database");
+    public static final ConfigSetting DATABASE_PASSWORD = new ConfigSetting(config, "database.password", "Password1", "The password used to login to the database");
+    public static final ConfigSetting DATABASE_USE_SSL = new ConfigSetting(config, "database.use ssl", true, "Should the connection use SSL?");
+
     public static final ConfigSetting DEFAULT_MATERIAL = new ConfigSetting(config, "defaults.material", "PAPER", "The default material to be used for the voucher");
     public static final ConfigSetting DEFAULT_PERMISSION = new ConfigSetting(config, "defaults.permission", "vouchers.use.%voucher_id%", "The default permission for a voucher");
     public static final ConfigSetting DEFAULT_DISPLAYNAME = new ConfigSetting(config, "defaults.display name", "&e%voucher_id%", "The default display name for a voucher");
