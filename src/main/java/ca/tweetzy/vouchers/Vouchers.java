@@ -10,6 +10,7 @@ import ca.tweetzy.core.database.DatabaseConnector;
 import ca.tweetzy.core.database.MySQLConnector;
 import ca.tweetzy.core.gui.GuiManager;
 import ca.tweetzy.core.utils.Metrics;
+import ca.tweetzy.vouchers.api.UpdateChecker;
 import ca.tweetzy.vouchers.commands.*;
 import ca.tweetzy.vouchers.database.DataManager;
 import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
@@ -89,6 +90,11 @@ public class Vouchers extends TweetyPlugin {
         this.guiManager.init();
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+
+        // update check
+        getServer().getScheduler().runTaskLaterAsynchronously(this, () -> {
+            new UpdateChecker(this, 89864, getConsole()).check();
+        }, 1L);
 
         // Metrics
         if (Settings.METRICS.getBoolean()) {

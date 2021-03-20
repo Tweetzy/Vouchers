@@ -23,7 +23,7 @@ public class Settings {
     public static final ConfigSetting LANG = new ConfigSetting(config, "lang", "en_US", "Default language file");
     public static final ConfigSetting METRICS = new ConfigSetting(config, "metrics", true, "Should the plugin use metrics?", "It simply allows me to see how many servers", "are currently using the vouchers plugin.");
 
-    public static final ConfigSetting DATABASE_USE = new ConfigSetting(config, "database.enabled", true, "Should vouchers use a database to store created vouchers?");
+    public static final ConfigSetting DATABASE_USE = new ConfigSetting(config, "database.enabled", false, "Should vouchers use a database to store created vouchers?");
     public static final ConfigSetting DATABASE_HOST = new ConfigSetting(config, "database.host", "localhost", "The host of the database");
     public static final ConfigSetting DATABASE_PORT = new ConfigSetting(config, "database.port", 3306, "Database port, by default its 3306");
     public static final ConfigSetting DATABASE_NAME = new ConfigSetting(config, "database.name", "plugin_dev", "The name of the actual database you're connecting to");
