@@ -49,7 +49,6 @@ public class Vouchers extends TweetyPlugin {
     @Override
     public void onPluginEnable() {
         TweetyCore.registerPlugin(this, 6, "PAPER");
-        TweetyCore.initEvents(this);
 
         if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_7)) {
             getServer().getPluginManager().disablePlugin(this);
