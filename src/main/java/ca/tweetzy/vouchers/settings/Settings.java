@@ -1,10 +1,8 @@
 package ca.tweetzy.vouchers.settings;
 
-import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
 import ca.tweetzy.core.configuration.Config;
 import ca.tweetzy.core.configuration.ConfigSetting;
-import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.vouchers.Vouchers;
 
 import java.util.Arrays;

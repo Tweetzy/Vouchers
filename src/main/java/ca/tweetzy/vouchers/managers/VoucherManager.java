@@ -3,12 +3,12 @@ package ca.tweetzy.vouchers.managers;
 import ca.tweetzy.core.compatibility.CompatibleHand;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
-import ca.tweetzy.core.configuration.editor.ConfigEditorGui;
 import ca.tweetzy.core.utils.PlayerUtils;
 import ca.tweetzy.core.utils.TextUtils;
-import ca.tweetzy.core.utils.nms.ActionBar;
-import ca.tweetzy.core.utils.nms.Title;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.ActionBar;
+import ca.tweetzy.vouchers.api.Titles;
+import ca.tweetzy.vouchers.api.VoucherAPI;
 import ca.tweetzy.vouchers.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.Bukkit;
@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -105,8 +104,8 @@ public class VoucherManager {
         if (voucherRedeemEvent.isCancelled()) return;
 
         if (voucher.isSendTitle()) {
-            Title.send(player, Title.TitleType.TITLE, voucher.getTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
-            Title.send(player, Title.TitleType.SUBTITLE, voucher.getSubTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()), voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20);
+            Titles.sendTitle(player, voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20, TextUtils.formatText(voucher.getTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId())), "");
+            Titles.sendTitle(player, voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20, "", TextUtils.formatText(voucher.getSubTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId())));
         }
 
         if (voucher.getRedeemSound() != null) {
@@ -114,7 +113,7 @@ public class VoucherManager {
         }
 
         if (voucher.isSendActionbar()) {
-            ActionBar.send(player, voucher.getActionbarMessage().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()));
+            ActionBar.sendActionBar(player, voucher.getActionbarMessage().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()));
         }
 
         if (voucher.getCommands().size() != 0) {

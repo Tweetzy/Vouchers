@@ -9,10 +9,8 @@ import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The current file has been created by Kiran Hart

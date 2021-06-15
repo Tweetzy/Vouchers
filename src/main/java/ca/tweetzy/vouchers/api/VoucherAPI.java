@@ -1,10 +1,13 @@
 package ca.tweetzy.vouchers.api;
 
+import ca.tweetzy.core.compatibility.ServerVersion;
+import ca.tweetzy.core.utils.nms.NMSUtils;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.lang.reflect.Constructor;
 
 /**
  * The current file has been created by Kiran Hart
@@ -16,7 +19,8 @@ public class VoucherAPI {
 
     private static VoucherAPI instance;
 
-    private VoucherAPI(){}
+    private VoucherAPI() {
+    }
 
     /**
      * @return An instance of the Voucher API
@@ -31,7 +35,7 @@ public class VoucherAPI {
     /**
      * Used to check if a voucher exists on the file
      *
-     * @param id    The ID/Name used when creating a voucher
+     * @param id The ID/Name used when creating a voucher
      * @return true if the voucher is present on file.
      */
     public boolean doesVoucherExists(String id) {
@@ -41,7 +45,7 @@ public class VoucherAPI {
     /**
      * Used to remove a specific voucher from the file
      *
-     * @param voucher   The ID/Name of the voucher being targeted
+     * @param voucher The ID/Name of the voucher being targeted
      */
     public void removeVoucher(String voucher) {
         Vouchers.getInstance().getData().set("vouchers." + voucher.toLowerCase(), null);
@@ -51,7 +55,7 @@ public class VoucherAPI {
     /**
      * Used to create a new voucher
      *
-     * @param voucher   An instance of {@link Voucher} class
+     * @param voucher An instance of {@link Voucher} class
      */
     public void createVoucher(Voucher voucher) {
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".display name", voucher.getDisplayName());

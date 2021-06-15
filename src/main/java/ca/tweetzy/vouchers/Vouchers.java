@@ -17,9 +17,7 @@ import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
 import ca.tweetzy.vouchers.listener.PlayerListener;
 import ca.tweetzy.vouchers.managers.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
-import org.bukkit.Bukkit;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

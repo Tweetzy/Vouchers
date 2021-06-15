@@ -5,7 +5,6 @@ import ca.tweetzy.core.utils.NumberUtils;
 import ca.tweetzy.core.utils.PlayerUtils;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VoucherAPI;
-import ca.tweetzy.vouchers.guis.GUIVoucherEdit;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.voucher.Voucher;
 import org.bukkit.Bukkit;
