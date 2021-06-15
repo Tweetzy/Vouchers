@@ -21,11 +21,6 @@
  */
 package ca.tweetzy.vouchers.api;
 
-import com.google.common.base.Strings;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -33,8 +28,6 @@ import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
@@ -48,28 +41,17 @@ import java.util.Objects;
  * PacketPlayOutTitle: https://wiki.vg/Protocol#Title
  *
  * @author Crypto Morin
- * @version 1.0.2
+ * @version 2.0.0
  * @see ReflectionUtils
  */
-public class Titles {
-    /**
-     * Check if the server is runnong on 1.11 or higher.
-     * Since in 1.11 you can change the timings.
-     */
-    private static final boolean SUPPORTED_API = Material.getMaterial("OBSERVER") != null;
-
+public final class Titles {
     /**
      * EnumTitleAction
      * Used for the fade in, stay and fade out feature of titles.
+     * Others: ACTIONBAR, RESET
      */
-    private static final Object TIMES;
-    private static final Object TITLE;
-    private static final Object SUBTITLE;
-
-    /**
-     * PacketPlayOutTitle Types: TITLE, SUBTITLE, ACTIONBAR, TIMES, CLEAR, RESET;
-     */
-    private static final MethodHandle PACKET;
+    private static final Object TITLE, SUBTITLE, TIMES, CLEAR;
+    private static final MethodHandle PACKET_PLAY_OUT_TITLE;
     /**
      * ChatComponentText JSON message builder.
      */
@@ -82,8 +64,9 @@ public class Titles {
         Object times = null;
         Object title = null;
         Object subtitle = null;
+        Object clear = null;
 
-        if (!SUPPORTED_API) {
+        if (!ReflectionUtils.supports(11)) {
             Class<?> chatComponentText = ReflectionUtils.getNMSClass("ChatComponentText");
             Class<?> packet = ReflectionUtils.getNMSClass("PacketPlayOutTitle");
             Class<?> titleTypes = packet.getDeclaredClasses()[0];
@@ -99,6 +82,8 @@ public class Titles {
                     case "SUBTITLE":
                         subtitle = type;
                         break;
+                    case "CLEAR":
+                        clear = type;
                 }
             }
 
@@ -117,8 +102,9 @@ public class Titles {
         TITLE = title;
         SUBTITLE = subtitle;
         TIMES = times;
+        CLEAR = clear;
 
-        PACKET = packetCtor;
+        PACKET_PLAY_OUT_TITLE = packetCtor;
         CHAT_COMPONENT_TEXT = chatComp;
     }
 
@@ -141,21 +127,21 @@ public class Titles {
                                  @Nullable String title, @Nullable String subtitle) {
         Objects.requireNonNull(player, "Cannot send title to null player");
         if (title == null && subtitle == null) return;
-        if (SUPPORTED_API) {
+        if (ReflectionUtils.supports(11)) {
             player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
             return;
         }
 
         try {
-            Object timesPacket = PACKET.invoke(TIMES, CHAT_COMPONENT_TEXT.invoke(title), fadeIn, stay, fadeOut);
+            Object timesPacket = PACKET_PLAY_OUT_TITLE.invoke(TIMES, CHAT_COMPONENT_TEXT.invoke(title), fadeIn, stay, fadeOut);
             ReflectionUtils.sendPacket(player, timesPacket);
 
             if (title != null) {
-                Object titlePacket = PACKET.invoke(TITLE, CHAT_COMPONENT_TEXT.invoke(title), fadeIn, stay, fadeOut);
+                Object titlePacket = PACKET_PLAY_OUT_TITLE.invoke(TITLE, CHAT_COMPONENT_TEXT.invoke(title), fadeIn, stay, fadeOut);
                 ReflectionUtils.sendPacket(player, titlePacket);
             }
             if (subtitle != null) {
-                Object subtitlePacket = PACKET.invoke(SUBTITLE, CHAT_COMPONENT_TEXT.invoke(subtitle), fadeIn, stay, fadeOut);
+                Object subtitlePacket = PACKET_PLAY_OUT_TITLE.invoke(SUBTITLE, CHAT_COMPONENT_TEXT.invoke(subtitle), fadeIn, stay, fadeOut);
                 ReflectionUtils.sendPacket(player, subtitlePacket);
             }
         } catch (Throwable throwable) {

@@ -104,8 +104,7 @@ public class VoucherManager {
         if (voucherRedeemEvent.isCancelled()) return;
 
         if (voucher.isSendTitle()) {
-            Titles.sendTitle(player, voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20, TextUtils.formatText(voucher.getTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId())), "");
-            Titles.sendTitle(player, voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20, "", TextUtils.formatText(voucher.getSubTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId())));
+            Titles.sendTitle(player, voucher.getTitleFadeIn() * 20, voucher.getTitleStay() * 20, voucher.getTitleFadeOut() * 20, TextUtils.formatText(voucher.getTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId())), TextUtils.formatText(voucher.getSubTitle().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId())));
         }
 
         if (voucher.getRedeemSound() != null) {
@@ -113,7 +112,7 @@ public class VoucherManager {
         }
 
         if (voucher.isSendActionbar()) {
-            ActionBar.sendActionBar(player, voucher.getActionbarMessage().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId()));
+            ActionBar.sendActionBar(player, TextUtils.formatText(voucher.getActionbarMessage().replace("%voucher_title%", voucher.getDisplayName()).replace("%voucher_id%", voucher.getId())));
         }
 
         if (voucher.getCommands().size() != 0) {
