@@ -29,6 +29,8 @@ public class Settings {
     public static final ConfigSetting DATABASE_PASSWORD = new ConfigSetting(config, "database.password", "Password1", "The password used to login to the database");
     public static final ConfigSetting DATABASE_USE_SSL = new ConfigSetting(config, "database.use ssl", true, "Should the connection use SSL?");
 
+    public static final ConfigSetting USE_REDEEM_MENU = new ConfigSetting(config, "use redeem menu", false, "If enabled, vouchers must be redeemed from the /voucher list menu", "THIS IS AN EXPERIMENTAL FEATURE");
+
     public static final ConfigSetting DEFAULT_MATERIAL = new ConfigSetting(config, "defaults.material", "PAPER", "The default material to be used for the voucher");
     public static final ConfigSetting DEFAULT_PERMISSION = new ConfigSetting(config, "defaults.permission", "vouchers.use.%voucher_id%", "The default permission for a voucher");
     public static final ConfigSetting DEFAULT_DISPLAYNAME = new ConfigSetting(config, "defaults.display name", "&e%voucher_id%", "The default display name for a voucher");

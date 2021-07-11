@@ -16,6 +16,7 @@ import ca.tweetzy.vouchers.database.DataManager;
 import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
 import ca.tweetzy.vouchers.listener.PlayerListener;
 import ca.tweetzy.vouchers.managers.VoucherManager;
+import ca.tweetzy.vouchers.settings.LocaleSettings;
 import ca.tweetzy.vouchers.settings.Settings;
 
 import java.util.List;
@@ -26,6 +27,8 @@ import java.util.List;
  * Time Created: 5:15 p.m.
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
+
+// TODO COME BACK AND DO THE VOUCHER REDEEM FROM A GUI THING
 public class Vouchers extends TweetyPlugin {
 
     private static Vouchers instance;
@@ -57,7 +60,8 @@ public class Vouchers extends TweetyPlugin {
         Settings.setup();
 
         // Locale
-        setLocale(Settings.LANG.getString(), false);
+        setLocale(Settings.LANG.getString());
+        LocaleSettings.setup();
 
         // Data File
         this.data.load();
@@ -106,8 +110,9 @@ public class Vouchers extends TweetyPlugin {
 
     @Override
     public void onConfigReload() {
-        setLocale(Settings.LANG.getString(), true);
-        this.locale.reloadMessages();
+        Settings.setup();
+        setLocale(Settings.LANG.getString());
+        LocaleSettings.setup();
         this.data.load();
         this.voucherManager.loadVouchers(true, Settings.DATABASE_USE.getBoolean());
     }
@@ -119,10 +124,6 @@ public class Vouchers extends TweetyPlugin {
 
     public static Vouchers getInstance() {
         return instance;
-    }
-
-    public CommandManager getCommandManager() {
-        return commandManager;
     }
 
     public GuiManager getGuiManager() {

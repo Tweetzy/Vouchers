@@ -10,8 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
 
 /**
  * The current file has been created by Kiran Hart
@@ -22,11 +26,28 @@ import org.bukkit.inventory.ItemStack;
 public class PlayerListener implements Listener {
 
     @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
+        ItemStack toBePlaced = e.getItemInHand();
+        if (toBePlaced.getType() == XMaterial.AIR.parseMaterial()) return;
+        if (NBTEditor.contains(toBePlaced, "tweetzy:voucher:id")) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onCraftAttempt(PrepareItemCraftEvent e) {
+        if (Arrays.stream(e.getInventory().getContents()).anyMatch(item -> NBTEditor.contains(item, "tweetzy:voucher:id"))) {
+            e.getInventory().setResult(XMaterial.AIR.parseItem());
+        }
+    }
+
+    @EventHandler
     public void onRightClick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack heldItem = Helpers.getHeldItem(player);
 
-        if (heldItem == null || (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)) return;
+        if (heldItem == null || e.getAction() != Action.RIGHT_CLICK_AIR)
+            return;
         if (heldItem.getType() == XMaterial.AIR.parseMaterial()) return;
         if (!NBTEditor.contains(heldItem, "tweetzy:voucher:id")) return;
 
