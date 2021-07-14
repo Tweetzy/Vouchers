@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -28,13 +29,36 @@ import java.util.stream.Collectors;
 public class VoucherManager {
 
     private final HashMap<String, Voucher> vouchers = new HashMap<>();
+    private final HashMap<UUID, HashMap<String, Long>> cooldowns = new HashMap<>();
+
+    public void addPlayerToCoolDown(UUID player, Voucher voucher) {
+        HashMap<String, Long> voucherCooldowns = new HashMap<>();
+        if (this.cooldowns.containsKey(player)) {
+            voucherCooldowns = this.cooldowns.get(player);
+        }
+
+        voucherCooldowns.put(voucher.getId(), System.currentTimeMillis() + (voucher.getCooldown() * 1000L));
+        this.cooldowns.put(player, voucherCooldowns);
+    }
+
+    public boolean isPlayerInCoolDown(UUID player) {
+        return this.cooldowns.containsKey(player);
+    }
+
+    public boolean isPlayerInCoolDownForVoucher(UUID player, Voucher voucher) {
+        return this.cooldowns.containsKey(player) && this.cooldowns.get(player).containsKey(voucher.getId());
+    }
+
+    public long getCoolDownTime(UUID player, Voucher voucher) {
+        return this.cooldowns.get(player).get(voucher.getId());
+    }
 
     public void addVoucher(Voucher voucher) {
         vouchers.put(voucher.getId(), voucher);
     }
 
     public void removeVoucher(Voucher voucher) {
-        vouchers.remove(voucher);
+        vouchers.remove(voucher.getId());
     }
 
     public Voucher getVoucher(String id) {
@@ -95,6 +119,8 @@ public class VoucherManager {
                 .titleFadeIn(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.fade in"))
                 .titleStay(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.stay"))
                 .titleFadeOut(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".titles.fade out"))
+                .cooldown(Vouchers.getInstance().getData().getInt("vouchers." + voucherId + ".options.cool down.time"))
+                .useCooldown(Vouchers.getInstance().getData().getBoolean("vouchers." + voucherId + ".options.cool down.use"))
                 .build();
     }
 

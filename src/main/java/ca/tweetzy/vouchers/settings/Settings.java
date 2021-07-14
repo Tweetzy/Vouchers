@@ -29,8 +29,6 @@ public class Settings {
     public static final ConfigSetting DATABASE_PASSWORD = new ConfigSetting(config, "database.password", "Password1", "The password used to login to the database");
     public static final ConfigSetting DATABASE_USE_SSL = new ConfigSetting(config, "database.use ssl", true, "Should the connection use SSL?");
 
-    public static final ConfigSetting USE_REDEEM_MENU = new ConfigSetting(config, "use redeem menu", false, "If enabled, vouchers must be redeemed from the /voucher list menu", "THIS IS AN EXPERIMENTAL FEATURE");
-
     public static final ConfigSetting DEFAULT_MATERIAL = new ConfigSetting(config, "defaults.material", "PAPER", "The default material to be used for the voucher");
     public static final ConfigSetting DEFAULT_PERMISSION = new ConfigSetting(config, "defaults.permission", "vouchers.use.%voucher_id%", "The default permission for a voucher");
     public static final ConfigSetting DEFAULT_DISPLAYNAME = new ConfigSetting(config, "defaults.display name", "&e%voucher_id%", "The default display name for a voucher");
@@ -63,6 +61,8 @@ public class Settings {
             "%voucher_title%   -> the display name of the voucher"
     );
     public static final ConfigSetting DEFAULT_REDEEM_SOUND = new ConfigSetting(config, "defaults.redeem sound", XSound.ENTITY_EXPERIENCE_ORB_PICKUP.parseSound().name(), "The default sound to be played on redeem");
+    public static final ConfigSetting DEFAULT_USE_COOLDOWN = new ConfigSetting(config, "defaults.use cooldown", true, "Should this voucher have a cooldown on it's use");
+    public static final ConfigSetting DEFAULT_COOLDOWN_TIME = new ConfigSetting(config, "defaults.cooldown time", 3, "How many seconds must a player wait before they can use this voucher after redeeming one");
 
     public static final ConfigSetting GUI_BACK_BTN_ITEM = new ConfigSetting(config, "gui.back button.item", "ARROW", "Settings for the back button");
     public static final ConfigSetting GUI_BACK_BTN_NAME = new ConfigSetting(config, "gui.back button.name", "&e<< Back");

@@ -51,6 +51,8 @@ public class CommandCreate extends AbstractCommand {
                 .titleStay(Settings.DEFAULT_TITLE_STAY.getInt())
                 .titleFadeOut(Settings.DEFAULT_TITLE_FADE_OUT.getInt())
                 .redeemSound(XSound.matchXSound(Settings.DEFAULT_REDEEM_SOUND.getString()).get().parseSound())
+                .useCooldown(Settings.DEFAULT_USE_COOLDOWN.getBoolean())
+                .cooldown(Settings.DEFAULT_COOLDOWN_TIME.getInt())
                 .build();
 
         VoucherCreateEvent createEvent = new VoucherCreateEvent(voucher);

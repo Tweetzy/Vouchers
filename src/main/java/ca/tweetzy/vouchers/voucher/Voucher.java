@@ -44,6 +44,7 @@ public class Voucher implements Serializable {
     private boolean removeOnUse;
     private boolean sendTitle;
     private boolean sendActionbar;
+    private boolean useCooldown;
 
     private List<String> commands;
     private List<String> broadcastMessages;
@@ -55,6 +56,7 @@ public class Voucher implements Serializable {
     private int titleFadeIn;
     private int titleStay;
     private int titleFadeOut;
+    private int cooldown;
 
     private Sound redeemSound;
 

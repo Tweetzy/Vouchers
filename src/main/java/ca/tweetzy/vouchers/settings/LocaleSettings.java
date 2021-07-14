@@ -20,6 +20,7 @@ public class LocaleSettings {
         languageNodes.put("general.air", "&cSorry, but you cannot set the item to air o.O");
         languageNodes.put("general.notanumber", "&cThe entry &4%value% &cis not a valid number!");
         languageNodes.put("general.playeroffline", "&cThe following player &4%player% &ccould not be found!");
+        languageNodes.put("general.cooldown", "&cYou must wait &4%remaining_time%&cs before you can use that voucher");
 
         languageNodes.put("voucher.nopermission", "&cYou do not have permission to use that voucher!");
         languageNodes.put("voucher.novouchers", "&cThere are no vouchers created!");

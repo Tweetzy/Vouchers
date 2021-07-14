@@ -63,6 +63,8 @@ public class VoucherAPI {
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".options.remove on use", voucher.isRemoveOnUse());
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".options.send title", voucher.isSendTitle());
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".options.send actionbar", voucher.isSendActionbar());
+        Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".options.cool down.use", voucher.isUseCooldown());
+        Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".options.cool down.time", voucher.getCooldown());
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".execution.commands", voucher.getCommands());
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".execution.broadcast messages", voucher.getBroadcastMessages());
         Vouchers.getInstance().getData().set("vouchers." + voucher.getId().toLowerCase() + ".execution.player messages", voucher.getPlayerMessages());
