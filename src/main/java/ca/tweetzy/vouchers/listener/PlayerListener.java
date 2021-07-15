@@ -46,20 +46,23 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerClick(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof Player) && !(e.getEntity() instanceof Player)) return;
-        Player player = (Player) e.getDamager();
-        ItemStack heldItem = Helpers.getHeldItem(player);
 
-        if (heldItem == null)
-            return;
-        if (heldItem.getType() == XMaterial.AIR.parseMaterial()) return;
-        if (!NBTEditor.contains(heldItem, "tweetzy:voucher:id")) return;
+        if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Player)) {
 
-        String voucherId = NBTEditor.getString(heldItem, "tweetzy:voucher:id");
-        // if there is a voucher loaded into the list, use that one instead of the one stored in nbt data
-        Voucher voucher = Vouchers.getInstance().getVoucherManager().isLoaded(voucherId) ? Vouchers.getInstance().getVoucherManager().getVoucher(voucherId) : (Voucher) Helpers.fromString(NBTEditor.getString(heldItem, "tweetzy:voucher:voucher"));
+            Player player = (Player) e.getDamager();
+            ItemStack heldItem = Helpers.getHeldItem(player);
 
-        handleRedeem(player, voucher);
+            if (heldItem == null)
+                return;
+            if (heldItem.getType() == XMaterial.AIR.parseMaterial()) return;
+            if (!NBTEditor.contains(heldItem, "tweetzy:voucher:id")) return;
+
+            String voucherId = NBTEditor.getString(heldItem, "tweetzy:voucher:id");
+            // if there is a voucher loaded into the list, use that one instead of the one stored in nbt data
+            Voucher voucher = Vouchers.getInstance().getVoucherManager().isLoaded(voucherId) ? Vouchers.getInstance().getVoucherManager().getVoucher(voucherId) : (Voucher) Helpers.fromString(NBTEditor.getString(heldItem, "tweetzy:voucher:voucher"));
+
+            handleRedeem(player, voucher, (Player) e.getEntity());
+        }
     }
 
     @EventHandler
@@ -76,10 +79,10 @@ public class PlayerListener implements Listener {
         // if there is a voucher loaded into the list, use that one instead of the one stored in nbt data
         Voucher voucher = Vouchers.getInstance().getVoucherManager().isLoaded(voucherId) ? Vouchers.getInstance().getVoucherManager().getVoucher(voucherId) : (Voucher) Helpers.fromString(NBTEditor.getString(heldItem, "tweetzy:voucher:voucher"));
 
-        handleRedeem(player, voucher);
+        handleRedeem(player, voucher, null);
     }
 
-    private void handleRedeem(Player player, Voucher voucher) {
+    private void handleRedeem(Player player, Voucher voucher, Player attacked) {
         if (!voucher.getPermission().isEmpty() && !player.hasPermission(voucher.getPermission())) {
             Vouchers.getInstance().getLocale().getMessage("voucher.nopermission").sendPrefixedMessage(player);
             return;
@@ -98,7 +101,7 @@ public class PlayerListener implements Listener {
         if (voucher.isAskConfirm()) {
             Vouchers.getInstance().getGuiManager().showGUI(player, new GUIConfirm(voucher));
         } else {
-            Vouchers.getInstance().getVoucherManager().redeem(player, voucher);
+            Vouchers.getInstance().getVoucherManager().redeem(player, voucher, attacked);
             Vouchers.getInstance().getVoucherManager().addPlayerToCoolDown(player.getUniqueId(), voucher);
         }
     }

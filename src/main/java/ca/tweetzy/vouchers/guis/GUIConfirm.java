@@ -29,7 +29,7 @@ public class GUIConfirm extends Gui {
         for (int i = 0; i <= 3; i++) {
             setButton(i, new TItemBuilder(Objects.requireNonNull(XMaterial.matchXMaterial(Settings.GUI_CONFIRM_YES_MATERIAL.getString()).get().parseMaterial())).setName(Settings.GUI_CONFIRM_YES_NAME.getString()).setLore(Settings.GUI_CONFIRM_YES_LORE.getStringList().stream().map(TextUtils::formatText).collect(Collectors.toList())).toItemStack(), (e) -> {
                 e.player.closeInventory();
-                Vouchers.getInstance().getVoucherManager().redeem(e.player, voucher);
+                Vouchers.getInstance().getVoucherManager().redeem(e.player, voucher, null);
                 Vouchers.getInstance().getVoucherManager().addPlayerToCoolDown(e.player.getUniqueId(), voucher);
             });
         }

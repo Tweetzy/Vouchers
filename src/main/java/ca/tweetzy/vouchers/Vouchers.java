@@ -18,6 +18,7 @@ import ca.tweetzy.vouchers.listener.PlayerListener;
 import ca.tweetzy.vouchers.managers.VoucherManager;
 import ca.tweetzy.vouchers.settings.LocaleSettings;
 import ca.tweetzy.vouchers.settings.Settings;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class Vouchers extends TweetyPlugin {
     private DatabaseConnector databaseConnector;
     private DataManager dataManager;
 
+    private boolean placeholderAPIActive;
+
     @Override
     public void onPluginLoad() {
         instance = this;
@@ -55,6 +58,9 @@ public class Vouchers extends TweetyPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        // check for placeholderAPI
+        this.placeholderAPIActive = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         // Settings
         Settings.setup();
@@ -144,5 +150,9 @@ public class Vouchers extends TweetyPlugin {
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public boolean isPlaceholderAPIActive() {
+        return placeholderAPIActive;
     }
 }

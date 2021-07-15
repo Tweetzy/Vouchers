@@ -4,6 +4,7 @@ api-version: 1.13
 main: ca.tweetzy.vouchers.Vouchers
 description: Reedemable vouchers made simple
 authors: [Kiran Hart]
+softdepend: [PlaceholderAPI]
 
 commands:
   vouchers:

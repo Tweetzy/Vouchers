@@ -11,6 +11,7 @@ import ca.tweetzy.vouchers.api.Titles;
 import ca.tweetzy.vouchers.api.VoucherAPI;
 import ca.tweetzy.vouchers.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.voucher.Voucher;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -124,7 +125,7 @@ public class VoucherManager {
                 .build();
     }
 
-    public void redeem(Player player, Voucher voucher) {
+    public void redeem(Player player, Voucher voucher, Player attacked) {
         VoucherRedeemEvent voucherRedeemEvent = new VoucherRedeemEvent(player, voucher);
         Bukkit.getServer().getPluginManager().callEvent(voucherRedeemEvent);
         if (voucherRedeemEvent.isCancelled()) return;
@@ -142,7 +143,19 @@ public class VoucherManager {
         }
 
         if (voucher.getCommands().size() != 0) {
-            voucher.getCommands().stream().map(cmd -> cmd.replace("%player%", player.getName())).collect(Collectors.toList()).forEach(cmd -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd));
+            voucher.getCommands().forEach(command -> {
+                String parsedCommand = command.replace("%player%", player.getName());
+
+                if (attacked != null) {
+                    parsedCommand = parsedCommand.replace("%attacked_player%", attacked.getName());
+                }
+
+                if (Vouchers.getInstance().isPlaceholderAPIActive()) {
+                    parsedCommand = PlaceholderAPI.setPlaceholders(player, parsedCommand);
+                }
+
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), parsedCommand);
+            });
         }
 
         if (voucher.getBroadcastMessages().size() != 0) {
