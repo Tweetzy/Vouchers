@@ -88,6 +88,10 @@
                                     <pattern>ca.tweetzy.core</pattern>
                                     <shadedPattern>${project.groupId}.vouchers.core</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>${project.groupId}.libs.com.hikari</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
