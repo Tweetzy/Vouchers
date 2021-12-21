@@ -21,11 +21,11 @@
  */
 package ca.tweetzy.vouchers.api;
 
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -138,7 +138,7 @@ public final class ReflectionUtils {
      * @since 4.0.0
      */
     @Nullable
-    public static Class<?> getNMSClass(@Nonnull String newPackage, @Nonnull String name) {
+    public static Class<?> getNMSClass(@NonNull String newPackage, @NonNull String name) {
         if (supports(17)) name = newPackage + '.' + name;
         return getNMSClass(name);
     }
@@ -151,7 +151,7 @@ public final class ReflectionUtils {
      * @since 1.0.0
      */
     @Nullable
-    public static Class<?> getNMSClass(@Nonnull String name) {
+    public static Class<?> getNMSClass(@NonNull String name) {
         try {
             return Class.forName(NMS + name);
         } catch (ClassNotFoundException ex) {
@@ -170,8 +170,8 @@ public final class ReflectionUtils {
      * @see #sendPacketSync(Player, Object...)
      * @since 1.0.0
      */
-    @Nonnull
-    public static CompletableFuture<Void> sendPacket(@Nonnull Player player, @Nonnull Object... packets) {
+    @NonNull
+    public static CompletableFuture<Void> sendPacket(@NonNull Player player, @NonNull Object... packets) {
         return CompletableFuture.runAsync(() -> sendPacketSync(player, packets))
                 .exceptionally(ex -> {
                     ex.printStackTrace();
@@ -187,7 +187,7 @@ public final class ReflectionUtils {
      * @see #sendPacket(Player, Object...)
      * @since 2.0.0
      */
-    public static void sendPacketSync(@Nonnull Player player, @Nonnull Object... packets) {
+    public static void sendPacketSync(@NonNull Player player, @NonNull Object... packets) {
         try {
             Object handle = GET_HANDLE.invoke(player);
             Object connection = PLAYER_CONNECTION.invoke(handle);
@@ -202,7 +202,7 @@ public final class ReflectionUtils {
     }
 
     @Nullable
-    public static Object getHandle(@Nonnull Player player) {
+    public static Object getHandle(@NonNull Player player) {
         Objects.requireNonNull(player, "Cannot get handle of null player");
         try {
             return GET_HANDLE.invoke(player);
@@ -213,7 +213,7 @@ public final class ReflectionUtils {
     }
 
     @Nullable
-    public static Object getConnection(@Nonnull Player player) {
+    public static Object getConnection(@NonNull Player player) {
         Objects.requireNonNull(player, "Cannot get connection of null player");
         try {
             Object handle = GET_HANDLE.invoke(player);
@@ -232,7 +232,7 @@ public final class ReflectionUtils {
      * @since 1.0.0
      */
     @Nullable
-    public static Class<?> getCraftClass(@Nonnull String name) {
+    public static Class<?> getCraftClass(@NonNull String name) {
         try {
             return Class.forName(CRAFTBUKKIT + name);
         } catch (ClassNotFoundException ex) {

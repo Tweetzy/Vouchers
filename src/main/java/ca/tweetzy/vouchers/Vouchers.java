@@ -18,6 +18,7 @@ import ca.tweetzy.vouchers.listener.PlayerListener;
 import ca.tweetzy.vouchers.managers.VoucherManager;
 import ca.tweetzy.vouchers.settings.LocaleSettings;
 import ca.tweetzy.vouchers.settings.Settings;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class Vouchers extends TweetyPlugin {
     private final GuiManager guiManager = new GuiManager(this);
 
     protected Metrics metrics;
+    @Getter
     private CommandManager commandManager;
     private VoucherManager voucherManager;
 
@@ -74,7 +76,7 @@ public class Vouchers extends TweetyPlugin {
 
         // Commands
         this.commandManager = new CommandManager(this);
-        this.commandManager.addMainCommand("vouchers").addSubCommands(
+        this.commandManager.addCommand(new VouchersCommand()).addSubCommands(
                 new CommandCreate(),
                 new CommandRemove(),
                 new CommandEdit(),
