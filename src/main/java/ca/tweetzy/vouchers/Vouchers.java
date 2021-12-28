@@ -1,158 +1,34 @@
 package ca.tweetzy.vouchers;
 
-import ca.tweetzy.core.TweetyCore;
-import ca.tweetzy.core.TweetyPlugin;
-import ca.tweetzy.core.commands.CommandManager;
-import ca.tweetzy.core.compatibility.ServerVersion;
-import ca.tweetzy.core.configuration.Config;
-import ca.tweetzy.core.database.DataMigrationManager;
-import ca.tweetzy.core.database.DatabaseConnector;
-import ca.tweetzy.core.database.MySQLConnector;
-import ca.tweetzy.core.gui.GuiManager;
-import ca.tweetzy.core.utils.Metrics;
-import ca.tweetzy.vouchers.api.UpdateChecker;
-import ca.tweetzy.vouchers.commands.*;
-import ca.tweetzy.vouchers.database.DataManager;
-import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
-import ca.tweetzy.vouchers.listener.PlayerListener;
-import ca.tweetzy.vouchers.managers.VoucherManager;
-import ca.tweetzy.vouchers.settings.LocaleSettings;
+import ca.tweetzy.tweety.Common;
+import ca.tweetzy.tweety.Messenger;
+import ca.tweetzy.tweety.plugin.SimplePlugin;
 import ca.tweetzy.vouchers.settings.Settings;
-import org.bukkit.Bukkit;
-
-import java.util.List;
 
 /**
  * The current file has been created by Kiran Hart
- * Date Created: March 01 2021
- * Time Created: 5:15 p.m.
+ * Date Created: December 22 2021
+ * Time Created: 6:24 p.m.
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
+public final class Vouchers extends SimplePlugin {
 
-// TODO COME BACK AND DO THE VOUCHER REDEEM FROM A GUI THING
-public class Vouchers extends TweetyPlugin {
 
-    private static Vouchers instance;
-    private final Config data = new Config(this, "data.yml");
-    private final GuiManager guiManager = new GuiManager(this);
+	@Override
+	protected void onPluginStart() {
+		normalizePrefix();
+	}
 
-    protected Metrics metrics;
-    private CommandManager commandManager;
-    private VoucherManager voucherManager;
-
-    private DatabaseConnector databaseConnector;
-    private DataManager dataManager;
-
-    private boolean placeholderAPIActive;
-
-    @Override
-    public void onPluginLoad() {
-        instance = this;
-    }
-
-    @Override
-    public void onPluginEnable() {
-        TweetyCore.registerPlugin(this, 6, "PAPER");
-
-        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_7)) {
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        // check for placeholderAPI
-        this.placeholderAPIActive = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
-
-        // Settings
-        Settings.setup();
-
-        // Locale
-        setLocale(Settings.LANG.getString());
-        LocaleSettings.setup();
-
-        // Data File
-        this.data.load();
-
-        // Commands
-        this.commandManager = new CommandManager(this);
-        this.commandManager.addMainCommand("vouchers").addSubCommands(
-                new CommandCreate(),
-                new CommandRemove(),
-                new CommandEdit(),
-                new CommandGive(),
-                new CommandList(),
-                new CommandSettings(),
-                new CommandReload()
-        );
-
-        this.voucherManager = new VoucherManager();
-
-        if (Settings.DATABASE_USE.getBoolean()) {
-            this.databaseConnector = new MySQLConnector(this, Settings.DATABASE_HOST.getString(), Settings.DATABASE_PORT.getInt(), Settings.DATABASE_NAME.getString(), Settings.DATABASE_USERNAME.getString(), Settings.DATABASE_PASSWORD.getString(), Settings.DATABASE_USE_SSL.getBoolean());
-            this.dataManager = new DataManager(this.databaseConnector, this);
-            DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager, new _1_InitialMigration());
-            dataMigrationManager.runMigrations();
-        }
-
-        this.voucherManager.loadVouchers(false, Settings.DATABASE_USE.getBoolean());
-        this.guiManager.init();
-
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-
-        // update check
-        getServer().getScheduler().runTaskLaterAsynchronously(this, () -> {
-            new UpdateChecker(this, 89864, getConsole()).check();
-        }, 1L);
-
-        // Metrics
-        if (Settings.METRICS.getBoolean()) {
-            this.metrics = new Metrics(this, 10530);
-        }
-    }
-
-    @Override
-    public void onPluginDisable() {
-        instance = null;
-    }
-
-    @Override
-    public void onConfigReload() {
-        Settings.setup();
-        setLocale(Settings.LANG.getString());
-        LocaleSettings.setup();
-        this.data.load();
-        this.voucherManager.loadVouchers(true, Settings.DATABASE_USE.getBoolean());
-    }
-
-    @Override
-    public List<Config> getExtraConfig() {
-        return null;
-    }
-
-    public static Vouchers getInstance() {
-        return instance;
-    }
-
-    public GuiManager getGuiManager() {
-        return guiManager;
-    }
-
-    public VoucherManager getVoucherManager() {
-        return voucherManager;
-    }
-
-    public Config getData() {
-        return data;
-    }
-
-    public DatabaseConnector getDatabaseConnector() {
-        return databaseConnector;
-    }
-
-    public DataManager getDataManager() {
-        return dataManager;
-    }
-
-    public boolean isPlaceholderAPIActive() {
-        return placeholderAPIActive;
-    }
+	private void normalizePrefix() {
+		Common.ADD_TELL_PREFIX = true;
+		Common.ADD_LOG_PREFIX = true;
+		Common.setTellPrefix(Settings.PREFIX);
+		Common.setLogPrefix(Settings.PREFIX);
+		Messenger.setInfoPrefix(Settings.PREFIX + " ");
+		Messenger.setAnnouncePrefix(Settings.PREFIX + " ");
+		Messenger.setErrorPrefix(Settings.PREFIX + " ");
+		Messenger.setQuestionPrefix(Settings.PREFIX + " ");
+		Messenger.setSuccessPrefix(Settings.PREFIX + " ");
+		Messenger.setWarnPrefix(Settings.PREFIX + " ");
+	}
 }
