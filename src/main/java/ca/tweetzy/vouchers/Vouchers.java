@@ -13,7 +13,6 @@ import ca.tweetzy.vouchers.settings.Settings;
  */
 public final class Vouchers extends SimplePlugin {
 
-
 	@Override
 	protected void onPluginStart() {
 		normalizePrefix();
