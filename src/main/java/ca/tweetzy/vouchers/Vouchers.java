@@ -2,7 +2,7 @@ package ca.tweetzy.vouchers;
 
 import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.Messenger;
-import ca.tweetzy.tweety.plugin.SimplePlugin;
+import ca.tweetzy.tweety.plugin.TweetyPlugin;
 import ca.tweetzy.vouchers.settings.Settings;
 
 /**
@@ -11,7 +11,7 @@ import ca.tweetzy.vouchers.settings.Settings;
  * Time Created: 6:24 p.m.
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
-public final class Vouchers extends SimplePlugin {
+public final class Vouchers extends TweetyPlugin {
 
 	@Override
 	protected void onPluginStart() {
