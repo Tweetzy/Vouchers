@@ -41,4 +41,12 @@ public interface IVoucherReward {
 	 * @return the percentage chance
 	 */
 	double getChance();
+
+	void setRewardType(@NonNull final RewardType type);
+
+	void setItem(@NonNull final ItemStack item);
+
+	void setCommand(@NonNull final String command);
+
+	void setChance(final double chance);
 }

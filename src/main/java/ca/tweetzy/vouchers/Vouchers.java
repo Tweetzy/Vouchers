@@ -4,6 +4,7 @@ import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.Messenger;
 import ca.tweetzy.tweety.MinecraftVersion;
 import ca.tweetzy.tweety.plugin.TweetyPlugin;
+import ca.tweetzy.vouchers.listener.VoucherListeners;
 import ca.tweetzy.vouchers.model.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
 
@@ -21,6 +22,8 @@ public final class Vouchers extends TweetyPlugin {
 	protected void onPluginStart() {
 		normalizePrefix();
 		this.voucherManager.load();
+
+		registerEvents(new VoucherListeners());
 	}
 
 	@Override

@@ -48,6 +48,12 @@ public final class Localization extends SimpleLocalization {
 		public static String ENTER_PERMISSION_TITLE;
 		public static String ENTER_PERMISSION_SUBTITLE;
 
+		public static String ENTER_COMMAND_TITLE;
+		public static String ENTER_COMMAND_SUBTITLE;
+
+		public static String ENTER_CHANCE_TITLE;
+		public static String ENTER_CHANCE_SUBTITLE;
+
 		private static void init() {
 			pathPrefix("Voucher Edit.Enter Name");
 			ENTER_NAME_TITLE = getString("Title");
@@ -80,6 +86,14 @@ public final class Localization extends SimpleLocalization {
 			pathPrefix("Voucher Edit.Enter Permission");
 			ENTER_PERMISSION_TITLE = getString("Title");
 			ENTER_PERMISSION_SUBTITLE = getString("Subtitle");
+
+			pathPrefix("Voucher Edit.Enter Command");
+			ENTER_COMMAND_TITLE = getString("Title");
+			ENTER_COMMAND_SUBTITLE = getString("Subtitle");
+
+			pathPrefix("Voucher Edit.Enter Chance");
+			ENTER_CHANCE_TITLE = getString("Title");
+			ENTER_CHANCE_SUBTITLE = getString("Subtitle");
 		}
 	}
 
@@ -87,11 +101,17 @@ public final class Localization extends SimpleLocalization {
 
 		public static String VOUCHER_ALREADY_EXISTS;
 		public static String VOUCHER_DOES_NOT_EXIST;
+		public static String CHANCE_TOO_HIGH;
+		public static String CHANCE_TOO_LOW;
+		public static String MISSING_REWARD_ITEM;
 
 		private static void init() {
 			pathPrefix("Error");
 			VOUCHER_ALREADY_EXISTS = getString("Voucher Already Exists");
 			VOUCHER_DOES_NOT_EXIST = getString("Voucher Does Not Exist");
+			CHANCE_TOO_HIGH = getString("Chance Too High");
+			CHANCE_TOO_LOW = getString("Chance Too Low");
+			MISSING_REWARD_ITEM = getString("Missing Reward Item");
 		}
 	}
 

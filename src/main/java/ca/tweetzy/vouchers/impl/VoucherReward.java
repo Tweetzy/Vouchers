@@ -17,10 +17,10 @@ import org.bukkit.inventory.ItemStack;
 @AllArgsConstructor
 public class VoucherReward implements IVoucherReward, ConfigSerializable {
 
-	private final RewardType rewardType;
-	private final ItemStack item;
-	private final String command;
-	private final double chance;
+	private RewardType rewardType;
+	private ItemStack item;
+	private String command;
+	private double chance;
 
 	public VoucherReward() {
 		this(RewardType.COMMAND, null, "eco give {player} 5000", 100);
@@ -44,6 +44,26 @@ public class VoucherReward implements IVoucherReward, ConfigSerializable {
 	@Override
 	public double getChance() {
 		return this.chance;
+	}
+
+	@Override
+	public void setRewardType(@NonNull RewardType type) {
+		this.rewardType = type;
+	}
+
+	@Override
+	public void setItem(@NonNull ItemStack item) {
+		this.item = item;
+	}
+
+	@Override
+	public void setCommand(@NonNull String command) {
+		this.command = command;
+	}
+
+	@Override
+	public void setChance(double chance) {
+		this.chance = chance;
 	}
 
 	@Override

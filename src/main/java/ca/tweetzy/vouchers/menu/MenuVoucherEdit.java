@@ -30,6 +30,7 @@ public final class MenuVoucherEdit extends Menu {
 	private final Button displayNameButton;
 	private final Button descriptionButton;
 	private final Button settingsButton;
+	private final Button rewardsButton;
 
 	public MenuVoucherEdit(@NonNull final Voucher voucher) {
 		this.voucher = voucher;
@@ -57,6 +58,7 @@ public final class MenuVoucherEdit extends Menu {
 
 		this.descriptionButton = new ButtonMenu(new MenuStringListEdit(this.voucher), ItemCreator.of(CompMaterial.WRITABLE_BOOK, "&e&lVoucher Description").lore(descLore));
 		this.settingsButton = new ButtonMenu(new MenuVoucherSettings(this.voucher), ItemCreator.of(CompMaterial.REPEATER, "&e&lVoucher Settings", "", "&dClick &7to edit voucher settings"));
+		this.rewardsButton = new ButtonMenu(new MenuVoucherRewards(this.voucher), ItemCreator.of(CompMaterial.DIAMOND, "&e&lVoucher Rewards", "", "&dClick &7to edit voucher rewards"));
 
 	}
 
@@ -73,6 +75,9 @@ public final class MenuVoucherEdit extends Menu {
 
 		if (slot == 9 * 3 + 3)
 			return this.settingsButton.getItem();
+
+		if (slot == 9 * 3 + 5)
+			return this.rewardsButton.getItem();
 
 		return ItemCreator.of(CompMaterial.BLACK_STAINED_GLASS_PANE).name(" ").make();
 	}

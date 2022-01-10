@@ -1,11 +1,19 @@
 package ca.tweetzy.vouchers.impl;
 
+import ca.tweetzy.tweety.Common;
+import ca.tweetzy.tweety.PlayerUtil;
+import ca.tweetzy.tweety.RandomUtil;
 import ca.tweetzy.tweety.collection.SerializedMap;
+import ca.tweetzy.tweety.menu.model.ItemCreator;
 import ca.tweetzy.tweety.model.ConfigSerializable;
 import ca.tweetzy.tweety.remain.CompMaterial;
+import ca.tweetzy.tweety.remain.Remain;
+import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.api.voucher.IVoucher;
 import ca.tweetzy.vouchers.api.voucher.IVoucherSettings;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -95,5 +103,49 @@ public class Voucher implements IVoucher, ConfigSerializable {
 				map.get("settings", VoucherSettings.class),
 				map.getList("rewards", VoucherReward.class)
 		);
+	}
+
+	public ItemStack build() {
+		return ItemCreator
+				.of(this.icon, this.displayName)
+				.lore(this.description)
+				.glow(this.settings.isGlowing())
+				.hideTags(true)
+				.unbreakable(true)
+				.tag("Tweetzy:Vouchers", this.id)
+				.make();
+	}
+
+	public void execute(@NonNull final Player player, @NonNull final ItemStack voucherItemstack) {
+		if (this.settings.requiresUsePermission() && !player.hasPermission(this.settings.getPermission())) return;
+
+		if (this.settings.sendTitle() && this.settings.sendSubtitle())
+			Remain.sendTitle(player, this.settings.getTitle(), this.settings.getSubtitle());
+		else if (this.settings.sendTitle() && !this.settings.sendSubtitle())
+			Remain.sendTitle(player, this.settings.getTitle(), "");
+		else
+			Remain.sendTitle(player, "", this.settings.getSubtitle());
+
+		if (this.settings.sendActionBar())
+			Remain.sendActionBar(player, this.settings.getActionBar());
+
+		Common.tell(player, this.settings.getRedeemMessage().replace("{voucher_name}", this.displayName).replace("{voucher_id}", this.id));
+
+		if (this.settings.broadcastRedeem())
+			Remain.getOnlinePlayers().forEach(onlinePlayer -> {
+				Common.tell(onlinePlayer, this.settings.getBroadcastMessage().replace("{player}", player.getName()).replace("{voucher_name}", this.displayName).replace("{voucher_id}", this.id));
+			});
+
+		if (this.settings.removeOnUse())
+			PlayerUtil.takeOnePiece(player, voucherItemstack);
+
+		this.getRewards().forEach(reward -> {
+			if (RandomUtil.chanceD(reward.getChance())) {
+				if (reward.getRewardType() == RewardType.ITEM && reward.getItem() != null)
+					PlayerUtil.addItems(player.getInventory(), reward.getItem());
+				else
+					Common.dispatchCommand(player, reward.getCommand());
+			}
+		});
 	}
 }

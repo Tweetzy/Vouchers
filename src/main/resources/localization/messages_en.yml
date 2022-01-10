@@ -35,9 +35,20 @@ Voucher Edit:
     Title: "&eVoucher Edit"
     Subtitle: "&7Enter new permission"
 
+  Enter Command:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new command"
+
+  Enter Chance:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new chance"
+
 Error:
   Voucher Already Exists: "&cThe voucher: &4{voucher_id}&c already exists"
   Voucher Does Not Exist: "&cThe voucher: &4{voucher_id}&c doesn't exist"
+  Chance Too High: "&cCannot set chance higher than 100%"
+  Chance Too Low: "&cCannot set chance lower than 1%"
+  Missing Reward Item: "&cPlease provide a reward item"
 
 Success:
   Voucher Created: "&aCreated new voucher with the id: &2{voucher_id}"

@@ -23,5 +23,6 @@ public final class VouchersCommand extends SimpleCommandGroup {
 	protected void registerSubcommands() {
 		registerSubcommand(new CommandCreate());
 		registerSubcommand(new CommandEdit());
+		registerSubcommand(new CommandGive());
 	}
 }
