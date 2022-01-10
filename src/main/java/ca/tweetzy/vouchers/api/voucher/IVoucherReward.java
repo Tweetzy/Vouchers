@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
  * Time Created: 11:02 p.m.
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
-public interface VoucherReward {
+public interface IVoucherReward {
 
 	/**
 	 * Get the type of reward it is
@@ -34,4 +34,11 @@ public interface VoucherReward {
 	 * @return command to be executed
 	 */
 	String getCommand();
+
+	/**
+	 * Get the chance for this reward to be gained
+	 *
+	 * @return the percentage chance
+	 */
+	double getChance();
 }

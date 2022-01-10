@@ -3,7 +3,7 @@ package ca.tweetzy.vouchers.impl;
 import ca.tweetzy.tweety.collection.SerializedMap;
 import ca.tweetzy.tweety.model.ConfigSerializable;
 import ca.tweetzy.vouchers.api.RewardType;
-import ca.tweetzy.vouchers.api.voucher.VoucherReward;
+import ca.tweetzy.vouchers.api.voucher.IVoucherReward;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
@@ -15,11 +15,16 @@ import org.bukkit.inventory.ItemStack;
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
 @AllArgsConstructor
-public class VVoucherReward implements VoucherReward, ConfigSerializable {
+public class VoucherReward implements IVoucherReward, ConfigSerializable {
 
 	private final RewardType rewardType;
 	private final ItemStack item;
 	private final String command;
+	private final double chance;
+
+	public VoucherReward() {
+		this(RewardType.COMMAND, null, "eco give {player} 5000", 100);
+	}
 
 	@Override
 	public @NonNull RewardType getRewardType() {
@@ -37,19 +42,26 @@ public class VVoucherReward implements VoucherReward, ConfigSerializable {
 	}
 
 	@Override
+	public double getChance() {
+		return this.chance;
+	}
+
+	@Override
 	public SerializedMap serialize() {
 		return SerializedMap.ofArray(
 				"reward type", this.rewardType,
 				"item", this.item,
-				"command", this.command
+				"command", this.command,
+				"chance", this.chance
 		);
 	}
 
-	public static VVoucherReward deserialize(SerializedMap map) {
-		return new VVoucherReward(
+	public static VoucherReward deserialize(SerializedMap map) {
+		return new VoucherReward(
 				map.get("reward type", RewardType.class),
 				map.getItem("item"),
-				map.getString("command")
+				map.getString("command"),
+				map.getDouble("chance")
 		);
 	}
 }

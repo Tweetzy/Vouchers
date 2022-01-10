@@ -4,12 +4,8 @@ import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.Messenger;
 import ca.tweetzy.tweety.MinecraftVersion;
 import ca.tweetzy.tweety.plugin.TweetyPlugin;
-import ca.tweetzy.tweety.settings.YamlStaticConfig;
 import ca.tweetzy.vouchers.model.VoucherManager;
-import ca.tweetzy.vouchers.model.VouchersDatabase;
 import ca.tweetzy.vouchers.settings.Settings;
-
-import java.util.List;
 
 /**
  * The current file has been created by Kiran Hart
@@ -24,6 +20,12 @@ public final class Vouchers extends TweetyPlugin {
 	@Override
 	protected void onPluginStart() {
 		normalizePrefix();
+		this.voucherManager.load();
+	}
+
+	@Override
+	protected void onPluginStop() {
+		this.voucherManager.getVoucherHolder().save();
 	}
 
 	public static VoucherManager getVoucherManager() {

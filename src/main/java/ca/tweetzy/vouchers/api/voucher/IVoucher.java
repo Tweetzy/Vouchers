@@ -1,7 +1,8 @@
 package ca.tweetzy.vouchers.api.voucher;
 
+import ca.tweetzy.tweety.remain.CompMaterial;
+import ca.tweetzy.vouchers.impl.VoucherReward;
 import lombok.NonNull;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * Time Created: 1:29 a.m.
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
-public interface Voucher {
+public interface IVoucher {
 
 	/**
 	 * Get the id of the voucher
@@ -24,16 +25,16 @@ public interface Voucher {
 	 * Get the physical that will be used
 	 * to represent the voucher
 	 *
-	 * @return the {@link ItemStack}
+	 * @return the {@link CompMaterial}
 	 */
-	@NonNull ItemStack getIcon();
+	@NonNull CompMaterial getIcon();
 
 	/**
 	 * Set the voucher item
 	 *
-	 * @param icon is the new {@link ItemStack}
+	 * @param icon is the new {@link CompMaterial}
 	 */
-	void setIcon(@NonNull final ItemStack icon);
+	void setIcon(@NonNull final CompMaterial icon);
 
 	/**
 	 * Get the display name of the voucher
@@ -61,5 +62,12 @@ public interface Voucher {
 	 *
 	 * @return the voucher settings
 	 */
-	VoucherSettings getSettings();
+	IVoucherSettings getSettings();
+
+	/**
+	 * Get all the voucher rewards
+	 *
+	 * @return the voucher rewards
+	 */
+	@NonNull List<VoucherReward> getRewards();
 }

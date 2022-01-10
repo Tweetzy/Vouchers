@@ -28,12 +28,12 @@
     </repositories>
 
     <!-- UNCOMMENT ONLY IF YOUR java.version IS SET TO JAVA 16 OR HIGHER. -->
-<!--    <pluginRepositories>-->
-<!--        <pluginRepository>-->
-<!--            <id>maven-snapshots</id>-->
-<!--            <url>https://repository.apache.org/content/repositories/snapshots/</url>-->
-<!--        </pluginRepository>-->
-<!--    </pluginRepositories>-->
+    <!--    <pluginRepositories>-->
+    <!--        <pluginRepository>-->
+    <!--            <id>maven-snapshots</id>-->
+    <!--            <url>https://repository.apache.org/content/repositories/snapshots/</url>-->
+    <!--        </pluginRepository>-->
+    <!--    </pluginRepositories>-->
 
     <dependencies>
         <dependency>

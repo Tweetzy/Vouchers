@@ -1,3 +1,47 @@
+Voucher Creation:
+  Title: "&eVoucher Creation"
+  Subtitle: "&7Enter voucher id"
+
+Voucher Edit:
+  Enter Name:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new display name"
+
+  Enter Description:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new description line"
+
+  Enter Broadcast:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new broadcast message"
+
+  Enter Chat Message:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new chat message"
+
+  Enter Title:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new title"
+
+  Enter Subtitle:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new subtitle"
+
+  Enter Actionbar:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new actionbar"
+
+  Enter Permission:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new permission"
+
+Error:
+  Voucher Already Exists: "&cThe voucher: &4{voucher_id}&c already exists"
+  Voucher Does Not Exist: "&cThe voucher: &4{voucher_id}&c doesn't exist"
+
+Success:
+  Voucher Created: "&aCreated new voucher with the id: &2{voucher_id}"
+
 # -------------------------------------------------------------------------------------------------
 # Do not change this value, otherwise it will corrupt your plugin installation!
 # -------------------------------------------------------------------------------------------------

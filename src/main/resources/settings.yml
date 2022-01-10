@@ -6,7 +6,7 @@ Timestamp_Format: "MMM/dd/yyyy HH:mm:ss aa"
 # -------------------------------------------------------------------------------------------------
 # * THE FIRST ALIAS IS THE MAIN LABEL, PLEASE DO NOT REMOVE IT. *
 # -------------------------------------------------------------------------------------------------
-Command_Aliases: [vouchers, voucher]
+Command_Aliases: [ vouchers, voucher ]
 
 # -------------------------------------------------------------------------------------------------
 # What language should we use for messages? If it exists, the language file will be copied
