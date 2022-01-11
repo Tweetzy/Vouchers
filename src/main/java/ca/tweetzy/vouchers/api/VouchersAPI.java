@@ -5,6 +5,8 @@ import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.model.VoucherManager;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -29,6 +31,10 @@ public final class VouchersAPI {
 
 	public void deleteVoucher(@NonNull final String id) {
 		voucherManager.deleteVoucher(id);
+	}
+
+	public void executeVoucher(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final ItemStack voucherItem) {
+		voucherManager.executeVoucher(player, voucher, voucherItem);
 	}
 
 	public List<Voucher> getVouchers() {

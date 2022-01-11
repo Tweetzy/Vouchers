@@ -8,9 +8,13 @@ import ca.tweetzy.tweety.menu.model.ItemCreator;
 import ca.tweetzy.tweety.model.ConfigSerializable;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.tweety.remain.Remain;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.api.voucher.IVoucher;
 import ca.tweetzy.vouchers.api.voucher.IVoucherSettings;
+import ca.tweetzy.vouchers.menu.MenuConfirm;
+import ca.tweetzy.vouchers.model.VoucherManager;
+import ca.tweetzy.vouchers.settings.Localization;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -117,35 +121,10 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	}
 
 	public void execute(@NonNull final Player player, @NonNull final ItemStack voucherItemstack) {
-		if (this.settings.requiresUsePermission() && !player.hasPermission(this.settings.getPermission())) return;
-
-		if (this.settings.sendTitle() && this.settings.sendSubtitle())
-			Remain.sendTitle(player, this.settings.getTitle(), this.settings.getSubtitle());
-		else if (this.settings.sendTitle() && !this.settings.sendSubtitle())
-			Remain.sendTitle(player, this.settings.getTitle(), "");
-		else
-			Remain.sendTitle(player, "", this.settings.getSubtitle());
-
-		if (this.settings.sendActionBar())
-			Remain.sendActionBar(player, this.settings.getActionBar());
-
-		Common.tell(player, this.settings.getRedeemMessage().replace("{voucher_name}", this.displayName).replace("{voucher_id}", this.id));
-
-		if (this.settings.broadcastRedeem())
-			Remain.getOnlinePlayers().forEach(onlinePlayer -> {
-				Common.tell(onlinePlayer, this.settings.getBroadcastMessage().replace("{player}", player.getName()).replace("{voucher_name}", this.displayName).replace("{voucher_id}", this.id));
-			});
-
-		if (this.settings.removeOnUse())
-			PlayerUtil.takeOnePiece(player, voucherItemstack);
-
-		this.getRewards().forEach(reward -> {
-			if (RandomUtil.chanceD(reward.getChance())) {
-				if (reward.getRewardType() == RewardType.ITEM && reward.getItem() != null)
-					PlayerUtil.addItems(player.getInventory(), reward.getItem());
-				else
-					Common.dispatchCommand(player, reward.getCommand());
-			}
-		});
+		if (this.settings.askConfirm()) {
+			new MenuConfirm(this, voucherItemstack).displayTo(player);
+		} else {
+			Vouchers.getVoucherManager().executeVoucher(player, this, voucherItemstack);
+		}
 	}
 }

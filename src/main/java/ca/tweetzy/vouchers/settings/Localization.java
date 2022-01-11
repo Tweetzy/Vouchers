@@ -104,6 +104,7 @@ public final class Localization extends SimpleLocalization {
 		public static String CHANCE_TOO_HIGH;
 		public static String CHANCE_TOO_LOW;
 		public static String MISSING_REWARD_ITEM;
+		public static String NO_VOUCHER_PERMISSION;
 
 		private static void init() {
 			pathPrefix("Error");
@@ -112,16 +113,19 @@ public final class Localization extends SimpleLocalization {
 			CHANCE_TOO_HIGH = getString("Chance Too High");
 			CHANCE_TOO_LOW = getString("Chance Too Low");
 			MISSING_REWARD_ITEM = getString("Missing Reward Item");
+			NO_VOUCHER_PERMISSION = getString("No Permission For Voucher");
 		}
 	}
 
 	public static final class Success {
 
 		public static String VOUCHER_CREATED;
+		public static String VOUCHER_DELETED;
 
 		private static void init() {
 			pathPrefix("Success");
 			VOUCHER_CREATED = getString("Voucher Created");
+			VOUCHER_DELETED = getString("Voucher Deleted");
 		}
 	}
 

@@ -1,3 +1,23 @@
+Confirm Menu:
+  Title: "&eConfirm Redeem"
+  Rows: 3
+  Background Item: BLACK_STAINED_GLASS_PANE
+  Confirm Item:
+    Slots: [ 14, 15, 16 ]
+    Material: LIME_STAINED_GLASS_PANE
+    Name: "&a&lConfirm"
+    Lore:
+      - ""
+      - "&dClick &7to confirm redeem"
+  Cancel Item:
+    Slots: [ 10, 11, 12 ]
+    Material: RED_STAINED_GLASS_PANE
+    Name: "&c&lCancel"
+    Lore:
+      - ""
+      - "&dClick &7to cancel redeem"
+
+
 # -------------------------------------------------------------------------------------------------
 # The format used in the {timestamp} placeholder (google "Java timestamp format" for options).
 # -------------------------------------------------------------------------------------------------

@@ -1,17 +1,23 @@
 package ca.tweetzy.vouchers.menu;
 
+import ca.tweetzy.tweety.ItemUtil;
 import ca.tweetzy.tweety.conversation.TitleInput;
 import ca.tweetzy.tweety.menu.Menu;
 import ca.tweetzy.tweety.menu.button.Button;
 import ca.tweetzy.tweety.menu.model.ItemCreator;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.model.BoolWord;
 import ca.tweetzy.vouchers.settings.Localization;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The current file has been created by Kiran Hart
@@ -23,6 +29,7 @@ public final class MenuVoucherSettings extends Menu {
 
 	private final Voucher voucher;
 
+	private final Button rewardModeButton;
 	private final Button glowingButton;
 	private final Button askConfirmButton;
 	private final Button removeOnUseButton;
@@ -46,6 +53,32 @@ public final class MenuVoucherSettings extends Menu {
 		this.voucher = voucher;
 		setTitle("&b" + voucher.getId() + " &8> &7Settings");
 		setSize(9 * 6);
+
+		this.rewardModeButton = new Button() {
+			@Override
+			public void onClickedInMenu(Player player, Menu menu, ClickType clickType) {
+				MenuVoucherSettings.this.voucher.getSettings().setRewardMode(MenuVoucherSettings.this.voucher.getSettings().getRewardMode().next());
+				saveReopen(player);
+			}
+
+			@Override
+			public ItemStack getItem() {
+				final List<String> rewardModeLore = new ArrayList<>();
+				rewardModeLore.add("");
+				for (RewardMode value : RewardMode.values()) {
+					if (MenuVoucherSettings.this.voucher.getSettings().getRewardMode() == value)
+						rewardModeLore.add("&e→ " + ItemUtil.bountifyCapitalized(value));
+					else
+						rewardModeLore.add("&7" + ItemUtil.bountifyCapitalized(value));
+
+				}
+
+				rewardModeLore.add("");
+				rewardModeLore.add("&dClick &7to go to next");
+
+				return ItemCreator.of(CompMaterial.PAPER).name("&e&lReward Mode").lore(rewardModeLore).make();
+			}
+		};
 
 		this.glowingButton = Button.makeSimple(ItemCreator.of(this.voucher.getSettings().isGlowing() ? CompMaterial.LIME_DYE : CompMaterial.RED_DYE, "&e&lGlowing", "", "&7Current&f: " + BoolWord.get(this.voucher.getSettings().isGlowing()), "", "&dClick &7to toggle value"), player -> {
 			this.voucher.getSettings().setGlowing(!this.voucher.getSettings().isGlowing());
@@ -200,6 +233,9 @@ public final class MenuVoucherSettings extends Menu {
 
 		if (slot == 9 * 4 + 3)
 			return this.permissionButton.getItem();
+
+		if (slot == 9 * 4 + 4)
+			return this.rewardModeButton.getItem();
 
 		if (slot == 9 * 4 + 5)
 			return this.titleMessageButton.getItem();

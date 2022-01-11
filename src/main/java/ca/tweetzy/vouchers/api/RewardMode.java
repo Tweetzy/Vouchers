@@ -9,5 +9,16 @@ package ca.tweetzy.vouchers.api;
 public enum RewardMode {
 
 	AUTOMATIC,
-	REWARD_SELECT
+	REWARD_SELECT,
+	RANDOM;
+
+	private static final RewardMode[] states = values();
+
+	public RewardMode previous() {
+		return states[(ordinal() - 1 + states.length) % states.length];
+	}
+
+	public RewardMode next() {
+		return states[(this.ordinal() + 1) % states.length];
+	}
 }

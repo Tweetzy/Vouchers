@@ -1,5 +1,6 @@
 package ca.tweetzy.vouchers.api.voucher;
 
+import ca.tweetzy.vouchers.api.RewardMode;
 import lombok.NonNull;
 
 /**
@@ -201,4 +202,18 @@ public interface IVoucherSettings {
 	 * @param msg is the new message
 	 */
 	void setRedeemMessage(@NonNull final String msg);
+
+	/**
+	 * Get the reward mode
+	 *
+	 * @return the {@link RewardMode}
+	 */
+	@NonNull RewardMode getRewardMode();
+
+	/**
+	 * Set the new reward mode
+	 *
+	 * @param mode is the new {@link RewardMode}
+	 */
+	void setRewardMode(@NonNull final RewardMode mode);
 }
