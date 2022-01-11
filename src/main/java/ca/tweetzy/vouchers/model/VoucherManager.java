@@ -4,8 +4,10 @@ import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.PlayerUtil;
 import ca.tweetzy.tweety.RandomUtil;
 import ca.tweetzy.tweety.remain.Remain;
+import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.impl.Voucher;
+import ca.tweetzy.vouchers.impl.VoucherReward;
 import ca.tweetzy.vouchers.settings.Localization;
 import lombok.Getter;
 import lombok.NonNull;
@@ -72,14 +74,30 @@ public class VoucherManager {
 		if (voucher.getSettings().removeOnUse())
 			PlayerUtil.takeOnePiece(player, voucherItem);
 
-		voucher.getRewards().forEach(reward -> {
-			if (RandomUtil.chanceD(reward.getChance())) {
-				if (reward.getRewardType() == RewardType.ITEM && reward.getItem() != null)
-					PlayerUtil.addItems(player.getInventory(), reward.getItem());
-				else
-					Common.dispatchCommand(player, reward.getCommand());
-			}
-		});
+		if (voucher.getSettings().getRewardMode() == RewardMode.RANDOM) {
+			final ProbabilityCollection<VoucherReward> rewardProbabilityCollection = new ProbabilityCollection<>();
+			if (voucher.getRewards().size() == 0) return;
+			voucher.getRewards().forEach(reward -> rewardProbabilityCollection.add(reward, (int) reward.getChance()));
+
+			final VoucherReward selectedReward = rewardProbabilityCollection.get();
+			applyReward(player, selectedReward);
+
+		} else if (voucher.getSettings().getRewardMode() == RewardMode.REWARD_SELECT) {
+
+		} else {
+			voucher.getRewards().forEach(reward -> {
+				if (RandomUtil.chanceD(reward.getChance())) {
+					applyReward(player, reward);
+				}
+			});
+		}
+	}
+
+	private void applyReward(@NonNull final Player player, @NonNull final VoucherReward reward) {
+		if (reward.getRewardType() == RewardType.ITEM && reward.getItem() != null)
+			PlayerUtil.addItems(player.getInventory(), reward.getItem());
+		else
+			Common.dispatchCommand(player, reward.getCommand());
 	}
 
 	public void load() {
