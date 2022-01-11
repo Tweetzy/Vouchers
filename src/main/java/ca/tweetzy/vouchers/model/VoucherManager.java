@@ -8,6 +8,7 @@ import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.impl.VoucherReward;
+import ca.tweetzy.vouchers.menu.MenuRewardSelect;
 import ca.tweetzy.vouchers.settings.Localization;
 import lombok.Getter;
 import lombok.NonNull;
@@ -83,7 +84,7 @@ public class VoucherManager {
 			applyReward(player, selectedReward);
 
 		} else if (voucher.getSettings().getRewardMode() == RewardMode.REWARD_SELECT) {
-
+			new MenuRewardSelect(voucher).displayTo(player);
 		} else {
 			voucher.getRewards().forEach(reward -> {
 				if (RandomUtil.chanceD(reward.getChance())) {

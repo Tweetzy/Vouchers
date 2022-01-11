@@ -4,6 +4,7 @@ import ca.tweetzy.tweety.MathUtil;
 import ca.tweetzy.tweety.menu.Menu;
 import ca.tweetzy.tweety.menu.button.Button;
 import ca.tweetzy.tweety.menu.model.ItemCreator;
+import ca.tweetzy.tweety.model.SimpleSound;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.settings.Settings;
@@ -31,10 +32,12 @@ public final class MenuConfirm extends Menu {
 		setSize(MathUtil.atLeast(9, Settings.ConfirmMenu.ROWS * 9));
 		this.voucher = voucher;
 		this.voucherItem = voucherItem;
+		setSound(new SimpleSound(this.voucher.getSettings().getSound().getSound(), 1.0f));
 
 		this.cancelButton = Button.makeSimple(Settings.ConfirmMenu.CANCEL_ITEM.build(), HumanEntity::closeInventory);
 		this.confirmButton = Button.makeSimple(Settings.ConfirmMenu.CONFIRM_ITEM.build(), player -> {
 			Vouchers.getVoucherManager().executeVoucher(player, this.voucher, this.voucherItem);
+
 			player.closeInventory();
 		});
 	}

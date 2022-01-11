@@ -4,6 +4,7 @@ import ca.tweetzy.tweety.ItemUtil;
 import ca.tweetzy.tweety.conversation.TitleInput;
 import ca.tweetzy.tweety.menu.Menu;
 import ca.tweetzy.tweety.menu.button.Button;
+import ca.tweetzy.tweety.menu.button.ButtonMenu;
 import ca.tweetzy.tweety.menu.model.ItemCreator;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
@@ -30,6 +31,8 @@ public final class MenuVoucherSettings extends Menu {
 	private final Voucher voucher;
 
 	private final Button rewardModeButton;
+	private final Button soundButton;
+
 	private final Button glowingButton;
 	private final Button askConfirmButton;
 	private final Button removeOnUseButton;
@@ -54,6 +57,8 @@ public final class MenuVoucherSettings extends Menu {
 		setTitle("&b" + voucher.getId() + " &8> &7Settings");
 		setSize(9 * 6);
 
+		this.soundButton = new ButtonMenu(new MenuSoundSelect(this.voucher), ItemCreator.of(CompMaterial.MUSIC_DISC_CHIRP, "&e&lVoucher Sound", "", "&7Current&f: &e" + ItemUtil.bountifyCapitalized(voucher.getSettings().getSound()), "", "&dClick &7to edit voucher sound"));
+
 		this.rewardModeButton = new Button() {
 			@Override
 			public void onClickedInMenu(Player player, Menu menu, ClickType clickType) {
@@ -76,7 +81,7 @@ public final class MenuVoucherSettings extends Menu {
 				rewardModeLore.add("");
 				rewardModeLore.add("&dClick &7to go to next");
 
-				return ItemCreator.of(CompMaterial.PAPER).name("&e&lReward Mode").lore(rewardModeLore).make();
+				return ItemCreator.of(CompMaterial.REPEATER).name("&e&lReward Mode").lore(rewardModeLore).make();
 			}
 		};
 
@@ -204,10 +209,10 @@ public final class MenuVoucherSettings extends Menu {
 		if (slot == 9 + 1)
 			return this.glowingButton.getItem();
 
-		if (slot == 9 + 3)
+		if (slot == 9 + 2)
 			return this.askConfirmButton.getItem();
 
-		if (slot == 9 + 5)
+		if (slot == 9 + 6)
 			return this.removeOnUseButton.getItem();
 
 		if (slot == 9 + 7)
@@ -216,10 +221,16 @@ public final class MenuVoucherSettings extends Menu {
 		if (slot == 9 * 2 + 1)
 			return this.broadcastRedeemButton.getItem();
 
-		if (slot == 9 * 2 + 3)
+		if (slot == 9 * 2 + 2)
 			return this.sendTitleButton.getItem();
 
-		if (slot == 9 * 2 + 5)
+		if (slot == 9 + 4)
+			return this.rewardModeButton.getItem();
+
+		if (slot == 9 * 2 + 4)
+			return this.soundButton.getItem();
+
+		if (slot == 9 * 2 + 6)
 			return this.sendSubtitleButton.getItem();
 
 		if (slot == 9 * 2 + 7)
@@ -233,9 +244,6 @@ public final class MenuVoucherSettings extends Menu {
 
 		if (slot == 9 * 4 + 3)
 			return this.permissionButton.getItem();
-
-		if (slot == 9 * 4 + 4)
-			return this.rewardModeButton.getItem();
 
 		if (slot == 9 * 4 + 5)
 			return this.titleMessageButton.getItem();

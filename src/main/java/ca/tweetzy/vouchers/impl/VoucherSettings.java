@@ -2,6 +2,7 @@ package ca.tweetzy.vouchers.impl;
 
 import ca.tweetzy.tweety.collection.SerializedMap;
 import ca.tweetzy.tweety.model.ConfigSerializable;
+import ca.tweetzy.tweety.remain.CompSound;
 import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.IVoucherSettings;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 
 	private RewardMode rewardMode;
+	private CompSound sound;
 	private boolean glowing;
 	private boolean askConfirm;
 	private boolean removeOnUse;
@@ -36,6 +38,7 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 	public VoucherSettings(@NonNull final String id) {
 		this(
 				RewardMode.AUTOMATIC,
+				CompSound.ORB_PICKUP,
 				false,
 				false,
 				true,
@@ -204,9 +207,20 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 	}
 
 	@Override
+	public @NonNull CompSound getSound() {
+		return this.sound;
+	}
+
+	@Override
+	public void setSound(@NonNull CompSound sound) {
+		this.sound = sound;
+	}
+
+	@Override
 	public SerializedMap serialize() {
 		return SerializedMap.ofArray(
 				"reward mode", this.rewardMode,
+				"sound", this.sound,
 				"glowing", this.glowing,
 				"ask confirm", this.askConfirm,
 				"remove on use", this.removeOnUse,
@@ -227,6 +241,7 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 	public static VoucherSettings deserialize(SerializedMap map) {
 		return new VoucherSettings(
 				map.get("reward mode", RewardMode.class),
+				map.get("sound", CompSound.class),
 				map.getBoolean("glowing"),
 				map.getBoolean("ask confirm"),
 				map.getBoolean("remove on use"),

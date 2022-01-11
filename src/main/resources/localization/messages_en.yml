@@ -50,6 +50,7 @@ Error:
   Chance Too Low: "&cCannot set chance lower than 1%"
   Missing Reward Item: "&cPlease provide a reward item"
   No Permission For Voucher: "&cYou do not have permission to use that voucher"
+  Did Not Get Reward: "&cYou weren't lucky enough to get that reward"
 
 Success:
   Voucher Created: "&aCreated new voucher with the id: &2{voucher_id}"

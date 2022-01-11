@@ -1,5 +1,6 @@
 package ca.tweetzy.vouchers.api.voucher;
 
+import ca.tweetzy.tweety.remain.CompSound;
 import ca.tweetzy.vouchers.api.RewardMode;
 import lombok.NonNull;
 
@@ -216,4 +217,8 @@ public interface IVoucherSettings {
 	 * @param mode is the new {@link RewardMode}
 	 */
 	void setRewardMode(@NonNull final RewardMode mode);
+
+	@NonNull CompSound getSound();
+
+	void setSound(@NonNull final CompSound sound);
 }

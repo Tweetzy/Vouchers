@@ -17,6 +17,25 @@ Confirm Menu:
       - ""
       - "&dClick &7to cancel redeem"
 
+Reward Select Menu:
+  Title: "&eSelect a Reward"
+  # If true, vouchers will ignore that reward's chance and always give the user
+  # the item they selected
+  Always Give: true
+  Rows: 3
+  Reward Slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 ]
+  Background Item: BLACK_STAINED_GLASS_PANE
+  Command Item: PAPER
+  Command Name: "&e&lCommand Reward"
+  Command Lore:
+    - ""
+    - "&7Command&f: &e{reward_command}"
+    - ""
+  Command Lore Chance:
+    - ""
+    - "&7Command&f: &e{reward_command}"
+    - "&7Chance&f: &a{reward_chance}&f%"
+    - ""
 
 # -------------------------------------------------------------------------------------------------
 # The format used in the {timestamp} placeholder (google "Java timestamp format" for options).
