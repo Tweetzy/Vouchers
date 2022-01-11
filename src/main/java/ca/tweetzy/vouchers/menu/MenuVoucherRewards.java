@@ -1,5 +1,7 @@
 package ca.tweetzy.vouchers.menu;
 
+import ca.tweetzy.tweety.ChatUtil;
+import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.ItemUtil;
 import ca.tweetzy.tweety.menu.Menu;
 import ca.tweetzy.tweety.menu.MenuPagged;
@@ -11,10 +13,12 @@ import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.impl.VoucherReward;
+import ca.tweetzy.vouchers.model.LoreUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.ChatPaginator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +72,7 @@ public final class MenuVoucherRewards extends MenuPagged<VoucherReward> {
 		if (reward.getRewardType() == RewardType.ITEM)
 			lore.addAll(getItemLore(reward.getItem()));
 		else
-			lore.add("&7Current&f: &e" + reward.getCommand());
+			lore.addAll(LoreUtils.wrapLore("&7Current&f: &e" + reward.getCommand(), true));
 
 		lore.add("&7Chance&f: &a" + reward.getChance() + "&f%");
 		lore.add("");

@@ -43,6 +43,10 @@ Voucher Edit:
     Title: "&eVoucher Edit"
     Subtitle: "&7Enter new chance"
 
+  Enter Cooldown:
+    Title: "&eVoucher Edit"
+    Subtitle: "&7Enter new cooldown"
+
 Error:
   Voucher Already Exists: "&cThe voucher: &4{voucher_id}&c already exists"
   Voucher Does Not Exist: "&cThe voucher: &4{voucher_id}&c doesn't exist"
@@ -51,6 +55,7 @@ Error:
   Missing Reward Item: "&cPlease provide a reward item"
   No Permission For Voucher: "&cYou do not have permission to use that voucher"
   Did Not Get Reward: "&cYou weren't lucky enough to get that reward"
+  Cooldown: "&cYou must wait &4{remaining_time}&cs before you can use that voucher"
 
 Success:
   Voucher Created: "&aCreated new voucher with the id: &2{voucher_id}"

@@ -9,7 +9,9 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The current file has been created by Kiran Hart
@@ -21,6 +23,22 @@ import java.util.List;
 public final class VouchersAPI {
 
 	private final VoucherManager voucherManager = Vouchers.getVoucherManager();
+
+	public void addPlayerToCoolDown(UUID player, Voucher voucher) {
+		voucherManager.addPlayerToCoolDown(player, voucher);
+	}
+
+	public boolean isPlayerInCoolDown(UUID player) {
+		return voucherManager.isPlayerInCoolDown(player);
+	}
+
+	public boolean isPlayerInCoolDownForVoucher(UUID player, Voucher voucher) {
+		return voucherManager.isPlayerInCoolDownForVoucher(player, voucher);
+	}
+
+	public long getCoolDownTime(UUID player, Voucher voucher) {
+		return voucherManager.getCoolDownTime(player, voucher);
+	}
 
 	public Voucher findVoucher(@NonNull final String id) {
 		return voucherManager.findVoucher(id);

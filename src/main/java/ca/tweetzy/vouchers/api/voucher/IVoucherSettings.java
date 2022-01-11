@@ -221,4 +221,8 @@ public interface IVoucherSettings {
 	@NonNull CompSound getSound();
 
 	void setSound(@NonNull final CompSound sound);
+
+	int getCooldown();
+
+	void setCooldown(final int cooldown);
 }

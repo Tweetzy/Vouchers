@@ -42,11 +42,6 @@ Reward Select Menu:
     - ""
 
 # -------------------------------------------------------------------------------------------------
-# The format used in the {timestamp} placeholder (google "Java timestamp format" for options).
-# -------------------------------------------------------------------------------------------------
-Timestamp_Format: "MMM/dd/yyyy HH:mm:ss aa"
-
-# -------------------------------------------------------------------------------------------------
 # * THE FIRST ALIAS IS THE MAIN LABEL, PLEASE DO NOT REMOVE IT. *
 # -------------------------------------------------------------------------------------------------
 Command_Aliases: [ vouchers, voucher ]
@@ -66,7 +61,7 @@ Prefix: "&8[&eVouchers&8]"
 # We log a console message if an operation takes over the time below (milliseconds).
 # Set to -1 to disable.
 # -------------------------------------------------------------------------------------------------
-Log_Lag_Over_Milis: 100
+Log_Lag_Over_Milis: -1
 
 # -------------------------------------------------------------------------------------------------
 # Do not change this value, otherwise it will corrupt your plugin installation!

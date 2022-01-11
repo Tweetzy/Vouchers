@@ -5,6 +5,7 @@ import ca.tweetzy.tweety.PlayerUtil;
 import ca.tweetzy.tweety.RandomUtil;
 import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.tweety.remain.Remain;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.impl.Voucher;
@@ -17,7 +18,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The current file has been created by Kiran Hart
@@ -29,6 +32,30 @@ public class VoucherManager {
 
 	@Getter
 	private VoucherHolder voucherHolder;
+
+	private final HashMap<UUID, HashMap<String, Long>> cooldowns = new HashMap<>();
+
+	public void addPlayerToCoolDown(UUID player, Voucher voucher) {
+		HashMap<String, Long> voucherCooldowns = new HashMap<>();
+		if (this.cooldowns.containsKey(player)) {
+			voucherCooldowns = this.cooldowns.get(player);
+		}
+
+		voucherCooldowns.put(voucher.getId(), System.currentTimeMillis() + (voucher.getSettings().getCooldown() * 1000L));
+		this.cooldowns.put(player, voucherCooldowns);
+	}
+
+	public boolean isPlayerInCoolDown(UUID player) {
+		return this.cooldowns.containsKey(player);
+	}
+
+	public boolean isPlayerInCoolDownForVoucher(UUID player, Voucher voucher) {
+		return this.cooldowns.containsKey(player) && this.cooldowns.get(player).containsKey(voucher.getId());
+	}
+
+	public long getCoolDownTime(UUID player, Voucher voucher) {
+		return this.cooldowns.get(player).get(voucher.getId());
+	}
 
 	public Voucher findVoucher(@NonNull final String id) {
 		return this.voucherHolder.getVouchers().getSource().stream().filter(voucher -> voucher.getId().equalsIgnoreCase(id)).findFirst().orElse(null);
@@ -60,21 +87,35 @@ public class VoucherManager {
 		return CompMetadata.getMetadata(itemstack, "tweetzy:voucher:id");
 	}
 
+	// yea I know i'm repeating replace() a lot here, i'll fix it
 	public void executeVoucher(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final ItemStack voucherItem) {
 		if (voucher.getSettings().requiresUsePermission() && !player.hasPermission(voucher.getSettings().getPermission())) {
 			Common.tell(player, Localization.Error.NO_VOUCHER_PERMISSION);
 			return;
 		}
 
+		if (isPlayerInCoolDown(player.getUniqueId())) {
+			if (isPlayerInCoolDownForVoucher(player.getUniqueId(), voucher)) {
+				long coolDownTime = getCoolDownTime(player.getUniqueId(), voucher);
+				if (System.currentTimeMillis() < coolDownTime) {
+					Common.tell(player, Localization.Error.COOLDOWN.replace("{remaining_time}", String.format("%,.2f", (coolDownTime - System.currentTimeMillis()) / 1000F)));
+					return;
+				}
+			}
+		}
+
+		addPlayerToCoolDown(player.getUniqueId(), voucher);
+		voucher.getSettings().getSound().play(player);
+
 		if (voucher.getSettings().sendTitle() && voucher.getSettings().sendSubtitle())
-			Remain.sendTitle(player, voucher.getSettings().getTitle(), voucher.getSettings().getSubtitle());
+			Remain.sendTitle(player, voucher.getSettings().getTitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()), voucher.getSettings().getSubtitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
 		else if (voucher.getSettings().sendTitle() && !voucher.getSettings().sendSubtitle())
-			Remain.sendTitle(player, voucher.getSettings().getTitle(), "");
+			Remain.sendTitle(player, voucher.getSettings().getTitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()), "");
 		else
-			Remain.sendTitle(player, "", voucher.getSettings().getSubtitle());
+			Remain.sendTitle(player, "", voucher.getSettings().getSubtitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
 
 		if (voucher.getSettings().sendActionBar())
-			Remain.sendActionBar(player, voucher.getSettings().getActionBar());
+			Remain.sendActionBar(player, voucher.getSettings().getActionBar().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
 
 		Common.tell(player, voucher.getSettings().getRedeemMessage().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
 

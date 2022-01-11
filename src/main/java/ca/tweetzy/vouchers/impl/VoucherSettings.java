@@ -20,6 +20,7 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 
 	private RewardMode rewardMode;
 	private CompSound sound;
+	private int cooldown;
 	private boolean glowing;
 	private boolean askConfirm;
 	private boolean removeOnUse;
@@ -39,6 +40,7 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 		this(
 				RewardMode.AUTOMATIC,
 				CompSound.ORB_PICKUP,
+				-1,
 				false,
 				false,
 				true,
@@ -217,6 +219,16 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 	}
 
 	@Override
+	public int getCooldown() {
+		return this.cooldown;
+	}
+
+	@Override
+	public void setCooldown(int cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	@Override
 	public SerializedMap serialize() {
 		return SerializedMap.ofArray(
 				"reward mode", this.rewardMode,
@@ -234,7 +246,8 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 				"send actionbar", this.sendActionBar,
 				"actionbar", this.actionbar,
 				"redeem message", this.redeemMessage,
-				"broadcast message", this.broadcastMessage
+				"broadcast message", this.broadcastMessage,
+				"cooldown", this.cooldown
 		);
 	}
 
@@ -242,6 +255,7 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 		return new VoucherSettings(
 				map.get("reward mode", RewardMode.class),
 				map.get("sound", CompSound.class),
+				map.getInteger("cooldown"),
 				map.getBoolean("glowing"),
 				map.getBoolean("ask confirm"),
 				map.getBoolean("remove on use"),

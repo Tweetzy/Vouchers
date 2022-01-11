@@ -13,6 +13,7 @@ import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.model.BoolWord;
 import ca.tweetzy.vouchers.settings.Localization;
 import lombok.NonNull;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -32,6 +33,7 @@ public final class MenuVoucherSettings extends Menu {
 
 	private final Button rewardModeButton;
 	private final Button soundButton;
+	private final Button cooldownButton;
 
 	private final Button glowingButton;
 	private final Button askConfirmButton;
@@ -56,6 +58,18 @@ public final class MenuVoucherSettings extends Menu {
 		this.voucher = voucher;
 		setTitle("&b" + voucher.getId() + " &8> &7Settings");
 		setSize(9 * 6);
+
+		this.cooldownButton = Button.makeSimple(ItemCreator.of(CompMaterial.CLOCK, "&e&lCooldown", "", "&eCurrent&f: " + voucher.getSettings().getCooldown(), "", "&dClick &7to change cooldown", "&7You can set the cool down to -1 to disable"), player -> new TitleInput(player, Localization.VoucherEdit.ENTER_COOLDOWN_TITLE, Localization.VoucherEdit.ENTER_COOLDOWN_SUBTITLE) {
+			@Override
+			public boolean onResult(String name) {
+				if (!NumberUtils.isNumber(name))
+					return false;
+
+				MenuVoucherSettings.this.voucher.getSettings().setCooldown(Integer.parseInt(name));
+				saveReopen(player);
+				return true;
+			}
+		});
 
 		this.soundButton = new ButtonMenu(new MenuSoundSelect(this.voucher), ItemCreator.of(CompMaterial.MUSIC_DISC_CHIRP, "&e&lVoucher Sound", "", "&7Current&f: &e" + ItemUtil.bountifyCapitalized(voucher.getSettings().getSound()), "", "&dClick &7to edit voucher sound"));
 
@@ -229,6 +243,9 @@ public final class MenuVoucherSettings extends Menu {
 
 		if (slot == 9 * 2 + 4)
 			return this.soundButton.getItem();
+
+		if (slot == 9 * 3 + 4)
+			return this.cooldownButton.getItem();
 
 		if (slot == 9 * 2 + 6)
 			return this.sendSubtitleButton.getItem();

@@ -54,6 +54,9 @@ public final class Localization extends SimpleLocalization {
 		public static String ENTER_CHANCE_TITLE;
 		public static String ENTER_CHANCE_SUBTITLE;
 
+		public static String ENTER_COOLDOWN_TITLE;
+		public static String ENTER_COOLDOWN_SUBTITLE;
+
 		private static void init() {
 			pathPrefix("Voucher Edit.Enter Name");
 			ENTER_NAME_TITLE = getString("Title");
@@ -94,6 +97,10 @@ public final class Localization extends SimpleLocalization {
 			pathPrefix("Voucher Edit.Enter Chance");
 			ENTER_CHANCE_TITLE = getString("Title");
 			ENTER_CHANCE_SUBTITLE = getString("Subtitle");
+
+			pathPrefix("Voucher Edit.Enter Cooldown");
+			ENTER_COOLDOWN_TITLE = getString("Title");
+			ENTER_COOLDOWN_SUBTITLE = getString("Subtitle");
 		}
 	}
 
@@ -106,6 +113,7 @@ public final class Localization extends SimpleLocalization {
 		public static String MISSING_REWARD_ITEM;
 		public static String NO_VOUCHER_PERMISSION;
 		public static String NOT_LUCKY_ENOUGH;
+		public static String COOLDOWN;
 
 		private static void init() {
 			pathPrefix("Error");
@@ -116,6 +124,7 @@ public final class Localization extends SimpleLocalization {
 			MISSING_REWARD_ITEM = getString("Missing Reward Item");
 			NO_VOUCHER_PERMISSION = getString("No Permission For Voucher");
 			NOT_LUCKY_ENOUGH = getString("Did Not Get Reward");
+			COOLDOWN = getString("Cooldown");
 		}
 	}
 

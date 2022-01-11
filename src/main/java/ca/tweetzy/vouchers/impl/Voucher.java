@@ -111,7 +111,6 @@ public class Voucher implements IVoucher, ConfigSerializable {
 			new MenuConfirm(this, voucherItemstack).displayTo(player);
 		} else {
 			Vouchers.getVoucherManager().executeVoucher(player, this, voucherItemstack);
-			this.settings.getSound().play(player);
 		}
 	}
 }

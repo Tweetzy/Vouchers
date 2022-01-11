@@ -51,9 +51,12 @@ public final class CommandImport extends AbstractVoucherCommand {
 			voucherSettings.setGlowing(voucherSection.getBoolean("options.glowing", false));
 			voucherSettings.setSendTitle(voucherSection.getBoolean("options.send title", true));
 			voucherSettings.setSendActionBar(voucherSection.getBoolean("options.send actionbar", true));
-			voucherSettings.setTitle(voucherSection.getString("titles.title", "&eVoucher Redeemed"));
-			voucherSettings.setSubtitle(voucherSection.getString("titles.subtitle", "&eVoucher Redeemed"));
-			voucherSettings.setActionbar(voucherSection.getString("titles.actionbar", "&eVoucher Redeemed"));
+			voucherSettings.setTitle(replace(voucherSection.getString("titles.title", "&eVoucher Redeemed")));
+			voucherSettings.setSubtitle(replace(voucherSection.getString("titles.subtitle", "&eVoucher Redeemed")));
+			voucherSettings.setActionbar(replace(voucherSection.getString("titles.actionbar", "&eVoucher Redeemed")));
+			voucherSettings.setCooldown(
+					voucherSection.getBoolean("options.cool down.use") ? voucherSection.getInt("options.cool down.time") : -1
+			);
 
 			final List<VoucherReward> rewards = new ArrayList<>();
 
@@ -81,5 +84,9 @@ public final class CommandImport extends AbstractVoucherCommand {
 
 		Vouchers.getVoucherManager().getVoucherHolder().save();
 		tell("&aImported any vouchers that could be imported, it is highly recommend that you check the vouchers to ensure everything is correct");
+	}
+
+	private String replace(String str) {
+		return str.replace("%voucher_id%", "{voucher_id}");
 	}
 }
