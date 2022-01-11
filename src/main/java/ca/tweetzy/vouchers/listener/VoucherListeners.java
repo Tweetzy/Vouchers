@@ -1,12 +1,13 @@
 package ca.tweetzy.vouchers.listener;
 
+import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
-import net.sacredlabyrinth.phaed.simpleclans.xseries.XMaterial;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -26,11 +27,12 @@ public final class VoucherListeners implements Listener {
 	public void onRedeem(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		if (event.getItem() == null) return;
+		if (event.getAction() != Action.RIGHT_CLICK_AIR) return;
 
 		final ItemStack possibleVoucher = event.getItem();
-		if (!CompMetadata.hasMetadata(possibleVoucher, "Tweetzy:Vouchers")) return;
+		if (!Vouchers.getVoucherManager().isVoucher(possibleVoucher)) return;
 
-		final String voucherId = CompMetadata.getMetadata(possibleVoucher, "Tweetzy:Vouchers");
+		final String voucherId = Vouchers.getVoucherManager().getVoucherId(possibleVoucher);
 		final Voucher voucher = Vouchers.getVoucherManager().findVoucher(voucherId);
 
 		if (voucher == null) return;
@@ -41,16 +43,16 @@ public final class VoucherListeners implements Listener {
 	@EventHandler
 	public void onBlockPlace(final BlockPlaceEvent e) {
 		final ItemStack toBePlaced = e.getItemInHand();
-		if (toBePlaced.getType() == XMaterial.AIR.parseMaterial()) return;
-		if (CompMetadata.hasMetadata(toBePlaced, "Tweetzy:Vouchers")) {
+		if (toBePlaced.getType() == CompMaterial.AIR.toMaterial()) return;
+		if (Vouchers.getVoucherManager().isVoucher(toBePlaced)) {
 			e.setCancelled(true);
 		}
 	}
 
 	@EventHandler
 	public void onCraftAttempt(final PrepareItemCraftEvent e) {
-		if (Arrays.stream(e.getInventory().getContents()).anyMatch(item -> CompMetadata.hasMetadata(item, "Tweetzy:Vouchers"))) {
-			e.getInventory().setResult(XMaterial.AIR.parseItem());
+		if (Arrays.stream(e.getInventory().getContents()).anyMatch(item -> Vouchers.getVoucherManager().isVoucher(item))) {
+			e.getInventory().setResult(CompMaterial.AIR.toItem());
 		}
 	}
 

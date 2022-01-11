@@ -1,5 +1,6 @@
 package ca.tweetzy.vouchers.api;
 
+import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.model.VoucherManager;
@@ -35,6 +36,14 @@ public final class VouchersAPI {
 
 	public void executeVoucher(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final ItemStack voucherItem) {
 		voucherManager.executeVoucher(player, voucher, voucherItem);
+	}
+
+	public boolean isVoucher(@NonNull final ItemStack itemstack) {
+		return voucherManager.isVoucher(itemstack);
+	}
+
+	public String getVoucherId(@NonNull final ItemStack itemstack) {
+		return voucherManager.getVoucherId(itemstack);
 	}
 
 	public List<Voucher> getVouchers() {

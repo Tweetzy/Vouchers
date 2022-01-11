@@ -3,6 +3,7 @@ package ca.tweetzy.vouchers.model;
 import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.PlayerUtil;
 import ca.tweetzy.tweety.RandomUtil;
+import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.tweety.remain.Remain;
 import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.RewardType;
@@ -47,6 +48,16 @@ public class VoucherManager {
 
 	public List<Voucher> getVouchers() {
 		return Collections.unmodifiableList(this.voucherHolder.getVouchers().getSource());
+	}
+
+	public boolean isVoucher(@NonNull final ItemStack itemstack) {
+		return CompMetadata.hasMetadata(itemstack, "Tweetzy:Vouchers") || CompMetadata.hasMetadata(itemstack, "tweetzy:voucher:id");
+	}
+
+	public String getVoucherId(@NonNull final ItemStack itemstack) {
+		if (CompMetadata.hasMetadata(itemstack, "Tweetzy:Vouchers"))
+			return CompMetadata.getMetadata(itemstack, "Tweetzy:Vouchers");
+		return CompMetadata.getMetadata(itemstack, "tweetzy:voucher:id");
 	}
 
 	public void executeVoucher(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final ItemStack voucherItem) {
