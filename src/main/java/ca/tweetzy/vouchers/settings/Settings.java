@@ -21,6 +21,20 @@ public final class Settings extends SimpleSettings {
 		PREFIX = getString("Prefix");
 	}
 
+	public static final class VoucherListMenu {
+
+		public static String TITLE;
+		public static CompMaterial BACKGROUND_ITEM;
+
+		private static void init() {
+			pathPrefix("Voucher List Menu");
+
+			TITLE = getString("Title");
+			BACKGROUND_ITEM = getMaterial("Background Item");
+		}
+
+	}
+
 	public static final class RewardSelectMenu {
 
 		public static String TITLE;

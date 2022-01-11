@@ -6,6 +6,7 @@ import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.impl.VoucherReward;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
+import ca.tweetzy.vouchers.menu.MenuVoucherEdit;
 import ca.tweetzy.vouchers.settings.Localization;
 import org.bukkit.entity.Player;
 
@@ -38,6 +39,7 @@ public final class CommandCreate extends AbstractVoucherCommand {
 
 				Voucher voucher = new Voucher(val, CompMaterial.PAPER, val, Collections.singletonList("&7sample lore"), new VoucherSettings(val), Collections.singletonList(new VoucherReward()));
 				Vouchers.getVoucherManager().addVoucher(voucher);
+				new MenuVoucherEdit(voucher).displayTo(player);
 
 				tell(Localization.Success.VOUCHER_CREATED.replace("{voucher_id}", val));
 				return true;

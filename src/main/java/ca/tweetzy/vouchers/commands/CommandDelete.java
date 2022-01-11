@@ -1,15 +1,12 @@
 package ca.tweetzy.vouchers.commands;
 
-import ca.tweetzy.tweety.conversation.TitleInput;
-import ca.tweetzy.tweety.remain.CompMaterial;
+import ca.tweetzy.tweety.TabUtil;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
-import ca.tweetzy.vouchers.impl.VoucherReward;
-import ca.tweetzy.vouchers.impl.VoucherSettings;
 import ca.tweetzy.vouchers.settings.Localization;
-import org.bukkit.entity.Player;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The current file has been created by Kiran Hart
@@ -33,5 +30,12 @@ public final class CommandDelete extends AbstractVoucherCommand {
 
 		Vouchers.getVoucherManager().deleteVoucher(voucher.getId());
 		tell(Localization.Success.VOUCHER_DELETED.replace("{voucher_id}", voucherId));
+	}
+
+	@Override
+	protected List<String> tabComplete() {
+		if (args.length == 1)
+			return TabUtil.complete(args[0], Vouchers.getVoucherManager().getVouchers().stream().map(Voucher::getId).collect(Collectors.toList()));
+		return NO_COMPLETE;
 	}
 }

@@ -6,6 +6,7 @@ import ca.tweetzy.tweety.remain.Remain;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.settings.Localization;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -34,7 +35,10 @@ public final class CommandGive extends AbstractVoucherCommand {
 			returnTell(Localization.Error.VOUCHER_DOES_NOT_EXIST.replace("{voucher_id}", voucherId));
 
 		final Player player = findPlayer(args[1]);
-		PlayerUtil.addItems(player.getInventory(), voucher.build());
+		final int amtToGive = args.length == 3 && NumberUtils.isNumber(args[2]) ? Integer.parseInt(args[2]) : 1;
+
+		for (int i = 0; i < amtToGive; i++)
+			PlayerUtil.addItems(player.getInventory(), voucher.build());
 
 	}
 

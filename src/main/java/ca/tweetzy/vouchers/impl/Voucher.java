@@ -1,20 +1,14 @@
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.tweety.Common;
-import ca.tweetzy.tweety.PlayerUtil;
-import ca.tweetzy.tweety.RandomUtil;
 import ca.tweetzy.tweety.collection.SerializedMap;
 import ca.tweetzy.tweety.menu.model.ItemCreator;
 import ca.tweetzy.tweety.model.ConfigSerializable;
 import ca.tweetzy.tweety.remain.CompMaterial;
-import ca.tweetzy.tweety.remain.Remain;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.api.voucher.IVoucher;
 import ca.tweetzy.vouchers.api.voucher.IVoucherSettings;
 import ca.tweetzy.vouchers.menu.MenuConfirm;
-import ca.tweetzy.vouchers.model.VoucherManager;
-import ca.tweetzy.vouchers.settings.Localization;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,6 +22,7 @@ import java.util.List;
  * Time Created: 11:10 p.m.
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
+@AllArgsConstructor
 public class Voucher implements IVoucher, ConfigSerializable {
 
 	private final String id;
@@ -36,15 +31,6 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	private final List<String> description;
 	private final IVoucherSettings settings;
 	private final List<VoucherReward> rewards;
-
-	public Voucher(@NonNull final String id, @NonNull final CompMaterial icon, @NonNull final String displayName, @NonNull final List<String> description, @NonNull final IVoucherSettings settings, @NonNull final List<VoucherReward> rewards) {
-		this.id = id;
-		this.icon = icon;
-		this.displayName = displayName;
-		this.description = description;
-		this.settings = settings;
-		this.rewards = rewards;
-	}
 
 	@Override
 	public @NonNull String getId() {
