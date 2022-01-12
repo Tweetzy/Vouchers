@@ -1,5 +1,7 @@
 package ca.tweetzy.vouchers.listener;
 
+import ca.tweetzy.tweety.Common;
+import ca.tweetzy.tweety.collection.StrictList;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.vouchers.Vouchers;
@@ -11,6 +13,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -22,6 +25,11 @@ import java.util.Arrays;
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
 public final class VoucherListeners implements Listener {
+
+	@EventHandler
+	public void onPlayerJoin(final PlayerJoinEvent event) {
+		final Player player = event.getPlayer();
+	}
 
 	@EventHandler
 	public void onRedeem(final PlayerInteractEvent event) {

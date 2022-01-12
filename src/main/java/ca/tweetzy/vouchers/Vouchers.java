@@ -7,6 +7,10 @@ import ca.tweetzy.tweety.plugin.TweetyPlugin;
 import ca.tweetzy.vouchers.listener.VoucherListeners;
 import ca.tweetzy.vouchers.model.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * The current file has been created by Kiran Hart
@@ -18,12 +22,33 @@ public final class Vouchers extends TweetyPlugin {
 
 	private final VoucherManager voucherManager = new VoucherManager();
 
+	private boolean bStats = false;
+
 	@Override
 	protected void onPluginStart() {
 		normalizePrefix();
 		this.voucherManager.load();
 
 		registerEvents(new VoucherListeners());
+
+		if (Settings.AUTO_STATS) {
+			final File file = new File("plugins" + File.separator + "bStats" + File.separator + "config.yml");
+			if (!file.exists()) bStats = true;
+			else {
+				final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+				configuration.set("enabled", true);
+				try {
+					configuration.save(file);
+					bStats = true;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (!bStats) {
+			Common.logFramed("&cPlease enable bStats within your plugins folder", "&cit helps me collect data on Vouchers.");
+		}
 	}
 
 	@Override

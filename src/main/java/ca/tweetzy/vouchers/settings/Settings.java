@@ -15,10 +15,12 @@ import java.util.List;
 public final class Settings extends SimpleSettings {
 
 	public static String PREFIX;
+	public static Boolean AUTO_STATS;
 
 	private static void init() {
 		pathPrefix(null);
 		PREFIX = getString("Prefix");
+		AUTO_STATS = getBoolean("Auto bStats");
 	}
 
 	public static final class VoucherListMenu {
