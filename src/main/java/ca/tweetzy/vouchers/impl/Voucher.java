@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,9 +90,9 @@ public class Voucher implements IVoucher, ConfigSerializable {
 				map.getString("id"),
 				map.getMaterial("icon"),
 				map.getString("display name"),
-				map.getStringList("description"),
+				new ArrayList<>(map.getStringList("description")),
 				map.get("settings", VoucherSettings.class),
-				map.getList("rewards", VoucherReward.class)
+				new ArrayList<>(map.getList("rewards", VoucherReward.class))
 		);
 	}
 
