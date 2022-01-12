@@ -27,11 +27,6 @@ import java.util.Arrays;
 public final class VoucherListeners implements Listener {
 
 	@EventHandler
-	public void onPlayerJoin(final PlayerJoinEvent event) {
-		final Player player = event.getPlayer();
-	}
-
-	@EventHandler
 	public void onRedeem(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		if (event.getItem() == null) return;
