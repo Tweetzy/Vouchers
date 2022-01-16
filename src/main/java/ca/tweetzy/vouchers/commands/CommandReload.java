@@ -1,17 +1,6 @@
 package ca.tweetzy.vouchers.commands;
 
-import ca.tweetzy.tweety.conversation.TitleInput;
-import ca.tweetzy.tweety.debug.LagCatcher;
-import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.impl.Voucher;
-import ca.tweetzy.vouchers.impl.VoucherReward;
-import ca.tweetzy.vouchers.impl.VoucherSettings;
-import ca.tweetzy.vouchers.menu.MenuVoucherEdit;
-import ca.tweetzy.vouchers.settings.Localization;
-import org.bukkit.entity.Player;
-
-import java.util.Collections;
 
 /**
  * The current file has been created by Kiran Hart
@@ -27,7 +16,12 @@ public final class CommandReload extends AbstractVoucherCommand {
 
 	@Override
 	protected void onCommand() {
-		Vouchers.getInstance().reload();
-		tell("&aSuccessfully reloaded files.");
+		if (args.length == 0)
+			returnTell("&cPlease use the command&f: &4/vouchers reload confirm. &CIf you made changes to the data.db file manually, reloading will not keep those changes, you must restart to apply them.");
+
+		if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
+			Vouchers.getInstance().reload();
+			tell("&aSuccessfully reloaded files.");
+		}
 	}
 }
