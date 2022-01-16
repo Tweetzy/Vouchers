@@ -144,7 +144,7 @@ public final class MenuNewReward extends Menu {
 				}
 			}
 
-			this.voucher.getRewards().add(this.voucherReward);
+			this.voucher.getRewards().addWeak(this.voucherReward);
 			Vouchers.getVoucherManager().getVoucherHolder().save();
 			new MenuVoucherRewards(this.voucher).displayTo(player);
 		});

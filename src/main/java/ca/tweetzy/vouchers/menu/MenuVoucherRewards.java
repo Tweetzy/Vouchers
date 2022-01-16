@@ -88,7 +88,7 @@ public final class MenuVoucherRewards extends MenuPagged<VoucherReward> {
 	@Override
 	protected void onPageClick(Player player, VoucherReward reward, ClickType click) {
 		if (click == ClickType.DROP) {
-			this.voucher.getRewards().remove(reward);
+			this.voucher.getRewards().removeWeak(reward);
 			Vouchers.getVoucherManager().getVoucherHolder().save();
 			newInstance().displayTo(player);
 		}

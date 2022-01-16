@@ -1,6 +1,7 @@
 package ca.tweetzy.vouchers.impl;
 
 import ca.tweetzy.tweety.collection.SerializedMap;
+import ca.tweetzy.tweety.collection.StrictList;
 import ca.tweetzy.tweety.menu.model.ItemCreator;
 import ca.tweetzy.tweety.model.ConfigSerializable;
 import ca.tweetzy.tweety.remain.CompMaterial;
@@ -29,9 +30,9 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	private final String id;
 	private CompMaterial icon;
 	private String displayName;
-	private final List<String> description;
+	private final StrictList<String> description;
 	private final IVoucherSettings settings;
-	private final List<VoucherReward> rewards;
+	private final StrictList<VoucherReward> rewards;
 
 	@Override
 	public @NonNull String getId() {
@@ -59,7 +60,7 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	}
 
 	@Override
-	public @NonNull List<String> getDescription() {
+	public @NonNull StrictList<String> getDescription() {
 		return this.description;
 	}
 
@@ -69,7 +70,7 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	}
 
 	@Override
-	public @NotNull List<VoucherReward> getRewards() {
+	public @NotNull StrictList<VoucherReward> getRewards() {
 		return this.rewards;
 	}
 
@@ -90,16 +91,16 @@ public class Voucher implements IVoucher, ConfigSerializable {
 				map.getString("id"),
 				map.getMaterial("icon"),
 				map.getString("display name"),
-				new ArrayList<>(map.getStringList("description")),
+				new StrictList<>(map.getStringList("description")),
 				map.get("settings", VoucherSettings.class),
-				new ArrayList<>(map.getList("rewards", VoucherReward.class))
+				new StrictList<>(map.getList("rewards", VoucherReward.class))
 		);
 	}
 
 	public ItemStack build() {
 		return ItemCreator
 				.of(this.icon, this.displayName)
-				.lore(this.description)
+				.lore(this.description.getSource())
 				.glow(this.settings.isGlowing())
 				.hideTags(true)
 				.unbreakable(true)

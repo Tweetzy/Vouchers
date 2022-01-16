@@ -1,5 +1,6 @@
 package ca.tweetzy.vouchers.api.voucher;
 
+import ca.tweetzy.tweety.collection.StrictList;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.impl.VoucherReward;
 import lombok.NonNull;
@@ -55,7 +56,7 @@ public interface IVoucher {
 	 *
 	 * @return the voucher description
 	 */
-	@NonNull List<String> getDescription();
+	@NonNull StrictList<String> getDescription();
 
 	/**
 	 * Get the settings of the voucher
@@ -69,5 +70,5 @@ public interface IVoucher {
 	 *
 	 * @return the voucher rewards
 	 */
-	@NonNull List<VoucherReward> getRewards();
+	@NonNull StrictList<VoucherReward> getRewards();
 }

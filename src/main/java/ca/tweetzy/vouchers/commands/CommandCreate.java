@@ -1,5 +1,6 @@
 package ca.tweetzy.vouchers.commands;
 
+import ca.tweetzy.tweety.collection.StrictList;
 import ca.tweetzy.tweety.conversation.TitleInput;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
@@ -37,7 +38,7 @@ public final class CommandCreate extends AbstractVoucherCommand {
 					return false;
 				}
 
-				Voucher voucher = new Voucher(val, CompMaterial.PAPER, val, Collections.singletonList("&7sample lore"), new VoucherSettings(val), Collections.singletonList(new VoucherReward()));
+				Voucher voucher = new Voucher(val, CompMaterial.PAPER, val, new StrictList<>("&7sample lore"), new VoucherSettings(val), new StrictList<>(new VoucherReward()));
 				Vouchers.getVoucherManager().addVoucher(voucher);
 				new MenuVoucherEdit(voucher).displayTo(player);
 
