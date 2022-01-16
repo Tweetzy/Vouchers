@@ -51,6 +51,12 @@ public final class Vouchers extends TweetyPlugin {
 		}
 	}
 
+
+	@Override
+	protected void onPluginReload() {
+		this.voucherManager.load();
+	}
+
 	@Override
 	protected void onPluginStop() {
 		this.voucherManager.getVoucherHolder().save();

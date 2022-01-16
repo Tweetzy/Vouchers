@@ -3,6 +3,7 @@ package ca.tweetzy.vouchers.model;
 import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.PlayerUtil;
 import ca.tweetzy.tweety.RandomUtil;
+import ca.tweetzy.tweety.model.HookManager;
 import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.tweety.remain.Remain;
 import ca.tweetzy.vouchers.Vouchers;
@@ -108,20 +109,20 @@ public class VoucherManager {
 		voucher.getSettings().getSound().play(player);
 
 		if (voucher.getSettings().sendTitle() && voucher.getSettings().sendSubtitle())
-			Remain.sendTitle(player, voucher.getSettings().getTitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()), voucher.getSettings().getSubtitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
+			Remain.sendTitle(player, replaceIds(player,voucher, voucher.getSettings().getTitle()), replaceIds(player,voucher, voucher.getSettings().getSubtitle()));
 		else if (voucher.getSettings().sendTitle() && !voucher.getSettings().sendSubtitle())
-			Remain.sendTitle(player, voucher.getSettings().getTitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()), "");
+			Remain.sendTitle(player, replaceIds(player,voucher, voucher.getSettings().getTitle()), "");
 		else
-			Remain.sendTitle(player, "", voucher.getSettings().getSubtitle().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
+			Remain.sendTitle(player, "", replaceIds(player,voucher, voucher.getSettings().getSubtitle()));
 
 		if (voucher.getSettings().sendActionBar())
-			Remain.sendActionBar(player, voucher.getSettings().getActionBar().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
+			Remain.sendActionBar(player, replaceIds(player,voucher, voucher.getSettings().getActionBar()));
 
-		Common.tell(player, voucher.getSettings().getRedeemMessage().replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
+		Common.tell(player, replaceIds(player,voucher, voucher.getSettings().getRedeemMessage()));
 
 		if (voucher.getSettings().broadcastRedeem())
 			Remain.getOnlinePlayers().forEach(onlinePlayer -> {
-				Common.tell(onlinePlayer, voucher.getSettings().getBroadcastMessage().replace("{player}", player.getName()).replace("{voucher_name}", voucher.getDisplayName()).replace("{voucher_id}", voucher.getId()));
+				Common.tell(onlinePlayer, replaceIds(player, voucher, voucher.getSettings().getBroadcastMessage()));
 			});
 
 		if (voucher.getSettings().removeOnUse())
@@ -150,7 +151,11 @@ public class VoucherManager {
 		if (reward.getRewardType() == RewardType.ITEM && reward.getItem() != null)
 			PlayerUtil.addItems(player.getInventory(), reward.getItem());
 		else
-			Common.dispatchCommand(player, reward.getCommand());
+			Common.dispatchCommand(player, HookManager.replacePlaceholders(player, reward.getCommand()));
+	}
+
+	private String replaceIds(Player player, Voucher voucher, String value) {
+		return HookManager.replacePlaceholders(player, value.replace("{player}", player.getName()).replace("{voucher_id}", voucher.getId()).replace("{voucher_name}", voucher.getDisplayName()));
 	}
 
 	public void load() {
