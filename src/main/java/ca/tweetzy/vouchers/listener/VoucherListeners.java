@@ -1,9 +1,6 @@
 package ca.tweetzy.vouchers.listener;
 
-import ca.tweetzy.tweety.Common;
-import ca.tweetzy.tweety.collection.StrictList;
 import ca.tweetzy.tweety.remain.CompMaterial;
-import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
 import org.bukkit.entity.Player;
@@ -13,7 +10,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;

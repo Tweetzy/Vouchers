@@ -1,7 +1,5 @@
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.tweety.collection.SerializedMap;
-import ca.tweetzy.tweety.model.ConfigSerializable;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.api.voucher.IVoucherReward;
 import lombok.AllArgsConstructor;
@@ -15,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
 @AllArgsConstructor
-public class VoucherReward implements IVoucherReward, ConfigSerializable {
+public class VoucherReward implements IVoucherReward {
 
 	private RewardType rewardType;
 	private ItemStack item;
@@ -66,22 +64,12 @@ public class VoucherReward implements IVoucherReward, ConfigSerializable {
 		this.chance = chance;
 	}
 
-	@Override
-	public SerializedMap serialize() {
-		return SerializedMap.ofArray(
-				"reward type", this.rewardType,
-				"item", this.item,
-				"command", this.command,
-				"chance", this.chance
-		);
-	}
-
-	public static VoucherReward deserialize(SerializedMap map) {
-		return new VoucherReward(
-				map.get("reward type", RewardType.class),
-				map.getItem("item"),
-				map.getString("command"),
-				map.getDouble("chance")
-		);
-	}
+//	public static VoucherReward deserialize(SerializedMap map) {
+//		return new VoucherReward(
+//				map.get("reward type", RewardType.class),
+//				map.getItemStack("item"),
+//				map.getString("command"),
+//				map.getDouble("chance")
+//		);
+//	}
 }

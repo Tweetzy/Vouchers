@@ -7,7 +7,7 @@
     <artifactId>vouchers</artifactId>
 
     <name>Vouchers</name>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -15,8 +15,8 @@
         <jarName>Vouchers</jarName>
         <main.class>${project.groupId}.${project.artifactId}.${project.name}</main.class>
         <java.version>1.8</java.version>
-        <tweety.version>1.10.0</tweety.version>
-        <tweety.path>com.github.kiranhart</tweety.path>
+        <tweety.version>2.2.0</tweety.version>
+        <tweety.path>ca.tweetzy</tweety.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -27,19 +27,21 @@
         </repository>
     </repositories>
 
-    <!-- UNCOMMENT ONLY IF YOUR java.version IS SET TO JAVA 16 OR HIGHER. -->
-    <!--    <pluginRepositories>-->
-    <!--        <pluginRepository>-->
-    <!--            <id>maven-snapshots</id>-->
-    <!--            <url>https://repository.apache.org/content/repositories/snapshots/</url>-->
-    <!--        </pluginRepository>-->
-    <!--    </pluginRepositories>-->
-
     <dependencies>
         <dependency>
             <groupId>${tweety.path}</groupId>
-            <artifactId>Tweety</artifactId>
+            <artifactId>tweety</artifactId>
             <version>${tweety.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Revxrsal.Lamp</groupId>
+            <artifactId>common</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Revxrsal.Lamp</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>2.6</version>
         </dependency>
     </dependencies>
     <build>
@@ -66,7 +68,9 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
-                            <include>${tweety.path}:Tweety*</include>
+                            <include>${tweety.path}:tweety*</include>
+                            <include>com.github.Revxrsal.Lamp:bukkit</include>
+                            <include>com.github.Revxrsal.Lamp:common</include>
                         </includes>
                     </artifactSet>
                     <filters>
@@ -84,6 +88,10 @@
                         <relocation>
                             <pattern>ca.tweetzy.tweety</pattern>
                             <shadedPattern>${project.groupId}.${project.artifactId}.core</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.github.Revxrsal.Lamp</pattern>
+                            <shadedPattern>${project.groupId}.${project.artifactId}.lib.lamp</shadedPattern> <!-- Replace this -->
                         </relocation>
                     </relocations>
                 </configuration>

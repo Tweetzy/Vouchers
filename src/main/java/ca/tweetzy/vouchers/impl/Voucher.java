@@ -1,22 +1,17 @@
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.tweety.collection.SerializedMap;
 import ca.tweetzy.tweety.collection.StrictList;
-import ca.tweetzy.tweety.menu.model.ItemCreator;
-import ca.tweetzy.tweety.model.ConfigSerializable;
+import ca.tweetzy.tweety.model.ItemCreator;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.IVoucher;
 import ca.tweetzy.vouchers.api.voucher.IVoucherSettings;
-import ca.tweetzy.vouchers.menu.MenuConfirm;
+import ca.tweetzy.vouchers.menus.MenuConfirm;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The current file has been created by Kiran Hart
@@ -25,7 +20,7 @@ import java.util.List;
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
 @AllArgsConstructor
-public class Voucher implements IVoucher, ConfigSerializable {
+public class Voucher implements IVoucher {
 
 	private final String id;
 	private CompMaterial icon;
@@ -74,28 +69,17 @@ public class Voucher implements IVoucher, ConfigSerializable {
 		return this.rewards;
 	}
 
-	@Override
-	public SerializedMap serialize() {
-		return SerializedMap.ofArray(
-				"id", this.id,
-				"icon", this.icon,
-				"display name", this.displayName,
-				"description", this.description,
-				"settings", this.settings,
-				"rewards", this.rewards
-		);
-	}
 
-	public static Voucher deserialize(SerializedMap map) {
-		return new Voucher(
-				map.getString("id"),
-				map.getMaterial("icon"),
-				map.getString("display name"),
-				new StrictList<>(map.getStringList("description")),
-				map.get("settings", VoucherSettings.class),
-				new StrictList<>(map.getList("rewards", VoucherReward.class))
-		);
-	}
+//	public static Voucher deserialize(SerializedMap map) {
+//		return new Voucher(
+//				map.getString("id"),
+//				map.getMaterial("icon"),
+//				map.getString("display name"),
+//				new StrictList<>(map.getStringList("description")),
+//				map.get("settings", VoucherSettings.class),
+//				new StrictList<>(map.getList("rewards", VoucherReward.class))
+//		);
+//	}
 
 	public ItemStack build() {
 		return ItemCreator
@@ -110,7 +94,7 @@ public class Voucher implements IVoucher, ConfigSerializable {
 
 	public void execute(@NonNull final Player player, @NonNull final ItemStack voucherItemstack) {
 		if (this.settings.askConfirm()) {
-			new MenuConfirm(this, voucherItemstack).displayTo(player);
+			Vouchers.getGuiManager().showGUI(player, new MenuConfirm(this, voucherItemstack));
 		} else {
 			Vouchers.getVoucherManager().executeVoucher(player, this, voucherItemstack);
 		}

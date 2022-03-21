@@ -1,26 +1,21 @@
 package ca.tweetzy.vouchers.model;
 
-import ca.tweetzy.tweety.*;
+import ca.tweetzy.tweety.model.Common;
 import ca.tweetzy.tweety.model.HookManager;
 import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.tweety.remain.Remain;
-import ca.tweetzy.tweety.settings.YamlConfig;
-import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.tweety.util.PlayerUtil;
+import ca.tweetzy.tweety.util.RandomUtil;
 import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.impl.VoucherReward;
-import ca.tweetzy.vouchers.menu.MenuRewardSelect;
-import ca.tweetzy.vouchers.settings.Localization;
-import lombok.Getter;
+import ca.tweetzy.vouchers.settings.Locale;
 import lombok.NonNull;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -33,9 +28,7 @@ import java.util.UUID;
  */
 public class VoucherManager {
 
-	@Getter
-	private VoucherHolder voucherHolder;
-
+	private final List<Voucher> vouchers = new ArrayList<>();
 	private final HashMap<UUID, HashMap<String, Long>> cooldowns = new HashMap<>();
 
 	public void addPlayerToCoolDown(UUID player, Voucher voucher) {
@@ -61,23 +54,21 @@ public class VoucherManager {
 	}
 
 	public Voucher findVoucher(@NonNull final String id) {
-		return this.voucherHolder.getVouchers().getSource().stream().filter(voucher -> voucher.getId().equalsIgnoreCase(id)).findFirst().orElse(null);
+		return this.vouchers.stream().filter(voucher -> voucher.getId().equalsIgnoreCase(id)).findFirst().orElse(null);
 	}
 
 	public void addVoucher(@NonNull final Voucher voucher) {
-		this.voucherHolder.getVouchers().addIfNotExist(voucher);
-		this.voucherHolder.save();
+		if (this.vouchers.contains(voucher)) return;
+		this.vouchers.add(voucher);
 	}
 
 	public void deleteVoucher(@NonNull final String id) {
-		final Voucher voucher = this.findVoucher(id);
-		if (voucher == null) return;
-		this.voucherHolder.getVouchers().removeWeak(voucher);
-		this.voucherHolder.save();
+		final Voucher voucher = findVoucher(id);
+		this.vouchers.remove(voucher);
 	}
 
 	public List<Voucher> getVouchers() {
-		return Collections.unmodifiableList(this.voucherHolder.getVouchers().getSource());
+		return this.vouchers;
 	}
 
 	public boolean isVoucher(@NonNull final ItemStack itemstack) {
@@ -93,7 +84,7 @@ public class VoucherManager {
 	// yea I know i'm repeating replace() a lot here, i'll fix it
 	public void executeVoucher(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final ItemStack voucherItem) {
 		if (voucher.getSettings().requiresUsePermission() && !player.hasPermission(voucher.getSettings().getPermission())) {
-			Common.tell(player, Localization.Error.NO_VOUCHER_PERMISSION);
+			Common.tell(player, Locale.ERROR_NO_PERMISSION.getString());
 			return;
 		}
 
@@ -101,7 +92,7 @@ public class VoucherManager {
 			if (isPlayerInCoolDownForVoucher(player.getUniqueId(), voucher)) {
 				long coolDownTime = getCoolDownTime(player.getUniqueId(), voucher);
 				if (System.currentTimeMillis() < coolDownTime) {
-					Common.tell(player, Localization.Error.COOLDOWN.replace("{remaining_time}", String.format("%,.2f", (coolDownTime - System.currentTimeMillis()) / 1000F)));
+					Common.tell(player, Locale.ERROR_COOLDOWN.getString().replace("{remaining_time}", String.format("%,.2f", (coolDownTime - System.currentTimeMillis()) / 1000F)));
 					return;
 				}
 			}
@@ -111,16 +102,16 @@ public class VoucherManager {
 		voucher.getSettings().getSound().play(player);
 
 		if (voucher.getSettings().sendTitle() && voucher.getSettings().sendSubtitle())
-			Remain.sendTitle(player, replaceIds(player,voucher, voucher.getSettings().getTitle()), replaceIds(player,voucher, voucher.getSettings().getSubtitle()));
+			Remain.sendTitle(player, replaceIds(player, voucher, voucher.getSettings().getTitle()), replaceIds(player, voucher, voucher.getSettings().getSubtitle()));
 		else if (voucher.getSettings().sendTitle() && !voucher.getSettings().sendSubtitle())
-			Remain.sendTitle(player, replaceIds(player,voucher, voucher.getSettings().getTitle()), "");
+			Remain.sendTitle(player, replaceIds(player, voucher, voucher.getSettings().getTitle()), "");
 		else
-			Remain.sendTitle(player, "", replaceIds(player,voucher, voucher.getSettings().getSubtitle()));
+			Remain.sendTitle(player, "", replaceIds(player, voucher, voucher.getSettings().getSubtitle()));
 
 		if (voucher.getSettings().sendActionBar())
-			Remain.sendActionBar(player, replaceIds(player,voucher, voucher.getSettings().getActionBar()));
+			Remain.sendActionBar(player, replaceIds(player, voucher, voucher.getSettings().getActionBar()));
 
-		Common.tell(player, replaceIds(player,voucher, voucher.getSettings().getRedeemMessage()));
+		Common.tell(player, replaceIds(player, voucher, voucher.getSettings().getRedeemMessage()));
 
 		if (voucher.getSettings().broadcastRedeem())
 			Remain.getOnlinePlayers().forEach(onlinePlayer -> {
@@ -139,7 +130,7 @@ public class VoucherManager {
 			applyReward(player, selectedReward);
 
 		} else if (voucher.getSettings().getRewardMode() == RewardMode.REWARD_SELECT) {
-			new MenuRewardSelect(voucher).displayTo(player);
+//			new MenuRewardSelect(voucher).displayTo(player); // todo open reward select
 		} else {
 			voucher.getRewards().forEach(reward -> {
 				if (RandomUtil.chanceD(reward.getChance())) {
@@ -160,7 +151,4 @@ public class VoucherManager {
 		return HookManager.replacePlaceholders(player, value.replace("{player}", player.getName()).replace("{voucher_id}", voucher.getId()).replace("{voucher_name}", voucher.getDisplayName()));
 	}
 
-	public void load() {
-		this.voucherHolder = new VoucherHolder();
-	}
 }

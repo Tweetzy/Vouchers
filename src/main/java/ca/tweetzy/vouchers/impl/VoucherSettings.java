@@ -1,7 +1,6 @@
 package ca.tweetzy.vouchers.impl;
 
 import ca.tweetzy.tweety.collection.SerializedMap;
-import ca.tweetzy.tweety.model.ConfigSerializable;
 import ca.tweetzy.tweety.remain.CompSound;
 import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.IVoucherSettings;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
 @AllArgsConstructor
-public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
+public class VoucherSettings implements IVoucherSettings {
 
 	private RewardMode rewardMode;
 	private CompSound sound;
@@ -228,48 +227,25 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 		this.cooldown = cooldown;
 	}
 
-	@Override
-	public SerializedMap serialize() {
-		return SerializedMap.ofArray(
-				"reward mode", this.rewardMode,
-				"sound", this.sound,
-				"glowing", this.glowing,
-				"ask confirm", this.askConfirm,
-				"remove on use", this.removeOnUse,
-				"require use permission", this.requireUsePermission,
-				"use permission", this.usePermission,
-				"broadcast redeem", this.broadcastRedeem,
-				"send title", this.sendTitle,
-				"title", this.title,
-				"send subtitle", this.sendSubtitle,
-				"subtitle", this.subTitle,
-				"send actionbar", this.sendActionBar,
-				"actionbar", this.actionbar,
-				"redeem message", this.redeemMessage,
-				"broadcast message", this.broadcastMessage,
-				"cooldown", this.cooldown
-		);
-	}
-
-	public static VoucherSettings deserialize(SerializedMap map) {
-		return new VoucherSettings(
-				map.get("reward mode", RewardMode.class),
-				map.get("sound", CompSound.class),
-				map.getInteger("cooldown"),
-				map.getBoolean("glowing"),
-				map.getBoolean("ask confirm"),
-				map.getBoolean("remove on use"),
-				map.getBoolean("require use permission"),
-				map.getBoolean("broadcast redeem"),
-				map.getBoolean("send title"),
-				map.getBoolean("send subtitle"),
-				map.getBoolean("send actionbar"),
-				map.getString("title"),
-				map.getString("subtitle"),
-				map.getString("actionbar"),
-				map.getString("redeem message"),
-				map.getString("broadcast message"),
-				map.getString("use permission")
-		);
-	}
+//	public static VoucherSettings deserialize(SerializedMap map) {
+//		return new VoucherSettings(
+//				map.get("reward mode", RewardMode.class),
+//				map.get("sound", CompSound.class),
+//				map.getInteger("cooldown"),
+//				map.getBoolean("glowing"),
+//				map.getBoolean("ask confirm"),
+//				map.getBoolean("remove on use"),
+//				map.getBoolean("require use permission"),
+//				map.getBoolean("broadcast redeem"),
+//				map.getBoolean("send title"),
+//				map.getBoolean("send subtitle"),
+//				map.getBoolean("send actionbar"),
+//				map.getString("title"),
+//				map.getString("subtitle"),
+//				map.getString("actionbar"),
+//				map.getString("redeem message"),
+//				map.getString("broadcast message"),
+//				map.getString("use permission")
+//		);
+//	}
 }
