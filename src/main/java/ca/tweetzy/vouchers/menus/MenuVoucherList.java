@@ -1,7 +1,6 @@
 package ca.tweetzy.vouchers.menus;
 
 import ca.tweetzy.tweety.model.ItemCreator;
-import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.tweety.util.PlayerUtil;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
