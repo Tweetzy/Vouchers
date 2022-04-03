@@ -6,10 +6,12 @@ import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.tweety.remain.Remain;
 import ca.tweetzy.tweety.util.PlayerUtil;
 import ca.tweetzy.tweety.util.RandomUtil;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.RewardMode;
 import ca.tweetzy.vouchers.api.RewardType;
 import ca.tweetzy.vouchers.impl.Voucher;
 import ca.tweetzy.vouchers.impl.VoucherReward;
+import ca.tweetzy.vouchers.menus.MenuRewardSelect;
 import ca.tweetzy.vouchers.settings.Locale;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -130,7 +132,7 @@ public class VoucherManager {
 			applyReward(player, selectedReward);
 
 		} else if (voucher.getSettings().getRewardMode() == RewardMode.REWARD_SELECT) {
-//			new MenuRewardSelect(voucher).displayTo(player); // todo open reward select
+			Vouchers.getGuiManager().showGUI(player, new MenuRewardSelect(voucher));
 		} else {
 			voucher.getRewards().forEach(reward -> {
 				if (RandomUtil.chanceD(reward.getChance())) {
