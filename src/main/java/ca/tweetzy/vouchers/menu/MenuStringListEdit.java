@@ -41,7 +41,9 @@ public final class MenuStringListEdit extends MenuPagged<String> {
 				if (line == null || line.length() < 1)
 					return false;
 
-				MenuStringListEdit.this.voucher.getDescription().addWeak(line);
+
+
+				MenuStringListEdit.this.voucher.getDescription().add(line);
 				saveReopen(player);
 				return true;
 			}
@@ -77,7 +79,9 @@ public final class MenuStringListEdit extends MenuPagged<String> {
 	@Override
 	protected void onPageClick(Player player, String s, ClickType clickType) {
 		if (clickType == ClickType.DROP) {
-			this.voucher.getDescription().removeWeak(s);
+			if (!this.voucher.getDescription().contains(s)) return;
+
+			this.voucher.getDescription().remove(s);
 			saveReopen(player);
 		}
 	}

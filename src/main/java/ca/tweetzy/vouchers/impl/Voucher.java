@@ -30,9 +30,9 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	private final String id;
 	private CompMaterial icon;
 	private String displayName;
-	private final StrictList<String> description;
+	private final ArrayList<String> description;
 	private final IVoucherSettings settings;
-	private final StrictList<VoucherReward> rewards;
+	private final ArrayList<VoucherReward> rewards;
 
 	@Override
 	public @NonNull String getId() {
@@ -60,7 +60,7 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	}
 
 	@Override
-	public @NonNull StrictList<String> getDescription() {
+	public @NonNull ArrayList<String> getDescription() {
 		return this.description;
 	}
 
@@ -70,7 +70,7 @@ public class Voucher implements IVoucher, ConfigSerializable {
 	}
 
 	@Override
-	public @NotNull StrictList<VoucherReward> getRewards() {
+	public @NotNull ArrayList<VoucherReward> getRewards() {
 		return this.rewards;
 	}
 
@@ -91,16 +91,16 @@ public class Voucher implements IVoucher, ConfigSerializable {
 				map.getString("id"),
 				map.getMaterial("icon"),
 				map.getString("display name"),
-				new StrictList<>(map.getStringList("description")),
+				new ArrayList<>(map.getStringList("description")),
 				map.get("settings", VoucherSettings.class),
-				new StrictList<>(map.getList("rewards", VoucherReward.class))
+				new ArrayList<>(map.getList("rewards", VoucherReward.class))
 		);
 	}
 
 	public ItemStack build() {
 		return ItemCreator
 				.of(this.icon, this.displayName)
-				.lore(this.description.getSource())
+				.lore(this.description)
 				.glow(this.settings.isGlowing())
 				.hideTags(true)
 				.unbreakable(true)

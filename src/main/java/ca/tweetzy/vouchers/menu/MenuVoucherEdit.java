@@ -52,7 +52,7 @@ public final class MenuVoucherEdit extends Menu {
 
 		final List<String> descLore = new ArrayList<>();
 		descLore.add("");
-		descLore.addAll(this.voucher.getDescription().getSource());
+		descLore.addAll(this.voucher.getDescription());
 		descLore.add("");
 		descLore.add("&dClick &7to edit voucher item");
 

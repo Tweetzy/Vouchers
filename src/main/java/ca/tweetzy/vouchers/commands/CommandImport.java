@@ -1,7 +1,6 @@
 package ca.tweetzy.vouchers.commands;
 
 import ca.tweetzy.tweety.FileUtil;
-import ca.tweetzy.tweety.collection.StrictList;
 import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.RewardType;
@@ -13,7 +12,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The current file has been created by Kiran Hart
@@ -59,7 +57,7 @@ public final class CommandImport extends AbstractVoucherCommand {
 					voucherSection.getBoolean("options.cool down.use") ? voucherSection.getInt("options.cool down.time") : -1
 			);
 
-			final StrictList<VoucherReward> rewards = new StrictList<>();
+			final ArrayList<VoucherReward> rewards = new ArrayList<>();
 
 			voucherSection.getStringList("execution.commands").forEach(cmd -> {
 				rewards.add(new VoucherReward(
@@ -74,7 +72,7 @@ public final class CommandImport extends AbstractVoucherCommand {
 					node,
 					CompMaterial.fromString(voucherSection.getString("material", "GRASS_BLOCK")),
 					voucherSection.getString("display name", "&e" + node),
-					new StrictList<>(voucherSection.getStringList("lore")),
+					new ArrayList<>(voucherSection.getStringList("lore")),
 					voucherSettings,
 					rewards
 			);

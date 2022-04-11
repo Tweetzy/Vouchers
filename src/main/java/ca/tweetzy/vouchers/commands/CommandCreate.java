@@ -11,6 +11,7 @@ import ca.tweetzy.vouchers.menu.MenuVoucherEdit;
 import ca.tweetzy.vouchers.settings.Localization;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 /**
@@ -38,7 +39,7 @@ public final class CommandCreate extends AbstractVoucherCommand {
 					return false;
 				}
 
-				Voucher voucher = new Voucher(val, CompMaterial.PAPER, val, new StrictList<>("&7sample lore"), new VoucherSettings(val), new StrictList<>(new VoucherReward()));
+				Voucher voucher = new Voucher(val, CompMaterial.PAPER, val, new ArrayList<>(Collections.singletonList("&7sample lore")), new VoucherSettings(val), new ArrayList<>(Collections.singletonList(new VoucherReward())));
 				Vouchers.getVoucherManager().addVoucher(voucher);
 				new MenuVoucherEdit(voucher).displayTo(player);
 

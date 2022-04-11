@@ -1,7 +1,5 @@
 package ca.tweetzy.vouchers.menu;
 
-import ca.tweetzy.tweety.ChatUtil;
-import ca.tweetzy.tweety.Common;
 import ca.tweetzy.tweety.ItemUtil;
 import ca.tweetzy.tweety.menu.Menu;
 import ca.tweetzy.tweety.menu.MenuPagged;
@@ -18,7 +16,6 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.ChatPaginator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +85,8 @@ public final class MenuVoucherRewards extends MenuPagged<VoucherReward> {
 	@Override
 	protected void onPageClick(Player player, VoucherReward reward, ClickType click) {
 		if (click == ClickType.DROP) {
-			this.voucher.getRewards().removeWeak(reward);
+			if (!this.voucher.getRewards().contains(reward)) return;
+			this.voucher.getRewards().remove(reward);
 			Vouchers.getVoucherManager().getVoucherHolder().save();
 			newInstance().displayTo(player);
 		}

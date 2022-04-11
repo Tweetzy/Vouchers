@@ -5,6 +5,7 @@ import ca.tweetzy.tweety.remain.CompMaterial;
 import ca.tweetzy.vouchers.impl.VoucherReward;
 import lombok.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,7 +57,7 @@ public interface IVoucher {
 	 *
 	 * @return the voucher description
 	 */
-	@NonNull StrictList<String> getDescription();
+	@NonNull ArrayList<String> getDescription();
 
 	/**
 	 * Get the settings of the voucher
@@ -70,5 +71,5 @@ public interface IVoucher {
 	 *
 	 * @return the voucher rewards
 	 */
-	@NonNull StrictList<VoucherReward> getRewards();
+	@NonNull ArrayList<VoucherReward> getRewards();
 }
