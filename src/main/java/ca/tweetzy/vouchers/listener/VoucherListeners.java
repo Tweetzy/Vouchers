@@ -1,9 +1,6 @@
 package ca.tweetzy.vouchers.listener;
 
-import ca.tweetzy.tweety.Common;
-import ca.tweetzy.tweety.collection.StrictList;
 import ca.tweetzy.tweety.remain.CompMaterial;
-import ca.tweetzy.tweety.remain.CompMetadata;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.impl.Voucher;
 import org.bukkit.entity.Player;
@@ -13,7 +10,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -30,17 +26,18 @@ public final class VoucherListeners implements Listener {
 	public void onRedeem(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		if (event.getItem() == null) return;
-		if (event.getAction() != Action.RIGHT_CLICK_AIR) return;
 
-		final ItemStack possibleVoucher = event.getItem();
-		if (!Vouchers.getVoucherManager().isVoucher(possibleVoucher)) return;
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+			final ItemStack possibleVoucher = event.getItem();
+			if (!Vouchers.getVoucherManager().isVoucher(possibleVoucher)) return;
 
-		final String voucherId = Vouchers.getVoucherManager().getVoucherId(possibleVoucher);
-		final Voucher voucher = Vouchers.getVoucherManager().findVoucher(voucherId);
+			final String voucherId = Vouchers.getVoucherManager().getVoucherId(possibleVoucher);
+			final Voucher voucher = Vouchers.getVoucherManager().findVoucher(voucherId);
 
-		if (voucher == null) return;
+			if (voucher == null) return;
 
-		voucher.execute(player, possibleVoucher);
+			voucher.execute(player, possibleVoucher);
+		}
 	}
 
 	@EventHandler

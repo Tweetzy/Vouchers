@@ -135,7 +135,7 @@ public class VoucherSettings implements IVoucherSettings, ConfigSerializable {
 
 	@Override
 	public void setSendTitle(boolean send) {
-		this.sendActionBar = send;
+		this.sendTitle = send;
 	}
 
 	@Override
