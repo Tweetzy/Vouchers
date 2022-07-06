@@ -1,0 +1,169 @@
+/*
+ * Vouchers
+ * Copyright 2022 Kiran Hart
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package ca.tweetzy.vouchers.database;
+
+import ca.tweetzy.feather.database.Callback;
+import ca.tweetzy.feather.database.DataManagerAbstract;
+import ca.tweetzy.feather.database.DatabaseConnector;
+import ca.tweetzy.vouchers.api.voucher.Redeem;
+import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.impl.ActiveVoucher;
+import ca.tweetzy.vouchers.impl.VoucherRedeem;
+import ca.tweetzy.vouchers.impl.VoucherSettings;
+import ca.tweetzy.vouchers.model.ItemEncoder;
+import ca.tweetzy.vouchers.model.RewardFactory;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import lombok.NonNull;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public final class DataManager extends DataManagerAbstract {
+
+	public DataManager(DatabaseConnector databaseConnector, Plugin plugin) {
+		super(databaseConnector, plugin);
+	}
+
+	public void createVoucher(@NotNull final Voucher voucher, Callback<Voucher> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			final String query = "INSERT INTO " + this.getTablePrefix() + "voucher (id, name, description, item, options, rewards) VALUES (?, ?, ?, ?, ?, ?)";
+			final String fetchQuery = "SELECT * FROM " + this.getTablePrefix() + "voucher WHERE id = ?";
+
+			try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+				final PreparedStatement fetch = connection.prepareStatement(fetchQuery);
+
+				fetch.setString(1, voucher.getId().toLowerCase());
+
+				preparedStatement.setString(1, voucher.getId().toLowerCase());
+				preparedStatement.setString(2, voucher.getName());
+				preparedStatement.setString(3, String.join(";;;", voucher.getDescription()));
+				preparedStatement.setString(4, ItemEncoder.encodeItem(voucher.getItem()));
+				preparedStatement.setString(5, voucher.getOptions().toJsonString());
+				preparedStatement.setString(6, voucher.getRewardJson());
+
+				preparedStatement.executeUpdate();
+
+				if (callback != null) {
+					final ResultSet res = fetch.executeQuery();
+					res.next();
+					callback.accept(null, extractVoucher(res));
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				resolveCallback(callback, e);
+			}
+		}));
+	}
+
+	public void getVouchers(@NonNull final Callback<List<Voucher>> callback) {
+		final List<Voucher> vouchers = new ArrayList<>();
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.getTablePrefix() + "voucher")) {
+				final ResultSet resultSet = statement.executeQuery();
+				while (resultSet.next()) {
+					vouchers.add(extractVoucher(resultSet));
+				}
+
+				callback.accept(null, vouchers);
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+			}
+		}));
+	}
+
+	public void updateVoucher(@NonNull final Voucher voucher, Callback<Boolean> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + this.getTablePrefix() + "voucher SET name = ?, description = ?, item = ?, options = ?, rewards = ? WHERE id = ?")) {
+
+				preparedStatement.setString(1, voucher.getName());
+				preparedStatement.setString(2, String.join(";;;", voucher.getDescription()));
+				preparedStatement.setString(3, ItemEncoder.encodeItem(voucher.getItem()));
+				preparedStatement.setString(4, voucher.getOptions().toJsonString());
+				preparedStatement.setString(5, voucher.getRewardJson());
+				preparedStatement.setString(6, voucher.getId().toLowerCase());
+
+				int result = preparedStatement.executeUpdate();
+
+				if (callback != null)
+					callback.accept(null, result > 0);
+
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+			}
+		}));
+	}
+
+	public void deleteVoucher(@NonNull final String id, Callback<Boolean> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + this.getTablePrefix() + "voucher WHERE id = ?")) {
+				statement.setString(1, id);
+
+				int result = statement.executeUpdate();
+				callback.accept(null, result > 0);
+
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+			}
+		}));
+	}
+
+	private Voucher extractVoucher(final ResultSet resultSet) throws SQLException {
+		final JsonArray object = JsonParser.parseString(resultSet.getString("rewards")).getAsJsonArray();
+
+		final List<Reward> rewardList = new ArrayList<>();
+		object.forEach(el -> rewardList.add(RewardFactory.decode(el.getAsJsonObject().toString())));
+
+		return new ActiveVoucher(
+				resultSet.getString("id"),
+				resultSet.getString("name"),
+				ItemEncoder.decodeItem(resultSet.getString("item")),
+				new ArrayList<>(Arrays.asList(resultSet.getString("description").split(";;;"))),
+				VoucherSettings.decode(resultSet.getString("options")),
+				rewardList
+		);
+	}
+
+	private Redeem extractVoucherRedeem(final ResultSet resultSet) throws SQLException {
+		return new VoucherRedeem(
+				UUID.fromString(resultSet.getString("id")),
+				UUID.fromString(resultSet.getString("user")),
+				resultSet.getString("voucher"),
+				resultSet.getLong("time")
+		);
+	}
+
+	private void resolveCallback(@Nullable Callback<?> callback, @NotNull Exception ex) {
+		if (callback != null) {
+			callback.accept(ex, null);
+		} else {
+			ex.printStackTrace();
+		}
+	}
+}

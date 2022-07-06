@@ -18,5 +18,7 @@
 
 package ca.tweetzy.vouchers.api;
 
-public interface VouchersAPI {
+public interface Jsonable {
+
+	String toJsonString();
 }

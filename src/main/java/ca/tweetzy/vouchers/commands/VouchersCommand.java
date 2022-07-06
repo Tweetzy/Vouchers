@@ -1,46 +1,64 @@
+/*
+ * Vouchers
+ * Copyright 2022 Kiran Hart
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ca.tweetzy.vouchers.commands;
 
-import ca.tweetzy.tweety.annotation.AutoRegister;
-import ca.tweetzy.tweety.command.SimpleCommandGroup;
-import ca.tweetzy.vouchers.menu.MenuVoucherList;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import ca.tweetzy.feather.command.AllowedExecutor;
+import ca.tweetzy.feather.command.Command;
+import ca.tweetzy.feather.command.ReturnType;
+import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.gui.GUIVouchersAdmin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-/**
- * The current file has been created by Kiran Hart
- * Date Created: December 28 2021
- * Time Created: 1:27 a.m.
- * Usage of any code found within this class is prohibited unless given explicit permission otherwise
- */
-@AutoRegister
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class VouchersCommand extends SimpleCommandGroup {
+import java.util.List;
 
-	@Getter
-	private static final VouchersCommand instance = new VouchersCommand();
+public final class VouchersCommand extends Command {
 
-	@Override
-	protected void zeroArgActions(CommandSender sender) {
-		if (!(sender instanceof Player)) return;
-		final Player player = (Player) sender;
-		new MenuVoucherList().displayTo(player);
+	public VouchersCommand() {
+		super(AllowedExecutor.BOTH, "vouchers");
 	}
 
 	@Override
-	protected void registerSubcommands() {
-		registerSubcommand(new CommandCreate());
-		registerSubcommand(new CommandDelete());
-		registerSubcommand(new CommandEdit());
-		registerSubcommand(new CommandGive());
-		registerSubcommand(new CommandImport());
-		registerSubcommand(new CommandReload());
+	protected ReturnType execute(CommandSender sender, String... args) {
+		if (sender instanceof final Player player)
+			Vouchers.getGuiManager().showGUI(player, new GUIVouchersAdmin());
+
+		return ReturnType.SUCCESS;
 	}
 
 	@Override
-	protected boolean useZeroArgAction() {
-		return true;
+	protected List<String> tab(CommandSender sender, String... args) {
+		return null;
+	}
+
+	@Override
+	public String getPermissionNode() {
+		return null;
+	}
+
+	@Override
+	public String getSyntax() {
+		return null;
+	}
+
+	@Override
+	public String getDescription() {
+		return null;
 	}
 }

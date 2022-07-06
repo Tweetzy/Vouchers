@@ -16,7 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.model.manager;
 
-public interface VouchersAPI {
+import lombok.NonNull;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public abstract class Manager<K, V> {
+
+	protected final Map<K, V> contents = new ConcurrentHashMap<>();
+
+	public abstract List<V> getAll();
+
+	public abstract V find(@NonNull final K k);
+
+	public abstract void add(@NonNull final V v);
+
+	public abstract void remove(@NonNull final K k);
+
+	public abstract void load();
 }

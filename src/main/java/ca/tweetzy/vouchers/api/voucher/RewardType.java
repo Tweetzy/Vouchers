@@ -16,7 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.api.voucher;
 
-public interface VouchersAPI {
+public enum RewardType {
+
+	COMMAND,
+	ITEM
 }

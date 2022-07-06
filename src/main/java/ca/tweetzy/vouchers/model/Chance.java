@@ -16,7 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.model;
 
-public interface VouchersAPI {
+import ca.tweetzy.vouchers.impl.VoucherRedeem;
+import lombok.experimental.UtilityClass;
+
+import java.util.Random;
+import java.util.UUID;
+
+@UtilityClass
+public final class Chance {
+
+	public boolean tryChance(final double chance) {
+		if (chance >= 100D) return true;
+		return Math.random() < chance / 100;
+	}
 }

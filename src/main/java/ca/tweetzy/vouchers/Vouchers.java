@@ -1,87 +1,126 @@
+/*
+ * Vouchers
+ * Copyright 2022 Kiran Hart
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ca.tweetzy.vouchers;
 
-import ca.tweetzy.tweety.Common;
-import ca.tweetzy.tweety.Messenger;
-import ca.tweetzy.tweety.MinecraftVersion;
-import ca.tweetzy.tweety.plugin.TweetyPlugin;
-import ca.tweetzy.tweety.settings.YamlStaticConfig;
-import ca.tweetzy.vouchers.listener.VoucherListeners;
-import ca.tweetzy.vouchers.model.VoucherManager;
+import ca.tweetzy.feather.FeatherCore;
+import ca.tweetzy.feather.FeatherPlugin;
+import ca.tweetzy.feather.command.CommandManager;
+import ca.tweetzy.feather.comp.enums.CompMaterial;
+import ca.tweetzy.feather.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.feather.database.DataMigrationManager;
+import ca.tweetzy.feather.database.DatabaseConnector;
+import ca.tweetzy.feather.database.SQLiteConnector;
+import ca.tweetzy.feather.gui.GuiManager;
+import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.vouchers.commands.VouchersCommand;
+import ca.tweetzy.vouchers.database.DataManager;
+import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
+import ca.tweetzy.vouchers.impl.importer.VouchersImporter;
+import ca.tweetzy.vouchers.model.manager.VoucherManager;
+import ca.tweetzy.vouchers.settings.Locale;
 import ca.tweetzy.vouchers.settings.Settings;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-/**
- * The current file has been created by Kiran Hart
- * Date Created: December 22 2021
- * Time Created: 6:24 p.m.
- * Usage of any code found within this class is prohibited unless given explicit permission otherwise
- */
-public final class Vouchers extends TweetyPlugin {
 
+public final class Vouchers extends FeatherPlugin {
+
+	private final TweetzyYamlConfig coreConfig = new TweetzyYamlConfig(this, "config.yml");
+	private TweetzyYamlConfig languageConfig;
+
+	private final GuiManager guiManager = new GuiManager(this);
+	private final CommandManager commandManager = new CommandManager(this);
 	private final VoucherManager voucherManager = new VoucherManager();
 
-	private boolean bStats = false;
+	@SuppressWarnings("FieldCanBeLocal")
+	private DatabaseConnector databaseConnector;
+
+	@SuppressWarnings("FieldCanBeLocal")
+	private DataManager dataManager;
 
 	@Override
-	protected void onPluginStart() {
-		normalizePrefix();
+	protected void onFlight() {
+		FeatherCore.registerPlugin(this, 7, CompMaterial.PAPER.name());
+
+		if (Settings.setup()) {
+			this.languageConfig = new TweetzyYamlConfig(this, Settings.LANGUAGE.getString() + ".yml");
+			Locale.setup();
+
+			Common.setPrefix(Settings.PREFIX.getString());
+		}
+
+		// Set up the database if enabled
+		this.databaseConnector = new SQLiteConnector(this);
+		this.dataManager = new DataManager(this.databaseConnector, this);
+
+		final DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
+				new _1_InitialMigration()
+		);
+
+		// run migrations for tables
+		dataMigrationManager.runMigrations();
+
+		new VouchersImporter().load();
+
 		this.voucherManager.load();
 
-		registerEvents(new VoucherListeners());
-
-		if (Settings.AUTO_STATS) {
-			final File file = new File("plugins" + File.separator + "bStats" + File.separator + "config.yml");
-			if (!file.exists()) bStats = true;
-			else {
-				final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-				configuration.set("enabled", true);
-				try {
-					configuration.save(file);
-					bStats = true;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		if (!bStats) {
-			Common.logFramed("&cPlease enable bStats within your plugins folder", "&cit helps me collect data on Vouchers.");
-		}
+		this.guiManager.init();
+		this.commandManager.registerCommandDynamically(new VouchersCommand());
 	}
 
 	@Override
-	protected void onPluginReload() {
-
+	protected void onSleep() {
+		shutdownDataManager(this.dataManager);
 	}
 
+	@NotNull
 	@Override
-	protected void onPluginStop() {
-//		this.voucherManager.getVoucherHolder().save();
+	public List<TweetzyYamlConfig> getConfigs() {
+		return List.of(this.coreConfig);
+	}
+
+	// instance
+	public static Vouchers getInstance() {
+		return (Vouchers) FeatherPlugin.getInstance();
+	}
+
+	public static TweetzyYamlConfig getLangConfig() {
+		return getInstance().languageConfig;
+	}
+
+	// data manager
+	public static TweetzyYamlConfig getCoreConfig() {
+		return getInstance().coreConfig;
+	}
+
+	// data manager
+	public static DataManager getDataManager() {
+		return getInstance().dataManager;
 	}
 
 	public static VoucherManager getVoucherManager() {
-		return ((Vouchers) TweetyPlugin.getInstance()).voucherManager;
+		return getInstance().voucherManager;
 	}
 
-	@Override
-	public MinecraftVersion.V getMinimumVersion() {
-		return MinecraftVersion.V.v1_8;
-	}
-
-	private void normalizePrefix() {
-		Common.ADD_TELL_PREFIX = true;
-		Common.ADD_LOG_PREFIX = true;
-		Common.setTellPrefix(Settings.PREFIX);
-		Common.setLogPrefix(Settings.PREFIX);
-		Messenger.setInfoPrefix(Settings.PREFIX + " ");
-		Messenger.setAnnouncePrefix(Settings.PREFIX + " ");
-		Messenger.setErrorPrefix(Settings.PREFIX + " ");
-		Messenger.setQuestionPrefix(Settings.PREFIX + " ");
-		Messenger.setSuccessPrefix(Settings.PREFIX + " ");
-		Messenger.setWarnPrefix(Settings.PREFIX + " ");
+	// gui manager
+	public static GuiManager getGuiManager() {
+		return getInstance().guiManager;
 	}
 }

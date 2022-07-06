@@ -7,16 +7,17 @@
     <artifactId>vouchers</artifactId>
 
     <name>Vouchers</name>
-    <version>2.3.0</version>
+    <description>This is quickstart template for plugins</description>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
         <author>Kiran Hart</author>
-        <jarName>Vouchers</jarName>
+        <jarName>${project.name}</jarName>
         <main.class>${project.groupId}.${project.artifactId}.${project.name}</main.class>
-        <java.version>1.8</java.version>
-        <tweety.version>1.16.0</tweety.version>
-        <tweety.path>com.github.kiranhart</tweety.path>
+        <java.version>16</java.version>
+        <feather.version>3.0.0</feather.version>
+        <feather.path>ca.tweetzy</feather.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -25,26 +26,67 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
-    <!-- UNCOMMENT ONLY IF YOUR java.version IS SET TO JAVA 16 OR HIGHER. -->
-    <!--    <pluginRepositories>-->
-    <!--        <pluginRepository>-->
-    <!--            <id>maven-snapshots</id>-->
-    <!--            <url>https://repository.apache.org/content/repositories/snapshots/</url>-->
-    <!--        </pluginRepository>-->
-    <!--    </pluginRepositories>-->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
-            <groupId>${tweety.path}</groupId>
-            <artifactId>Tweety</artifactId>
-            <version>${tweety.version}</version>
+            <groupId>${feather.path}</groupId>
+            <artifactId>feather</artifactId>
+            <version>${feather.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
         </dependency>
     </dependencies>
     <build>
         <finalName>${jarName}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,number}</format>
+                    <items>
+                        <item>buildNumber</item>
+                    </items>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -52,8 +94,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -66,7 +117,7 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
-                            <include>${tweety.path}:Tweety*</include>
+                            <include>${feather.path}:feather*</include>
                         </includes>
                     </artifactSet>
                     <filters>
@@ -82,35 +133,10 @@
                     </filters>
                     <relocations>
                         <relocation>
-                            <pattern>ca.tweetzy.tweety</pattern>
-                            <shadedPattern>${project.groupId}.${project.artifactId}.core</shadedPattern>
+                            <pattern>ca.tweetzy.feather</pattern>
+                            <shadedPattern>${project.groupId}.${project.artifactId}.feather</shadedPattern>
                         </relocation>
                     </relocations>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>testCompile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -134,23 +160,6 @@
                             </resources>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>copy-files-to-ready-jars</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>C:\Users\Kiran\Documents\Development\Minecraft\Ready Jars</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>C:\Users\Kiran\Documents\Development\Minecraft\Active\${project.name}\target</directory>
-                                    <include>${project.name}.jar</include>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>
@@ -161,4 +170,10 @@
             </resource>
         </resources>
     </build>
+    <scm>
+        <connection>scm:git:http://127.0.0.1/dummy</connection>
+        <developerConnection>scm:git:https://127.0.0.1/dummy</developerConnection>
+        <tag>HEAD</tag>
+        <url>http://127.0.0.1/dummy</url>
+    </scm>
 </project>

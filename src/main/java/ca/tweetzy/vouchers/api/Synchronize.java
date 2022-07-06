@@ -1,5 +1,5 @@
 /*
- * Vouchers
+ * Construct
  * Copyright 2022 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,5 +18,12 @@
 
 package ca.tweetzy.vouchers.api;
 
-public interface VouchersAPI {
+public interface Synchronize {
+
+	/**
+	 * Runs the appropriate database update queries
+	 *
+	 * @param silent is if the update should be console logged
+	 */
+	void sync(boolean silent);
 }

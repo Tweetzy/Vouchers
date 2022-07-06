@@ -16,7 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.impl;
 
-public interface VouchersAPI {
+import ca.tweetzy.vouchers.api.VouchersAPI;
+
+public final class VouchersAPIImplementation implements VouchersAPI {
 }

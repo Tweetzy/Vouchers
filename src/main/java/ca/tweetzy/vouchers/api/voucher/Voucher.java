@@ -16,7 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.api.voucher;
 
-public interface VouchersAPI {
+import ca.tweetzy.vouchers.api.Synchronize;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+
+public interface Voucher extends Synchronize {
+
+	String getId();
+
+	String getName();
+
+	ItemStack getItem();
+
+	List<String> getDescription();
+
+	VoucherOptions getOptions();
+
+	List<Reward> getRewards();
+
+	void setName(String name);
+
+	void setItem(ItemStack item);
+
+	void setDescription(List<String> description);
+
+	String getRewardJson();
 }

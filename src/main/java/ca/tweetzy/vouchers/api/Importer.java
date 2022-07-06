@@ -18,5 +18,11 @@
 
 package ca.tweetzy.vouchers.api;
 
-public interface VouchersAPI {
+public interface Importer {
+
+	String getName();
+
+	String getAuthor();
+
+	void load();
 }

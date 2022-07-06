@@ -16,7 +16,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.api.voucher;
 
-public interface VouchersAPI {
+import ca.tweetzy.vouchers.api.Jsonable;
+
+import java.util.List;
+
+public interface VoucherOptions extends Jsonable {
+
+	int getMaxUses();
+
+	int getCooldown();
+
+	boolean isGlowing();
+
+	boolean isAskConfirm();
+
+	boolean isRemoveOnUse();
+
+	boolean isRequiresPermission();
+
+	String getPermission();
+
+	List<Message> getMessages();
+
+	void setPermission(String permission);
+
+	void setMaxUses(int maxUses);
+
+	void setCooldown(int cooldown);
+
+	void setMessages(List<Message> messages);
+
+	void setGlowing(boolean glowing);
+
+	void setAskConfirm(boolean askConfirm);
+
+	void setRemoveOnUse(boolean removeOnUse);
+
+	void setRequiresPermission(boolean requiresPermission);
 }

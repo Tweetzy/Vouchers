@@ -16,7 +16,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.impl;
 
-public interface VouchersAPI {
+import ca.tweetzy.vouchers.api.voucher.Redeem;
+import lombok.AllArgsConstructor;
+
+import java.util.UUID;
+
+@AllArgsConstructor
+public final class VoucherRedeem implements Redeem {
+
+	private final UUID id;
+	private final UUID user;
+	private final String voucherId;
+	private final long time;
+
+	@Override
+	public UUID getId() {
+		return this.id;
+	}
+
+	@Override
+	public UUID getUser() {
+		return this.user;
+	}
+
+	@Override
+	public String getVoucherId() {
+		return this.voucherId.toLowerCase();
+	}
+
+	@Override
+	public long getTime() {
+		return this.time;
+	}
 }

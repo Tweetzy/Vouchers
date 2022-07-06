@@ -16,7 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.settings;
 
-public interface VouchersAPI {
+import ca.tweetzy.feather.config.tweetzy.ConfigEntry;
+import ca.tweetzy.feather.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.vouchers.Vouchers;
+
+public final class Locale {
+
+	static final TweetzyYamlConfig config = Vouchers.getLangConfig();
+
+	public static final ConfigEntry VOUCHER_EXISTS_ALREADY = new ConfigEntry(config, "Voucher Already Exists", "&cA voucher with that id already exists");
+	public static final ConfigEntry NOT_A_NUMBER = new ConfigEntry(config, "Not A Number", "&cThat is not a valid number!");
+
+
+	public static boolean setup() {
+		return config.init();
+	}
 }

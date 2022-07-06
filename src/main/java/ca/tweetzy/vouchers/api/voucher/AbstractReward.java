@@ -16,7 +16,39 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.api.voucher;
 
-public interface VouchersAPI {
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public abstract class AbstractReward implements Reward {
+
+	private RewardType rewardType;
+	private double chance;
+	private int delay;
+
+	@Override
+	public int getDelay() {
+		return this.delay;
+	}
+
+	@Override
+	public RewardType getType() {
+		return this.rewardType;
+	}
+
+	@Override
+	public double getChance() {
+		return this.chance;
+	}
+
+	@Override
+	public void setDelay(int delay) {
+		this.delay = delay;
+	}
+
+	@Override
+	public void setChance(double chance) {
+		this.chance = chance;
+	}
 }

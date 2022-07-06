@@ -16,7 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.api.voucher;
 
-public interface VouchersAPI {
+public enum RewardMode {
+
+	AUTOMATIC,
+	REWARD_SELECT,
+	RANDOM;
+
+	private static final RewardMode[] states = values();
+
+	public RewardMode next() {
+		return states[(this.ordinal() + 1) % states.length];
+	}
 }
