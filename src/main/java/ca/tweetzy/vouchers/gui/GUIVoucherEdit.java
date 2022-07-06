@@ -123,6 +123,22 @@ public final class GUIVoucherEdit extends BaseGUI {
 						)
 						.make(), click -> click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher)));
 
+		setButton(3, 4, QuickItem
+				.of(CompMaterial.HEART_OF_THE_SEA)
+				.name("&b&lVoucher Reward Mode")
+				.lore(
+						"",
+						"&7Current&f: &b" + ChatUtil.capitalizeFully(this.voucher.getRewardMode()),
+						"",
+						"&b&lClick &8» &7To switch mode"
+				)
+				.make(), click -> {
+
+			this.voucher.setRewardMode(this.voucher.getRewardMode().next());
+			this.voucher.sync(true);
+			click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
+		});
+
 		setButton(3, 7, QuickItem
 						.of(CompMaterial.DIAMOND)
 						.name("&b&lVoucher Rewards")
@@ -130,9 +146,7 @@ public final class GUIVoucherEdit extends BaseGUI {
 								"",
 								"&b&lClick &8» &7To edit rewards"
 						)
-						.make(), click -> {
-				}
-		);
+						.make(), click -> click.manager.showGUI(click.player, new GUIRewardList(this.voucher)));
 
 		applyBackExit();
 	}

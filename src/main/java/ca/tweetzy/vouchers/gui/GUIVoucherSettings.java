@@ -36,7 +36,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 	private final Voucher voucher;
 
 	public GUIVoucherSettings(@NonNull final Voucher voucher) {
-		super(new GUIVoucherList(), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Options", 6);
+		super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Options", 6);
 		this.voucher = voucher;
 		setAcceptsItems(true);
 		draw();

@@ -37,6 +37,7 @@ public final class _1_InitialMigration extends DataMigration {
 					"id VARCHAR(64) PRIMARY KEY, " +
 					"name TEXT NOT NULL, " +
 					"description TEXT NOT NULL, " +
+					"reward_mode VARCHAR(32) NOT NULL, " +
 					"item TEXT NOT NULL, " +
 					"options TEXT NOT NULL, " +
 					"rewards TEXT NOT NULL " +

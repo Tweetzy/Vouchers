@@ -26,6 +26,7 @@ import ca.tweetzy.feather.utils.Common;
 import ca.tweetzy.feather.utils.QuickItem;
 import ca.tweetzy.feather.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
@@ -79,7 +80,7 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 					return false;
 				}
 
-				final Voucher voucher = new ActiveVoucher(string, "&e" + string, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), new VoucherSettings(), new ArrayList<>());
+				final Voucher voucher = new ActiveVoucher(string, "&e" + string, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), RewardMode.AUTOMATIC, new VoucherSettings(), new ArrayList<>());
 
 				Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {
 					if (error == null) {

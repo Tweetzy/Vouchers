@@ -23,6 +23,7 @@ import ca.tweetzy.feather.database.DataManagerAbstract;
 import ca.tweetzy.feather.database.DatabaseConnector;
 import ca.tweetzy.vouchers.api.voucher.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
@@ -52,7 +53,7 @@ public final class DataManager extends DataManagerAbstract {
 
 	public void createVoucher(@NotNull final Voucher voucher, Callback<Voucher> callback) {
 		this.runAsync(() -> this.databaseConnector.connect(connection -> {
-			final String query = "INSERT INTO " + this.getTablePrefix() + "voucher (id, name, description, item, options, rewards) VALUES (?, ?, ?, ?, ?, ?)";
+			final String query = "INSERT INTO " + this.getTablePrefix() + "voucher (id, name, description, item, options, rewards,reward_mode) VALUES (?, ?, ?, ?, ?, ?, ?)";
 			final String fetchQuery = "SELECT * FROM " + this.getTablePrefix() + "voucher WHERE id = ?";
 
 			try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -66,6 +67,7 @@ public final class DataManager extends DataManagerAbstract {
 				preparedStatement.setString(4, ItemEncoder.encodeItem(voucher.getItem()));
 				preparedStatement.setString(5, voucher.getOptions().toJsonString());
 				preparedStatement.setString(6, voucher.getRewardJson());
+				preparedStatement.setString(7, voucher.getRewardMode().name());
 
 				preparedStatement.executeUpdate();
 
@@ -100,14 +102,15 @@ public final class DataManager extends DataManagerAbstract {
 
 	public void updateVoucher(@NonNull final Voucher voucher, Callback<Boolean> callback) {
 		this.runAsync(() -> this.databaseConnector.connect(connection -> {
-			try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + this.getTablePrefix() + "voucher SET name = ?, description = ?, item = ?, options = ?, rewards = ? WHERE id = ?")) {
+			try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + this.getTablePrefix() + "voucher SET name = ?, description = ?, item = ?, options = ?, rewards = ?, reward_mode = ? WHERE id = ?")) {
 
 				preparedStatement.setString(1, voucher.getName());
 				preparedStatement.setString(2, String.join(";;;", voucher.getDescription()));
 				preparedStatement.setString(3, ItemEncoder.encodeItem(voucher.getItem()));
 				preparedStatement.setString(4, voucher.getOptions().toJsonString());
 				preparedStatement.setString(5, voucher.getRewardJson());
-				preparedStatement.setString(6, voucher.getId().toLowerCase());
+				preparedStatement.setString(6, voucher.getRewardMode().name());
+				preparedStatement.setString(7, voucher.getId().toLowerCase());
 
 				int result = preparedStatement.executeUpdate();
 
@@ -145,6 +148,7 @@ public final class DataManager extends DataManagerAbstract {
 				resultSet.getString("name"),
 				ItemEncoder.decodeItem(resultSet.getString("item")),
 				new ArrayList<>(Arrays.asList(resultSet.getString("description").split(";;;"))),
+				RewardMode.valueOf(resultSet.getString("reward_mode").toUpperCase()),
 				VoucherSettings.decode(resultSet.getString("options")),
 				rewardList
 		);

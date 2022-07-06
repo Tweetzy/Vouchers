@@ -19,10 +19,7 @@
 package ca.tweetzy.vouchers.impl;
 
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.AbstractReward;
-import ca.tweetzy.vouchers.api.voucher.Reward;
-import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.api.voucher.VoucherOptions;
+import ca.tweetzy.vouchers.api.voucher.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -38,6 +35,7 @@ public final class ActiveVoucher implements Voucher {
 	private String name;
 	private ItemStack item;
 	private List<String> description;
+	private RewardMode rewardMode;
 	private VoucherOptions options;
 	private List<Reward> rewards;
 
@@ -69,6 +67,16 @@ public final class ActiveVoucher implements Voucher {
 	@Override
 	public List<Reward> getRewards() {
 		return this.rewards;
+	}
+
+	@Override
+	public RewardMode getRewardMode() {
+		return this.rewardMode;
+	}
+
+	@Override
+	public void setRewardMode(RewardMode rewardMode) {
+		this.rewardMode = rewardMode;
 	}
 
 	@Override

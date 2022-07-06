@@ -35,11 +35,15 @@ public interface Voucher extends Synchronize {
 
 	VoucherOptions getOptions();
 
+	RewardMode getRewardMode();
+
 	List<Reward> getRewards();
 
 	void setName(String name);
 
 	void setItem(ItemStack item);
+
+	void setRewardMode(RewardMode rewardMode);
 
 	void setDescription(List<String> description);
 
