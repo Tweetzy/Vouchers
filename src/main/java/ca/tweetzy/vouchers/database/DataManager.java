@@ -137,6 +137,53 @@ public final class DataManager extends DataManagerAbstract {
 		}));
 	}
 
+	public void createVoucherRedeem(@NotNull final Redeem redeem, Callback<Redeem> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			final String query = "INSERT INTO " + this.getTablePrefix() + "voucher_redeem (id, user, voucher, time) VALUES (?, ?, ?, ?)";
+			final String fetchQuery = "SELECT * FROM " + this.getTablePrefix() + "voucher_redeem WHERE id = ?";
+
+			try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+				final PreparedStatement fetch = connection.prepareStatement(fetchQuery);
+
+				fetch.setString(1, redeem.getId().toString());
+
+				preparedStatement.setString(1, redeem.getId().toString());
+				preparedStatement.setString(2, redeem.getUser().toString());
+				preparedStatement.setString(3, redeem.getVoucherId().toLowerCase());
+				preparedStatement.setLong(4, redeem.getTime());
+
+				preparedStatement.executeUpdate();
+
+				if (callback != null) {
+					final ResultSet res = fetch.executeQuery();
+					res.next();
+					callback.accept(null, extractVoucherRedeem(res));
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				resolveCallback(callback, e);
+			}
+		}));
+	}
+
+	public void getVoucherRedeems(@NonNull final Callback<List<Redeem>> callback) {
+		final List<Redeem> redeems = new ArrayList<>();
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.getTablePrefix() + "voucher_redeem")) {
+				final ResultSet resultSet = statement.executeQuery();
+				while (resultSet.next()) {
+					redeems.add(extractVoucherRedeem(resultSet));
+				}
+
+				callback.accept(null, redeems);
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+			}
+		}));
+	}
+
+
 	private Voucher extractVoucher(final ResultSet resultSet) throws SQLException {
 		final JsonArray object = JsonParser.parseString(resultSet.getString("rewards")).getAsJsonArray();
 

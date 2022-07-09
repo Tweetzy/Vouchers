@@ -28,15 +28,21 @@ import ca.tweetzy.feather.database.DatabaseConnector;
 import ca.tweetzy.feather.database.SQLiteConnector;
 import ca.tweetzy.feather.gui.GuiManager;
 import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.vouchers.commands.CommandGive;
+import ca.tweetzy.vouchers.commands.CommandImport;
 import ca.tweetzy.vouchers.commands.VouchersCommand;
 import ca.tweetzy.vouchers.database.DataManager;
 import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
-import ca.tweetzy.vouchers.impl.importer.VouchersImporter;
+import ca.tweetzy.vouchers.listeners.BlockListeners;
+import ca.tweetzy.vouchers.listeners.VoucherListeners;
+import ca.tweetzy.vouchers.model.manager.CooldownManager;
+import ca.tweetzy.vouchers.model.manager.RedeemManager;
 import ca.tweetzy.vouchers.model.manager.VoucherManager;
 import ca.tweetzy.vouchers.settings.Locale;
 import ca.tweetzy.vouchers.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -48,6 +54,9 @@ public final class Vouchers extends FeatherPlugin {
 	private final GuiManager guiManager = new GuiManager(this);
 	private final CommandManager commandManager = new CommandManager(this);
 	private final VoucherManager voucherManager = new VoucherManager();
+	private final RedeemManager redeemManager = new RedeemManager();
+	private final CooldownManager cooldownManager = new CooldownManager();
+
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private DatabaseConnector databaseConnector;
@@ -60,7 +69,7 @@ public final class Vouchers extends FeatherPlugin {
 		FeatherCore.registerPlugin(this, 7, CompMaterial.PAPER.name());
 
 		if (Settings.setup()) {
-			this.languageConfig = new TweetzyYamlConfig(this, Settings.LANGUAGE.getString() + ".yml");
+			this.languageConfig = new TweetzyYamlConfig(this, "locales" + File.separator + Settings.LANGUAGE.getString() + ".yml");
 			Locale.setup();
 
 			Common.setPrefix(Settings.PREFIX.getString());
@@ -77,12 +86,14 @@ public final class Vouchers extends FeatherPlugin {
 		// run migrations for tables
 		dataMigrationManager.runMigrations();
 
-		new VouchersImporter().load();
+		getServer().getPluginManager().registerEvents(new VoucherListeners(), this);
+		getServer().getPluginManager().registerEvents(new BlockListeners(), this);
 
 		this.voucherManager.load();
+		this.redeemManager.load();
 
 		this.guiManager.init();
-		this.commandManager.registerCommandDynamically(new VouchersCommand());
+		this.commandManager.registerCommandDynamically(new VouchersCommand()).addSubCommands(new CommandImport(), new CommandGive());
 	}
 
 	@Override
@@ -117,6 +128,14 @@ public final class Vouchers extends FeatherPlugin {
 
 	public static VoucherManager getVoucherManager() {
 		return getInstance().voucherManager;
+	}
+
+	public static RedeemManager getRedeemManager() {
+		return getInstance().redeemManager;
+	}
+
+	public static CooldownManager getCooldownManager() {
+		return getInstance().cooldownManager;
 	}
 
 	// gui manager

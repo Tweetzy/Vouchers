@@ -48,4 +48,6 @@ public interface Voucher extends Synchronize {
 	void setDescription(List<String> description);
 
 	String getRewardJson();
+
+	ItemStack buildItem();
 }

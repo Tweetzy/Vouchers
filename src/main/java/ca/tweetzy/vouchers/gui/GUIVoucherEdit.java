@@ -115,13 +115,13 @@ public final class GUIVoucherEdit extends BaseGUI {
 				.make(), click -> click.manager.showGUI(click.player, new GUIListEditor(this.voucher)));
 
 		setButton(3, 1, QuickItem
-						.of(CompMaterial.REPEATER)
-						.name("&b&lVoucher Settings")
-						.lore(
-								"",
-								"&b&lClick &8» &7To adjust settings"
-						)
-						.make(), click -> click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher)));
+				.of(CompMaterial.REPEATER)
+				.name("&b&lVoucher Settings")
+				.lore(
+						"",
+						"&b&lClick &8» &7To adjust settings"
+				)
+				.make(), click -> click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher)));
 
 		setButton(3, 4, QuickItem
 				.of(CompMaterial.HEART_OF_THE_SEA)
@@ -140,13 +140,13 @@ public final class GUIVoucherEdit extends BaseGUI {
 		});
 
 		setButton(3, 7, QuickItem
-						.of(CompMaterial.DIAMOND)
-						.name("&b&lVoucher Rewards")
-						.lore(
-								"",
-								"&b&lClick &8» &7To edit rewards"
-						)
-						.make(), click -> click.manager.showGUI(click.player, new GUIRewardList(this.voucher)));
+				.of(CompMaterial.DIAMOND)
+				.name("&b&lVoucher Rewards")
+				.lore(
+						"",
+						"&b&lClick &8» &7To edit rewards"
+				)
+				.make(), click -> click.manager.showGUI(click.player, new GUIRewardList(this.voucher)));
 
 		applyBackExit();
 	}

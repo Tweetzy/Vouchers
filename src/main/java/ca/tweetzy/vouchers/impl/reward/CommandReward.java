@@ -39,7 +39,16 @@ public final class CommandReward extends AbstractReward {
 	}
 
 	@Override
-	public void execute(Player player) {
+	public void execute(Player player, boolean guarantee) {
+		if (guarantee) {
+			if (this.getDelay() != -1)
+				Common.runLater(this.getDelay(), () -> executeCommand(player));
+			else
+				executeCommand(player);
+
+			return;
+		}
+
 		if (!Chance.tryChance(this.getChance())) return;
 
 		if (this.getDelay() != -1)

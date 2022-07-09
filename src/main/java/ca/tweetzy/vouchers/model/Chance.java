@@ -18,11 +18,7 @@
 
 package ca.tweetzy.vouchers.model;
 
-import ca.tweetzy.vouchers.impl.VoucherRedeem;
 import lombok.experimental.UtilityClass;
-
-import java.util.Random;
-import java.util.UUID;
 
 @UtilityClass
 public final class Chance {

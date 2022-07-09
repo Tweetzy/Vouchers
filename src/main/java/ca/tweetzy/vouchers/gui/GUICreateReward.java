@@ -190,7 +190,7 @@ public final class GUICreateReward extends BaseGUI {
 					click.manager.showGUI(click.player, new GUICreateReward(
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
-							new CommandReward(GUICreateReward.this.commandReward.getCommand(), GUICreateReward.this.commandReward.getDelay(), finalRate),
+							new CommandReward(GUICreateReward.this.commandReward.getCommand(), GUICreateReward.this.commandReward.getChance(), finalRate),
 							null
 					));
 
@@ -210,33 +210,33 @@ public final class GUICreateReward extends BaseGUI {
 					)
 					.make(), click -> new TitleInput(click.player, "&b&lReward Chance", "&fEnter new reward chance") {
 
-						@Override
-						public void onExit(Player player) {
-							click.manager.showGUI(click.player, GUICreateReward.this);
-						}
+				@Override
+				public void onExit(Player player) {
+					click.manager.showGUI(click.player, GUICreateReward.this);
+				}
 
-						@Override
-						public boolean onResult(String string) {
-							string = ChatColor.stripColor(string.toLowerCase());
+				@Override
+				public boolean onResult(String string) {
+					string = ChatColor.stripColor(string.toLowerCase());
 
-							if (!NumberUtils.isNumber(string)) {
-								Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
-								return false;
-							}
+					if (!NumberUtils.isNumber(string)) {
+						Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+						return false;
+					}
 
-							final double rate = Double.parseDouble(string);
-							double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
+					final double rate = Double.parseDouble(string);
+					double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
 
-							click.manager.showGUI(click.player, new GUICreateReward(
-									GUICreateReward.this.voucher,
-									RewardType.COMMAND,
-									new CommandReward(GUICreateReward.this.commandReward.getCommand(), finalRate, GUICreateReward.this.commandReward.getDelay()),
-									null
-							));
+					click.manager.showGUI(click.player, new GUICreateReward(
+							GUICreateReward.this.voucher,
+							RewardType.COMMAND,
+							new CommandReward(GUICreateReward.this.commandReward.getCommand(), finalRate, GUICreateReward.this.commandReward.getDelay()),
+							null
+					));
 
-							return true;
-						}
-					});
+					return true;
+				}
+			});
 
 		}
 

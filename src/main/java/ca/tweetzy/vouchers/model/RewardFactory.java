@@ -35,7 +35,7 @@ public final class RewardFactory {
 
 		final RewardType rewardType = RewardType.valueOf(object.get("type").getAsString().toUpperCase());
 
-		return switch(rewardType) {
+		return switch (rewardType) {
 			case COMMAND -> new CommandReward(object.get("command").getAsString(), object.get("chance").getAsDouble(), object.get("delay").getAsInt());
 			case ITEM -> new ItemReward(ItemEncoder.decodeItem(object.get("item").getAsString()), object.get("chance").getAsDouble());
 		};

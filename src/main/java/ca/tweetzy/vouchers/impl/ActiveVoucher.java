@@ -18,8 +18,12 @@
 
 package ca.tweetzy.vouchers.impl;
 
+import ca.tweetzy.feather.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.*;
+import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.RewardMode;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.VoucherOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -109,5 +113,18 @@ public final class ActiveVoucher implements Voucher {
 	@Override
 	public void sync(boolean silent) {
 		Vouchers.getDataManager().updateVoucher(this, null);
+	}
+
+	@Override
+	public ItemStack buildItem() {
+		return QuickItem
+				.of(this.item)
+				.name(this.name)
+				.lore(this.description)
+				.glow(this.options.isGlowing())
+				.hideTags(true)
+				.unbreakable(true)
+				.tag("Tweetzy:Vouchers", this.id)
+				.make();
 	}
 }

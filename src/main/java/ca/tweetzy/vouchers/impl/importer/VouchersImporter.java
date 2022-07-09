@@ -20,7 +20,10 @@ package ca.tweetzy.vouchers.impl.importer;
 
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.Importer;
-import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.*;
+import ca.tweetzy.vouchers.impl.ActiveVoucher;
+import ca.tweetzy.vouchers.impl.VoucherMessage;
+import ca.tweetzy.vouchers.impl.VoucherSettings;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import org.bukkit.configuration.ConfigurationSection;
@@ -66,28 +69,88 @@ public final class VouchersImporter implements Importer {
 				rewardSection.getKeys(false).forEach(rewardKey -> {
 
 					if (rewardSection.getString(rewardKey + ".type").equalsIgnoreCase("command")) {
-						voucherRewards.add(
-								new CommandReward(
-										rewardSection.getString(rewardKey + ".command"),
-										rewardSection.getDouble(rewardKey + ".chance"),
-										0
-								)
-						);
+						voucherRewards.add(new CommandReward(
+								rewardSection.getString(rewardKey + ".command").replace("{player}", "%player%"),
+								rewardSection.getDouble(rewardKey + ".chance"),
+								0
+						));
 					} else {
-//						voucherRewards.add(
-//								new ItemReward(
-//										rewardSection.getString(rewardKey + ".item"),
-//										rewardSection.getDouble(rewardKey + ".chance"),
-//										0
-//								)
-//						);
+						if (rewardSection.contains(rewardKey + ".item"))
+							voucherRewards.add(new ItemReward(
+									rewardSection.getItemStack(rewardKey + ".item"),
+									rewardSection.getDouble(rewardKey + ".chance")
+							));
 					}
 
 				});
 			}
 
+			final List<Message> messages = new ArrayList<>();
 
-//			final Voucher voucher = new ActiveVoucher();
+			if (section.getBoolean(voucherNode + ".setting.broadcast redeem")) {
+				messages.add(new VoucherMessage(
+						MessageType.BROADCAST,
+						section.getString(voucherNode + ".setting.broadcast msg"),
+						0, 0, 0
+				));
+			}
+
+			if (section.getBoolean(voucherNode + ".setting.send title")) {
+				messages.add(new VoucherMessage(
+						MessageType.TITLE,
+						section.getString(voucherNode + ".setting.title"),
+						20, 20, 20
+				));
+			}
+
+			if (section.getBoolean(voucherNode + ".setting.send subtitle")) {
+				messages.add(new VoucherMessage(
+						MessageType.SUBTITLE,
+						section.getString(voucherNode + ".setting.subtitle"),
+						20, 20, 20
+				));
+			}
+
+			if (section.getBoolean(voucherNode + ".setting.send actionbar")) {
+				messages.add(new VoucherMessage(
+						MessageType.ACTION_BAR,
+						section.getString(voucherNode + ".setting.actionbar"),
+						0, 0, 0
+				));
+			}
+
+			messages.add(new VoucherMessage(
+					MessageType.CHAT,
+					section.getString(voucherNode + ".setting.redeem msg"),
+					0, 0, 0
+			));
+
+			final VoucherOptions options = new VoucherSettings(
+					-1,
+					section.getInt(voucherNode + ".setting.cooldown"),
+					section.getBoolean(voucherNode + ".setting.glow"),
+					section.getBoolean(voucherNode + ".setting.ask confirm"),
+					true,
+					section.getBoolean(voucherNode + ".setting.require permission"),
+					section.getString(voucherNode + ".setting.permission"),
+					messages
+			);
+
+
+			final Voucher voucher = new ActiveVoucher(
+					voucherNode,
+					section.getString(voucherNode + ".display name"),
+					section.getItemStack(voucherNode + ".icon"),
+					section.getStringList(voucherNode + ".description"),
+					RewardMode.valueOf(section.getString(voucherNode + ".setting.reward mode").toUpperCase()),
+					options,
+					voucherRewards
+			);
+
+			Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {
+				if (error == null)
+					Vouchers.getVoucherManager().add(created);
+			});
 
 		});
 	}

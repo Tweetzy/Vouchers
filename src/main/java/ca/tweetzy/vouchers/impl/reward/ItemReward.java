@@ -19,16 +19,13 @@
 package ca.tweetzy.vouchers.impl.reward;
 
 import ca.tweetzy.feather.utils.Common;
-import ca.tweetzy.feather.utils.PlayerUtil;
 import ca.tweetzy.vouchers.api.voucher.AbstractReward;
-import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.model.Chance;
 import ca.tweetzy.vouchers.model.ItemEncoder;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -43,7 +40,15 @@ public final class ItemReward extends AbstractReward {
 	}
 
 	@Override
-	public void execute(Player player) {
+	public void execute(Player player, boolean guarantee) {
+		if (guarantee) {
+			if (this.getDelay() != -1)
+				Common.runLater(this.getDelay(), () -> giveItem(player));
+			else
+				giveItem(player);
+			return;
+		}
+
 		if (!Chance.tryChance(this.getChance())) return;
 
 		if (this.getDelay() != -1)

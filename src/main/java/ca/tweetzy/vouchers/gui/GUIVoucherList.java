@@ -106,6 +106,9 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 			});
 
 		if (clickEvent.clickType == ClickType.LEFT)
+			clickEvent.player.getInventory().addItem(voucher.buildItem());
+
+		if (clickEvent.clickType == ClickType.RIGHT)
 			clickEvent.manager.showGUI(clickEvent.player, new GUIVoucherEdit(voucher));
 	}
 

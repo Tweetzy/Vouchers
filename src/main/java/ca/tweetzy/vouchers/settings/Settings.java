@@ -28,6 +28,7 @@ public final class Settings {
 
 	public static final ConfigEntry PREFIX = new ConfigEntry(config, "prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»").withComment("The global prefix for the plugin");
 	public static final ConfigEntry LANGUAGE = new ConfigEntry(config, "language", "english").withComment("The default language for the plugin");
+	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = new ConfigEntry(config, "reward select always gives", true).withComment("If true, the reward picker menu will ignore reward chances");
 
 	public static boolean setup() {
 		return config.init();

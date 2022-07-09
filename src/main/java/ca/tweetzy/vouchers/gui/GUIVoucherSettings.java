@@ -195,8 +195,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				"&7- Broadcast Messages",
 				"",
 				"&b&lClick &8» &7To edit messages"
-		).make(), click -> {
-		});
+		).make(), click -> click.manager.showGUI(click.player, new GUIMessagesList(this.voucher)));
 
 		applyBackExit();
 	}

@@ -21,38 +21,32 @@ package ca.tweetzy.vouchers.gui;
 import ca.tweetzy.feather.comp.enums.CompMaterial;
 import ca.tweetzy.feather.gui.template.BaseGUI;
 import ca.tweetzy.feather.utils.QuickItem;
-import ca.tweetzy.vouchers.api.voucher.RewardType;
-import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.settings.Locale;
 import lombok.NonNull;
 
-public final class GUIRewardType extends BaseGUI {
+import java.util.List;
+import java.util.function.Consumer;
 
-	private final Voucher voucher;
+public final class GUIConfirm extends BaseGUI {
 
-	public GUIRewardType(@NonNull final Voucher voucher) {
-		super(new GUIRewardList(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Reward Type", 4);
-		this.voucher = voucher;
+	private final Consumer<Boolean> onClick;
+
+	public GUIConfirm(@NonNull final Consumer<Boolean> onClick) {
+		super(null, Locale.GUI_CONFIRM_TITLE.getString(), 3);
+		this.onClick = onClick;
 		draw();
-
 	}
 
 	@Override
 	protected void draw() {
 
-		setButton(1, 2, QuickItem
-				.of(CompMaterial.PAPER)
-				.name("&b&lCommand Reward")
-				.lore("")
-				.lore("&b&lClick &8» &7To create command reward")
-				.make(), click -> click.manager.showGUI(click.player, new GUICreateReward(this.voucher, RewardType.COMMAND)));
+		// 9 10 11 12 13 14 15 16 17
 
-		setButton(1, 6, QuickItem
-				.of(CompMaterial.DIAMOND_SWORD)
-				.name("&b&lItem Reward")
-				.lore("")
-				.lore("&b&lClick &8» &7To create item reward")
-				.make(), click -> click.manager.showGUI(click.player, new GUICreateReward(this.voucher, RewardType.ITEM)));
+		for (int i = 10; i <= 12; i++)
+			setButton(i, QuickItem.of(CompMaterial.RED_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_NO_NAME.getString()).lore((List<String>) Locale.GUI_CONFIRM_ITEM_NO_LORE.get()).make(), click -> this.onClick.accept(false));
 
-		applyBackExit();
+		for (int i = 14; i <= 16; i++)
+			setButton(i, QuickItem.of(CompMaterial.LIME_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_YES_NAME.getString()).lore((List<String>) Locale.GUI_CONFIRM_ITEM_YES_LORE.get()).make(), click -> this.onClick.accept(true));
+
 	}
 }

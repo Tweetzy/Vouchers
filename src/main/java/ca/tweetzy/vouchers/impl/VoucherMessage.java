@@ -18,10 +18,18 @@
 
 package ca.tweetzy.vouchers.impl;
 
+import ca.tweetzy.feather.comp.ActionBar;
+import ca.tweetzy.feather.comp.Titles;
+import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.feather.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.Message;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.settings.Settings;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import org.bukkit.entity.Player;
 
 @AllArgsConstructor
 public final class VoucherMessage implements Message {
@@ -75,6 +83,27 @@ public final class VoucherMessage implements Message {
 	@Override
 	public void setFadeOutDuration(int ticks) {
 		this.fadeOutDuration = ticks;
+	}
+
+	@Override
+	public void send(Player player, Voucher voucher) {
+		switch (this.type) {
+			case BROADCAST -> Common.broadcast(null, false, getColouredAndReplaced(player, voucher));
+			case CHAT -> Common.tell(player, false, getColouredAndReplaced(player, voucher));
+			case ACTION_BAR -> ActionBar.sendActionBar(player, getColouredAndReplaced(player, voucher));
+			case TITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, getColouredAndReplaced(player, voucher), "");
+			case SUBTITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, "", getColouredAndReplaced(player, voucher));
+		}
+	}
+
+	@Override
+	public String getColouredAndReplaced(@NonNull final Player player, @NonNull final Voucher voucher) {
+		return Common.colorize(Replacer.replaceVariables(this.message,
+				"player", player.getName(),
+				"voucher_id", voucher.getId(),
+				"voucher_name", voucher.getName(),
+				"pl_prefix", Settings.PREFIX.getString()
+		));
 	}
 
 	@Override

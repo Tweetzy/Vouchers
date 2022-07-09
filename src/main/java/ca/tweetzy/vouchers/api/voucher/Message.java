@@ -19,6 +19,7 @@
 package ca.tweetzy.vouchers.api.voucher;
 
 import ca.tweetzy.vouchers.api.Jsonable;
+import org.bukkit.entity.Player;
 
 public interface Message extends Jsonable {
 
@@ -39,4 +40,8 @@ public interface Message extends Jsonable {
 	void setStayDuration(int ticks);
 
 	void setFadeOutDuration(int ticks);
+
+	void send(Player player, Voucher voucher);
+
+	String getColouredAndReplaced(Player player, Voucher voucher);
 }

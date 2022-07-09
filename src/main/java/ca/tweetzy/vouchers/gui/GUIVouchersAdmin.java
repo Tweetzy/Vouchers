@@ -56,8 +56,7 @@ public final class GUIVouchersAdmin extends BaseGUI {
 						"",
 						"&b&lClick &8» &7To view redeems"
 				)
-				.make(), click -> {
-		});
+				.make(), click -> click.manager.showGUI(click.player, new GUIVoucherRedeemList()));
 
 
 		setButton(1, 7, QuickItem

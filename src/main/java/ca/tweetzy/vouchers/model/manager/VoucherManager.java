@@ -18,9 +18,11 @@
 
 package ca.tweetzy.vouchers.model.manager;
 
+import ca.tweetzy.feather.comp.NBTEditor;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import lombok.NonNull;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -44,6 +46,10 @@ public final class VoucherManager extends Manager<String, Voucher> {
 	@Override
 	public void remove(@NonNull String s) {
 		this.contents.remove(s.toLowerCase());
+	}
+
+	public boolean isVoucher(@NonNull final ItemStack item) {
+		return NBTEditor.contains(item, "Tweetzy:Vouchers");
 	}
 
 	@Override
