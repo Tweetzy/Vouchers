@@ -35,13 +35,12 @@ import java.util.List;
 public final class CommandGive extends Command {
 
 	public CommandGive() {
-		super(AllowedExecutor.PLAYER, "give");
+		super(AllowedExecutor.BOTH, "give");
 	}
 
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
 		if (args.length == 0) {
-
 			return ReturnType.SUCCESS;
 		}
 
@@ -64,6 +63,8 @@ public final class CommandGive extends Command {
 
 		// check for flags
 		final String voucher = CommandFlag.get(String.class, "voucher", null, args);
+		if (voucher == null)
+			return ReturnType.FAIL;
 
 		final Voucher voucherFound = Vouchers.getVoucherManager().find(voucher);
 		if (voucherFound == null) return ReturnType.FAIL;

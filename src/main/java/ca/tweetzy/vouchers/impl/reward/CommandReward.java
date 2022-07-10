@@ -19,6 +19,7 @@
 package ca.tweetzy.vouchers.impl.reward;
 
 import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.feather.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.AbstractReward;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.model.Chance;
@@ -70,6 +71,6 @@ public final class CommandReward extends AbstractReward {
 	}
 
 	private void executeCommand(@NonNull final Player player) {
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.command.replace("%player%", player.getName()));
+		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), Replacer.replaceVariables(this.command, "player", player.getName()));
 	}
 }

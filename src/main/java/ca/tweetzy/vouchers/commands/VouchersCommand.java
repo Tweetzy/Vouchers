@@ -49,7 +49,7 @@ public final class VouchersCommand extends Command {
 
 	@Override
 	public String getPermissionNode() {
-		return null;
+		return "vouchers.admin";
 	}
 
 	@Override
