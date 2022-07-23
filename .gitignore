@@ -2,3 +2,4 @@
 /src/test/
 .idea
 Vouchers.iml
+buildNumber.properties
