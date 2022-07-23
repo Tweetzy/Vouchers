@@ -79,7 +79,7 @@ public final class GUIVoucherEdit extends BaseGUI {
 						"&7Current&f: " + ChatUtil.capitalizeFully(this.voucher.getItem().getType()),
 						"",
 						"&b&lLeft Click &8» &7To change with picker",
-						"&b&lRight Click &8» &7To select custom item"
+						"&b&lRight Click &8» &7To select held item"
 				)
 				.make(), click -> {
 
