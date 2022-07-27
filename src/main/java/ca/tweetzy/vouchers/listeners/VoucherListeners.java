@@ -28,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
 public final class VoucherListeners implements Listener {
@@ -63,4 +64,14 @@ public final class VoucherListeners implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onHandSwapWithVoucher(final PlayerSwapHandItemsEvent event) {
+		final Player player = event.getPlayer();
+		final ItemStack itemMain = event.getMainHandItem();
+		final ItemStack itemOff = event.getOffHandItem();
+
+		if ((itemMain != null && Vouchers.getVoucherManager().isVoucher(itemMain)) || (itemOff != null && Vouchers.getVoucherManager().isVoucher(itemOff)))  {
+			event.setCancelled(true);
+		}
+	}
 }
