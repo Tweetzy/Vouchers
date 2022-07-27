@@ -23,6 +23,7 @@ import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.GUIConfirm;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -46,6 +47,8 @@ public final class VoucherListeners implements Listener {
 
 			// invalid / deleted voucher
 			if (voucher == null) return;
+
+			event.setUseItemInHand(Event.Result.DENY);
 
 			if (voucher.getOptions().isAskConfirm()) {
 				Vouchers.getGuiManager().showGUI(player, new GUIConfirm(confirmed -> {
