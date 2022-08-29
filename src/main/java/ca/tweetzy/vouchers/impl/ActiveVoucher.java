@@ -31,6 +31,9 @@ import lombok.AllArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public final class ActiveVoucher implements Voucher {
@@ -125,6 +128,22 @@ public final class ActiveVoucher implements Voucher {
 				.hideTags(true)
 				.unbreakable(true)
 				.tag("Tweetzy:Vouchers", this.id)
+				.make();
+	}
+
+	@Override
+	public ItemStack buildItem(List<String> args) {
+		String vArgs = String.join(" ", args);
+
+		return QuickItem
+				.of(this.item)
+				.name(java.text.MessageFormat.format(this.name, args.toArray()))
+				.lore(this.description.stream().map(line -> java.text.MessageFormat.format(line, args.toArray())).collect(Collectors.toList()))
+				.glow(this.options.isGlowing())
+				.hideTags(true)
+				.unbreakable(true)
+				.tag("Tweetzy:Vouchers", this.id)
+				.tag("Tweetzy:VouchersArgs", vArgs)
 				.make();
 	}
 }

@@ -31,6 +31,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public final class VoucherListeners implements Listener {
 
 	@EventHandler
@@ -45,6 +47,9 @@ public final class VoucherListeners implements Listener {
 			if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
 			final Voucher voucher = Vouchers.getVoucherManager().find(NBTEditor.getString(item, "Tweetzy:Vouchers"));
+			final String voucherArgsRaw = NBTEditor.getString(item, "Tweetzy:VouchersArgs");
+
+			final List<String> voucherArgs = voucherArgsRaw == null ? null : voucherArgsRaw.split(" ").length == 0 ? null : List.of(voucherArgsRaw.split(" "));
 
 			// invalid / deleted voucher
 			if (voucher == null) return;
@@ -54,12 +59,17 @@ public final class VoucherListeners implements Listener {
 			if (voucher.getOptions().isAskConfirm()) {
 				Vouchers.getGuiManager().showGUI(player, new GUIConfirm(confirmed -> {
 					if (confirmed) {
-						Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
+						if (voucherArgs == null)
+							Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
+						else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
+
 					}
 					player.closeInventory();
 				}));
 			} else {
-				Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
+				if (voucherArgs == null)
+					Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
+				else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
 			}
 		}
 	}
@@ -70,7 +80,7 @@ public final class VoucherListeners implements Listener {
 		final ItemStack itemMain = event.getMainHandItem();
 		final ItemStack itemOff = event.getOffHandItem();
 
-		if ((itemMain != null && Vouchers.getVoucherManager().isVoucher(itemMain)) || (itemOff != null && Vouchers.getVoucherManager().isVoucher(itemOff)))  {
+		if ((itemMain != null && Vouchers.getVoucherManager().isVoucher(itemMain)) || (itemOff != null && Vouchers.getVoucherManager().isVoucher(itemOff))) {
 			event.setCancelled(true);
 		}
 	}

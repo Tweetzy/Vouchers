@@ -30,7 +30,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class CommandGive extends Command {
 
@@ -40,9 +43,7 @@ public final class CommandGive extends Command {
 
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
-		if (args.length == 0) {
-			return ReturnType.SUCCESS;
-		}
+		if (args.length < 3) return ReturnType.FAIL;
 
 		final boolean isGivingAll = args[0].equals("*");
 
@@ -56,27 +57,22 @@ public final class CommandGive extends Command {
 
 		int amount = 1;
 
-		if (args.length > 1) {
-			if (NumberUtils.isNumber(args[1]))
-				amount = Integer.parseInt(args[1]);
-		}
+		if (NumberUtils.isNumber(args[1]))
+			amount = Integer.parseInt(args[1]);
 
-		// check for flags
-		final String voucher = CommandFlag.get(String.class, "voucher", null, args);
-		if (voucher == null)
-			return ReturnType.FAIL;
-
-		final Voucher voucherFound = Vouchers.getVoucherManager().find(voucher);
+		final Voucher voucherFound = Vouchers.getVoucherManager().find(args[2]);
 		if (voucherFound == null) return ReturnType.FAIL;
+
+		final List<String> optionalArgs = new ArrayList<>(Arrays.asList(args).subList(3, args.length));
 
 		if (isGivingAll)
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				for (int i = 0; i < amount; i++)
-					player.getInventory().addItem(voucherFound.buildItem());
+					player.getInventory().addItem(optionalArgs.isEmpty() ? voucherFound.buildItem() : voucherFound.buildItem(optionalArgs));
 			}
 		else {
 			for (int i = 0; i < amount; i++)
-				target.getInventory().addItem(voucherFound.buildItem());
+				target.getInventory().addItem(optionalArgs.isEmpty() ? voucherFound.buildItem() : voucherFound.buildItem(optionalArgs));
 		}
 
 		return ReturnType.SUCCESS;
@@ -84,6 +80,19 @@ public final class CommandGive extends Command {
 
 	@Override
 	protected List<String> tab(CommandSender sender, String... args) {
+		if (args.length == 1) {
+			final List<String> options = new java.util.ArrayList<>(List.of("*"));
+
+			options.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+			return options;
+		}
+
+		if (args.length == 2)
+			return List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+
+		if (args.length == 3)
+			return Vouchers.getVoucherManager().getAll().stream().map(Voucher::getId).collect(Collectors.toList());
+
 		return null;
 	}
 
@@ -94,7 +103,7 @@ public final class CommandGive extends Command {
 
 	@Override
 	public String getSyntax() {
-		return "<player/*> [#] -voucher <voucherId>";
+		return "<player/*> <#> <voucherId> [args]";
 	}
 
 	@Override

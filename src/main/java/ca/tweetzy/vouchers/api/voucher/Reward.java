@@ -21,6 +21,8 @@ package ca.tweetzy.vouchers.api.voucher;
 import ca.tweetzy.vouchers.api.Jsonable;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public interface Reward extends Jsonable {
 
 	RewardType getType();
@@ -33,5 +35,5 @@ public interface Reward extends Jsonable {
 
 	void setChance(double chance);
 
-	void execute(Player player, boolean guarantee);
+	void execute(Player player, boolean guarantee, List<String> args);
 }

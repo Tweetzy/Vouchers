@@ -30,8 +30,10 @@ import ca.tweetzy.vouchers.gui.GUIRewardSelection;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
 import ca.tweetzy.vouchers.settings.Locale;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -74,6 +76,10 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 	}
 
 	public void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown) {
+		redeemVoucher(player, voucher, ignoreRedeemLimit, ignoreCooldown, Collections.emptyList());
+	}
+
+	public void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown, List<String> args) {
 		// check permission
 		if (voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) {
 			Common.tell(player, Locale.NOT_ALLOWED_TO_USE.getString());
@@ -117,20 +123,22 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				stay = Math.max(subtitleMessage.getStayDuration(), stay);
 			}
 
+			args.forEach(Bukkit::broadcastMessage);
+
 			if (!(titleMessage == null && subtitleMessage == null)) {
 				Titles.sendTitle(
 						player,
 						fadeIn,
 						stay,
 						fadeOut,
-						Common.colorize(titleMessage != null ? titleMessage.getColouredAndReplaced(player, voucher) : ""),
-						Common.colorize(subtitleMessage != null ? subtitleMessage.getColouredAndReplaced(player, voucher) : "")
+						Common.colorize(titleMessage != null ? java.text.MessageFormat.format(titleMessage.getColouredAndReplaced(player, voucher), args.toArray()) : ""),
+						Common.colorize(subtitleMessage != null ? java.text.MessageFormat.format(subtitleMessage.getColouredAndReplaced(player, voucher), args.toArray()) : "")
 				);
 			}
 
 			// the other message types
 			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE).collect(Collectors.toList()).forEach(msg -> {
-				msg.send(player, voucher);
+				msg.send(player, voucher, args);
 			});
 		}
 
@@ -139,13 +147,13 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		switch (voucher.getRewardMode()) {
 			case AUTOMATIC -> {
 				// automatic means it will give them every reward added to the voucher
-				voucher.getRewards().forEach(reward -> reward.execute(player, false));
+				voucher.getRewards().forEach(reward -> reward.execute(player, false, args));
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
 				registerRedeemIfApplicable(player, voucher);
 			}
-			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(voucher, selected -> {
+			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(voucher, args, selected -> {
 				takeHand(player, voucher);
 				player.closeInventory();
 				if (!ignoreCooldown)
@@ -157,7 +165,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				voucher.getRewards().forEach(reward -> rewardProbabilityCollection.add(reward, (int) reward.getChance()));
 
 				final Reward selectedReward = rewardProbabilityCollection.get();
-				selectedReward.execute(player, false);
+				selectedReward.execute(player, false, args);
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);

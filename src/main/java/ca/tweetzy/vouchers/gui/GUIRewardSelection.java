@@ -38,10 +38,12 @@ import java.util.function.Consumer;
 
 public final class GUIRewardSelection extends PagedGUI<Reward> {
 
+	private List<String> args;
 	private final Consumer<Reward> selected;
 
-	public GUIRewardSelection(@NonNull final Voucher voucher, @NonNull final Consumer<Reward> selected) {
+	public GUIRewardSelection(@NonNull final Voucher voucher, List<String> args, @NonNull final Consumer<Reward> selected) {
 		super(null, Locale.GUI_REWARD_SELECT_TITLE.getString(), 6, voucher.getRewards());
+		this.args = args;
 		this.selected = selected;
 		draw();
 	}
@@ -69,7 +71,7 @@ public final class GUIRewardSelection extends PagedGUI<Reward> {
 
 	@Override
 	protected void onClick(Reward reward, GuiClickEvent click) {
-		reward.execute(click.player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean());
+		reward.execute(click.player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean(), this.args);
 		this.selected.accept(reward);
 	}
 

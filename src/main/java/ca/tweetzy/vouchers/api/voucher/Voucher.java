@@ -19,6 +19,7 @@
 package ca.tweetzy.vouchers.api.voucher;
 
 import ca.tweetzy.vouchers.api.Synchronize;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -50,4 +51,6 @@ public interface Voucher extends Synchronize {
 	String getRewardJson();
 
 	ItemStack buildItem();
+
+	ItemStack buildItem(List<String> params);
 }
