@@ -31,6 +31,9 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 @AllArgsConstructor
 public final class VoucherMessage implements Message {
 
@@ -86,13 +89,13 @@ public final class VoucherMessage implements Message {
 	}
 
 	@Override
-	public void send(Player player, Voucher voucher) {
+	public void send(Player player, Voucher voucher, List<String> args) {
 		switch (this.type) {
-			case BROADCAST -> Common.broadcast(null, false, getColouredAndReplaced(player, voucher));
-			case CHAT -> Common.tell(player, false, getColouredAndReplaced(player, voucher));
-			case ACTION_BAR -> ActionBar.sendActionBar(player, getColouredAndReplaced(player, voucher));
-			case TITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, getColouredAndReplaced(player, voucher), "");
-			case SUBTITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, "", getColouredAndReplaced(player, voucher));
+			case BROADCAST -> Common.broadcast(null, false, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
+			case CHAT -> Common.tell(player, false, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
+			case ACTION_BAR -> ActionBar.sendActionBar(player, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
+			case TITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()), "");
+			case SUBTITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, "", MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
 		}
 	}
 

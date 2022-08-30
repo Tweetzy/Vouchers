@@ -29,6 +29,8 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public final class ItemReward extends AbstractReward {
 
 	@Getter
@@ -40,7 +42,7 @@ public final class ItemReward extends AbstractReward {
 	}
 
 	@Override
-	public void execute(Player player, boolean guarantee) {
+	public void execute(Player player, boolean guarantee, List<String> args) {
 		if (guarantee) {
 			if (this.getDelay() != -1)
 				Common.runLater(this.getDelay(), () -> giveItem(player));

@@ -23,6 +23,7 @@ import ca.tweetzy.feather.gui.template.BaseGUI;
 import ca.tweetzy.feather.utils.QuickItem;
 import ca.tweetzy.vouchers.settings.Locale;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,9 +32,10 @@ public final class GUIConfirm extends BaseGUI {
 
 	private final Consumer<Boolean> onClick;
 
-	public GUIConfirm(@NonNull final Consumer<Boolean> onClick) {
+	public GUIConfirm(@NonNull final Consumer<Boolean> onClick, @NonNull final Consumer<Player> onExit) {
 		super(null, Locale.GUI_CONFIRM_TITLE.getString(), 3);
 		this.onClick = onClick;
+		setOnClose(close -> onExit.accept(close.player));
 		draw();
 	}
 

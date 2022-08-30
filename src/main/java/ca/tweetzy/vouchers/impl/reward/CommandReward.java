@@ -29,6 +29,9 @@ import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 public final class CommandReward extends AbstractReward {
 
 	@Getter
@@ -40,12 +43,12 @@ public final class CommandReward extends AbstractReward {
 	}
 
 	@Override
-	public void execute(Player player, boolean guarantee) {
+	public void execute(Player player, boolean guarantee, List<String> args) {
 		if (guarantee) {
 			if (this.getDelay() != -1)
-				Common.runLater(this.getDelay(), () -> executeCommand(player));
+				Common.runLater(this.getDelay(), () -> executeCommand(player, args));
 			else
-				executeCommand(player);
+				executeCommand(player, args);
 
 			return;
 		}
@@ -53,9 +56,9 @@ public final class CommandReward extends AbstractReward {
 		if (!Chance.tryChance(this.getChance())) return;
 
 		if (this.getDelay() != -1)
-			Common.runLater(this.getDelay(), () -> executeCommand(player));
+			Common.runLater(this.getDelay(), () -> executeCommand(player, args));
 		else
-			executeCommand(player);
+			executeCommand(player, args);
 	}
 
 	@Override
@@ -70,7 +73,7 @@ public final class CommandReward extends AbstractReward {
 		return object.toString();
 	}
 
-	private void executeCommand(@NonNull final Player player) {
-		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), Replacer.replaceVariables(this.command, "player", player.getName()));
+	private void executeCommand(@NonNull final Player player, List<String> args) {
+		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MessageFormat.format(Replacer.replaceVariables(this.command, "player", player.getName()), args.toArray()));
 	}
 }

@@ -18,7 +18,111 @@
 
 package ca.tweetzy.vouchers.impl;
 
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VouchersAPI;
+import ca.tweetzy.vouchers.api.voucher.Redeem;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+import lombok.NonNull;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.UUID;
 
 public final class VouchersAPIImplementation implements VouchersAPI {
+
+	@Override
+	public List<Voucher> getAllVouchers() {
+		return Vouchers.getVoucherManager().getAll();
+	}
+
+	@Override
+	public Voucher findVoucher(@NonNull String key) {
+		return Vouchers.getVoucherManager().find(key);
+	}
+
+	@Override
+	public void addVoucher(@NonNull Voucher voucher) {
+		Vouchers.getVoucherManager().add(voucher);
+	}
+
+	@Override
+	public void removeVoucher(@NonNull String voucher) {
+		Vouchers.getVoucherManager().remove(voucher);
+	}
+
+	@Override
+	public boolean isVoucher(@NonNull ItemStack item) {
+		return Vouchers.getVoucherManager().isVoucher(item);
+	}
+
+	@Override
+	public List<Redeem> getAllRedeems() {
+		return Vouchers.getRedeemManager().getAll();
+	}
+
+	@Override
+	public Redeem findRedeem(@NonNull UUID uuid) {
+		return Vouchers.getRedeemManager().find(uuid);
+	}
+
+	@Override
+	public void addRedeem(@NonNull Redeem redeem) {
+		Vouchers.getRedeemManager().add(redeem);
+	}
+
+	@Override
+	public void removeRedeem(@NonNull UUID uuid) {
+		Vouchers.getRedeemManager().remove(uuid);
+	}
+
+	@Override
+	public int getTotalRedeems(@NonNull UUID playerUUID, @NonNull String voucherId) {
+		return Vouchers.getRedeemManager().getTotalRedeems(playerUUID, voucherId);
+	}
+
+	@Override
+	public int getTotalRedeems(@NonNull Player player, @NonNull Voucher voucher) {
+		return Vouchers.getRedeemManager().getTotalRedeems(player, voucher);
+	}
+
+	@Override
+	public boolean isAtRedeemLimit(@NonNull Player player, @NonNull Voucher voucher) {
+		return Vouchers.getRedeemManager().isAtRedeemLimit(player, voucher);
+	}
+
+	@Override
+	public void redeemVoucher(@NonNull Player player, @NonNull Voucher voucher, boolean ignoreRedeemLimit, boolean ignoreCooldown, List<String> args) {
+		Vouchers.getRedeemManager().redeemVoucher(player, voucher, ignoreRedeemLimit, ignoreCooldown, args);
+	}
+
+	@Override
+	public void redeemVoucher(@NonNull Player player, @NonNull Voucher voucher, boolean ignoreRedeemLimit, boolean ignoreCooldown) {
+		Vouchers.getRedeemManager().redeemVoucher(player, voucher, ignoreRedeemLimit, ignoreCooldown);
+	}
+
+	@Override
+	public void registerRedeemIfApplicable(@NonNull Player player, @NonNull Voucher voucher) {
+		Vouchers.getRedeemManager().registerRedeemIfApplicable(player, voucher);
+	}
+
+	@Override
+	public void addPlayerToCooldown(@NonNull UUID player, @NonNull Voucher voucher) {
+		Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
+	}
+
+	@Override
+	public boolean isPlayerInCooldown(@NonNull UUID player) {
+		return Vouchers.getCooldownManager().isPlayerInCooldown(player);
+	}
+
+	@Override
+	public boolean isPlayerInCooldownForVoucher(@NonNull UUID player, @NonNull Voucher voucher) {
+		return Vouchers.getCooldownManager().isPlayerInCooldownForVoucher(player, voucher);
+	}
+
+	@Override
+	public long getCooldownTime(@NonNull UUID player, @NonNull Voucher voucher) {
+		return Vouchers.getCooldownManager().getCooldownTime(player, voucher);
+	}
 }

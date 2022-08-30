@@ -16,41 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher;
+package ca.tweetzy.vouchers.api.events;
 
-import ca.tweetzy.vouchers.api.Synchronize;
-import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemStack;
+public enum VoucherRedeemResult {
 
-import java.util.List;
+	FAIL_AT_MAX_USES,
+	FAIL_HAS_COOLDOWN,
+	FAIL_NO_PERMISSION,
+	FAIL_CANCELED_CONFIRM,
 
-public interface Voucher extends Synchronize {
-
-	String getId();
-
-	String getName();
-
-	ItemStack getItem();
-
-	List<String> getDescription();
-
-	VoucherOptions getOptions();
-
-	RewardMode getRewardMode();
-
-	List<Reward> getRewards();
-
-	void setName(String name);
-
-	void setItem(ItemStack item);
-
-	void setRewardMode(RewardMode rewardMode);
-
-	void setDescription(List<String> description);
-
-	String getRewardJson();
-
-	ItemStack buildItem();
-
-	ItemStack buildItem(List<String> params);
+	SUCCESS
 }

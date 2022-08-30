@@ -20,10 +20,12 @@ package ca.tweetzy.vouchers.listeners;
 
 import ca.tweetzy.feather.comp.enums.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
