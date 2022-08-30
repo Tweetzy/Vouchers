@@ -19,7 +19,10 @@
 package ca.tweetzy.vouchers.listeners;
 
 import ca.tweetzy.feather.comp.NBTEditor;
+import ca.tweetzy.feather.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
+import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.GUIConfirm;
 import org.bukkit.entity.Player;
@@ -70,11 +73,16 @@ public final class VoucherListeners implements Listener {
 						if (voucherArgs == null)
 							Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
 						else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
+					} else {
+						Common.callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_CANCELED_CONFIRM));
 					}
 
 					player.closeInventory();
 					this.blockedFromDrop.remove(player.getUniqueId());
-				}, fail -> this.blockedFromDrop.remove(player.getUniqueId())));
+				}, fail -> {
+					this.blockedFromDrop.remove(player.getUniqueId());
+					Common.callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_CANCELED_CONFIRM));
+				}));
 			} else {
 				if (voucherArgs == null)
 					Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
