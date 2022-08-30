@@ -28,11 +28,13 @@ import ca.tweetzy.feather.database.DatabaseConnector;
 import ca.tweetzy.feather.database.SQLiteConnector;
 import ca.tweetzy.feather.gui.GuiManager;
 import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.vouchers.api.VouchersAPI;
 import ca.tweetzy.vouchers.commands.CommandGive;
 import ca.tweetzy.vouchers.commands.CommandImport;
 import ca.tweetzy.vouchers.commands.VouchersCommand;
 import ca.tweetzy.vouchers.database.DataManager;
 import ca.tweetzy.vouchers.database.migrations._1_InitialMigration;
+import ca.tweetzy.vouchers.impl.VouchersAPIImplementation;
 import ca.tweetzy.vouchers.listeners.BlockListeners;
 import ca.tweetzy.vouchers.listeners.VoucherListeners;
 import ca.tweetzy.vouchers.model.manager.CooldownManager;
@@ -57,6 +59,7 @@ public final class Vouchers extends FeatherPlugin {
 	private final RedeemManager redeemManager = new RedeemManager();
 	private final CooldownManager cooldownManager = new CooldownManager();
 
+	private VouchersAPI API;
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private DatabaseConnector databaseConnector;
@@ -91,6 +94,9 @@ public final class Vouchers extends FeatherPlugin {
 
 		this.voucherManager.load();
 		this.redeemManager.load();
+
+		// ideally initialize after the load
+		this.API = new VouchersAPIImplementation();
 
 		this.guiManager.init();
 		this.commandManager.registerCommandDynamically(new VouchersCommand()).addSubCommands(new CommandImport(), new CommandGive());
@@ -136,6 +142,10 @@ public final class Vouchers extends FeatherPlugin {
 
 	public static CooldownManager getCooldownManager() {
 		return getInstance().cooldownManager;
+	}
+
+	public static VouchersAPI getAPI() {
+		return getInstance().API;
 	}
 
 	// gui manager
