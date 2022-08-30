@@ -18,7 +18,7 @@
 
 package ca.tweetzy.vouchers.settings;
 
-import ca.tweetzy.feather.config.tweetzy.ConfigEntry;
+import ca.tweetzy.feather.config.ConfigEntry;
 import ca.tweetzy.feather.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.vouchers.Vouchers;
 
@@ -26,9 +26,9 @@ public final class Settings {
 
 	static final TweetzyYamlConfig config = Vouchers.getCoreConfig();
 
-	public static final ConfigEntry PREFIX = new ConfigEntry(config, "prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»").withComment("The global prefix for the plugin");
-	public static final ConfigEntry LANGUAGE = new ConfigEntry(config, "language", "english").withComment("The default language for the plugin");
-	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = new ConfigEntry(config, "reward select always gives", true).withComment("If true, the reward picker menu will ignore reward chances");
+	public static final ConfigEntry PREFIX = config.createEntry("prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»").withComment("The global prefix for the plugin");
+	public static final ConfigEntry LANGUAGE = config.createEntry("language", "english").withComment("The default language for the plugin");
+	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = config.createEntry("reward select always gives", true).withComment("If true, the reward picker menu will ignore reward chances");
 
 	public static boolean setup() {
 		return config.init();
