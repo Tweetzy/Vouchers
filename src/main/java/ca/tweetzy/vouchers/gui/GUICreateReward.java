@@ -147,7 +147,7 @@ public final class GUICreateReward extends BaseGUI {
 					click.manager.showGUI(click.player, new GUICreateReward(
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
-							new CommandReward(string, GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
+							new CommandReward(ChatColor.stripColor(string), GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
 							null
 					));
 
