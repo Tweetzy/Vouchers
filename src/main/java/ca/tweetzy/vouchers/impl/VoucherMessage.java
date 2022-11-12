@@ -18,10 +18,10 @@
 
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.feather.comp.ActionBar;
-import ca.tweetzy.feather.comp.Titles;
-import ca.tweetzy.feather.utils.Common;
-import ca.tweetzy.feather.utils.Replacer;
+import ca.tweetzy.flight.comp.ActionBar;
+import ca.tweetzy.flight.comp.Titles;
+import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.Message;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;

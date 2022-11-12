@@ -18,12 +18,13 @@
 
 package ca.tweetzy.vouchers.commands;
 
-import ca.tweetzy.feather.command.AllowedExecutor;
-import ca.tweetzy.feather.command.Command;
-import ca.tweetzy.feather.command.ReturnType;
-import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.flight.command.AllowedExecutor;
+import ca.tweetzy.flight.command.Command;
+import ca.tweetzy.flight.command.ReturnType;
+import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.model.Giver;
 import ca.tweetzy.vouchers.settings.Locale;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -68,11 +69,11 @@ public final class CommandGive extends Command {
 		if (isGivingAll)
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				for (int i = 0; i < amount; i++)
-					player.getInventory().addItem(optionalArgs.isEmpty() ? voucherFound.buildItem() : voucherFound.buildItem(optionalArgs));
+					Giver.giveItem(player, optionalArgs.isEmpty() ? voucherFound.buildItem() : voucherFound.buildItem(optionalArgs), true);
 			}
 		else {
 			for (int i = 0; i < amount; i++)
-				target.getInventory().addItem(optionalArgs.isEmpty() ? voucherFound.buildItem() : voucherFound.buildItem(optionalArgs));
+				Giver.giveItem(target, optionalArgs.isEmpty() ? voucherFound.buildItem() : voucherFound.buildItem(optionalArgs), true);
 		}
 
 		return ReturnType.SUCCESS;
@@ -83,7 +84,7 @@ public final class CommandGive extends Command {
 		if (args.length == 1) {
 			final List<String> options = new java.util.ArrayList<>(List.of("*"));
 
-			options.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+			options.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
 			return options;
 		}
 

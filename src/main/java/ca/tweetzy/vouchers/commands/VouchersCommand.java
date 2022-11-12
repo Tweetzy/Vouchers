@@ -18,9 +18,9 @@
 
 package ca.tweetzy.vouchers.commands;
 
-import ca.tweetzy.feather.command.AllowedExecutor;
-import ca.tweetzy.feather.command.Command;
-import ca.tweetzy.feather.command.ReturnType;
+import ca.tweetzy.flight.command.AllowedExecutor;
+import ca.tweetzy.flight.command.Command;
+import ca.tweetzy.flight.command.ReturnType;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.gui.GUIVouchersAdmin;
 import org.bukkit.command.CommandSender;

@@ -18,8 +18,8 @@
 
 package ca.tweetzy.vouchers.impl.reward;
 
-import ca.tweetzy.feather.utils.Common;
-import ca.tweetzy.feather.utils.Replacer;
+import ca.tweetzy.flight.utils.Replacer;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.AbstractReward;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.model.Chance;
@@ -27,6 +27,7 @@ import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
@@ -46,7 +47,7 @@ public final class CommandReward extends AbstractReward {
 	public void execute(Player player, boolean guarantee, List<String> args) {
 		if (guarantee) {
 			if (this.getDelay() != -1)
-				Common.runLater(this.getDelay(), () -> executeCommand(player, args));
+				Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> executeCommand(player, args), this.getDelay());
 			else
 				executeCommand(player, args);
 
@@ -56,7 +57,8 @@ public final class CommandReward extends AbstractReward {
 		if (!Chance.tryChance(this.getChance())) return;
 
 		if (this.getDelay() != -1)
-			Common.runLater(this.getDelay(), () -> executeCommand(player, args));
+			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> executeCommand(player, args), this.getDelay());
+
 		else
 			executeCommand(player, args);
 	}
@@ -74,6 +76,6 @@ public final class CommandReward extends AbstractReward {
 	}
 
 	private void executeCommand(@NonNull final Player player, List<String> args) {
-		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MessageFormat.format(Replacer.replaceVariables(this.command, "player", player.getName()), args.toArray()));
+		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MessageFormat.format(Replacer.replaceVariables(ChatColor.stripColor(this.command), "player", player.getName()), args.toArray()));
 	}
 }

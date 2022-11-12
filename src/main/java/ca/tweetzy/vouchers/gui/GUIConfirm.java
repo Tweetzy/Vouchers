@@ -18,14 +18,13 @@
 
 package ca.tweetzy.vouchers.gui;
 
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.gui.template.BaseGUI;
-import ca.tweetzy.feather.utils.QuickItem;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.settings.Locale;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public final class GUIConfirm extends BaseGUI {
@@ -45,10 +44,10 @@ public final class GUIConfirm extends BaseGUI {
 		// 9 10 11 12 13 14 15 16 17
 
 		for (int i = 10; i <= 12; i++)
-			setButton(i, QuickItem.of(CompMaterial.RED_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_NO_NAME.getString()).lore((List<String>) Locale.GUI_CONFIRM_ITEM_NO_LORE.get()).make(), click -> this.onClick.accept(false));
+			setButton(i, QuickItem.of(CompMaterial.RED_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_NO_NAME.getString()).lore(Locale.GUI_CONFIRM_ITEM_NO_LORE.getStringList()).make(), click -> this.onClick.accept(false));
 
 		for (int i = 14; i <= 16; i++)
-			setButton(i, QuickItem.of(CompMaterial.LIME_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_YES_NAME.getString()).lore((List<String>) Locale.GUI_CONFIRM_ITEM_YES_LORE.get()).make(), click -> this.onClick.accept(true));
+			setButton(i, QuickItem.of(CompMaterial.LIME_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_YES_NAME.getString()).lore(Locale.GUI_CONFIRM_ITEM_YES_LORE.getStringList()).make(), click -> this.onClick.accept(true));
 
 	}
 }

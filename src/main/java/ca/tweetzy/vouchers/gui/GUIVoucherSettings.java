@@ -18,12 +18,13 @@
 
 package ca.tweetzy.vouchers.gui;
 
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.gui.events.GuiClickEvent;
-import ca.tweetzy.feather.gui.template.BaseGUI;
-import ca.tweetzy.feather.utils.Common;
-import ca.tweetzy.feather.utils.QuickItem;
-import ca.tweetzy.feather.utils.input.TitleInput;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.gui.events.GuiClickEvent;
+import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.flight.utils.input.TitleInput;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.settings.Locale;
 import lombok.NonNull;
@@ -54,7 +55,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				"&7Current&f: &b" + this.voucher.getOptions().getMaxUses(),
 				"",
 				"&b&lClick &8» &7To edit max uses"
-		).make(), click -> new TitleInput(click.player, "&B&lVoucher Edit", "&fEnter new maximum uses") {
+		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new maximum uses") {
 
 			@Override
 			public void onExit(Player player) {
@@ -86,7 +87,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				"&7Current&f: &b" + this.voucher.getOptions().getCooldown(),
 				"",
 				"&b&lClick &8» &7To edit use cooldown"
-		).make(), click -> new TitleInput(click.player, "&B&lVoucher Edit", "&fEnter new cooldown") {
+		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new cooldown") {
 
 			@Override
 			public void onExit(Player player) {
@@ -168,7 +169,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				"&7Current&f: &b" + this.voucher.getOptions().getPermission(),
 				"",
 				"&b&lClick &8» &7To edit permission"
-		).make(), click -> new TitleInput(click.player, "&B&lVoucher Edit", "&fEnter new voucher permission") {
+		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new voucher permission") {
 
 			@Override
 			public void onExit(Player player) {

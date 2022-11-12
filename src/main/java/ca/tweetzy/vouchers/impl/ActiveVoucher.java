@@ -18,7 +18,7 @@
 
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.feather.utils.QuickItem;
+import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.RewardMode;
@@ -31,8 +31,6 @@ import lombok.AllArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor

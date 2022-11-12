@@ -18,12 +18,13 @@
 
 package ca.tweetzy.vouchers.gui;
 
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.gui.template.BaseGUI;
-import ca.tweetzy.feather.gui.template.MaterialPickerGUI;
-import ca.tweetzy.feather.utils.ChatUtil;
-import ca.tweetzy.feather.utils.QuickItem;
-import ca.tweetzy.feather.utils.input.TitleInput;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.gui.template.MaterialPickerGUI;
+import ca.tweetzy.flight.utils.ChatUtil;
+import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.flight.utils.input.TitleInput;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -53,7 +54,7 @@ public final class GUIVoucherEdit extends BaseGUI {
 						"",
 						"&b&lClick &8» &7To change display name"
 				)
-				.make(), click -> new TitleInput(click.player, "&B&lVoucher Edit", "&fEnter new name into chat") {
+				.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new name into chat") {
 
 			@Override
 			public void onExit(Player player) {

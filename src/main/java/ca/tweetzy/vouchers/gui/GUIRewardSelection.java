@@ -18,12 +18,12 @@
 
 package ca.tweetzy.vouchers.gui;
 
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.gui.events.GuiClickEvent;
-import ca.tweetzy.feather.gui.helper.InventoryBorder;
-import ca.tweetzy.feather.gui.template.PagedGUI;
-import ca.tweetzy.feather.utils.QuickItem;
-import ca.tweetzy.feather.utils.Replacer;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.gui.events.GuiClickEvent;
+import ca.tweetzy.flight.gui.helper.InventoryBorder;
+import ca.tweetzy.flight.gui.template.PagedGUI;
+import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
@@ -61,9 +61,9 @@ public final class GUIRewardSelection extends PagedGUI<Reward> {
 		quickItem.lore("");
 
 		if (reward instanceof final CommandReward commandReward) {
-			quickItem.lore(Replacer.replaceVariables((List<String>) Locale.GUI_REWARD_SELECT_CMD_LORE.get(), "reward_command", commandReward.getCommand(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : commandReward.getChance()));
+			quickItem.lore(Replacer.replaceVariables(Locale.GUI_REWARD_SELECT_CMD_LORE.getStringList(), "reward_command", commandReward.getCommand(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : commandReward.getChance()));
 		} else {
-			quickItem.lore(Replacer.replaceVariables((List<String>) Locale.GUI_REWARD_SELECT_ITEM_LORE.get(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : reward.getChance()));
+			quickItem.lore(Replacer.replaceVariables(Locale.GUI_REWARD_SELECT_ITEM_LORE.getStringList(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : reward.getChance()));
 		}
 
 		return quickItem.make();

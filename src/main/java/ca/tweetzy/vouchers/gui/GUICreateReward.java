@@ -18,11 +18,12 @@
 
 package ca.tweetzy.vouchers.gui;
 
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.gui.template.BaseGUI;
-import ca.tweetzy.feather.utils.Common;
-import ca.tweetzy.feather.utils.QuickItem;
-import ca.tweetzy.feather.utils.input.TitleInput;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.flight.utils.input.TitleInput;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
@@ -89,7 +90,7 @@ public final class GUICreateReward extends BaseGUI {
 
 				this.itemReward = new ItemReward(getItem(1, 4), this.itemReward.getChance());
 
-				new TitleInput(click.player, "&b&lReward Chance", "&fEnter new reward chance") {
+				new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Chance", "&fEnter new reward chance") {
 
 					@Override
 					public void onExit(Player player) {
@@ -135,7 +136,7 @@ public final class GUICreateReward extends BaseGUI {
 							"",
 							"&b&lClick &8» &7To edit reward command"
 					)
-					.make(), click -> new TitleInput(click.player, "&b&lReward Command", "&fEnter new reward command") {
+					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Command", "&fEnter new reward command") {
 
 				@Override
 				public void onExit(Player player) {
@@ -166,7 +167,7 @@ public final class GUICreateReward extends BaseGUI {
 							"",
 							"&b&lClick &8» &7To edit reward delay"
 					)
-					.make(), click -> new TitleInput(click.player, "&b&lReward Delay", "&fEnter new reward delay") {
+					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Delay", "&fEnter new reward delay") {
 
 				@Override
 				public void onExit(Player player) {
@@ -208,7 +209,7 @@ public final class GUICreateReward extends BaseGUI {
 							"",
 							"&b&lClick &8» &7To edit reward chance"
 					)
-					.make(), click -> new TitleInput(click.player, "&b&lReward Chance", "&fEnter new reward chance") {
+					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Chance", "&fEnter new reward chance") {
 
 				@Override
 				public void onExit(Player player) {

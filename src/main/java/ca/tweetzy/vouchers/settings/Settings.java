@@ -18,19 +18,25 @@
 
 package ca.tweetzy.vouchers.settings;
 
-import ca.tweetzy.feather.config.ConfigEntry;
-import ca.tweetzy.feather.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.flight.files.ConfigSetting;
+import ca.tweetzy.flight.files.file.YamlFile;
 import ca.tweetzy.vouchers.Vouchers;
+import lombok.SneakyThrows;
 
 public final class Settings {
 
-	static final TweetzyYamlConfig config = Vouchers.getCoreConfig();
+	static final YamlFile config = Vouchers.getCoreConfig();
 
-	public static final ConfigEntry PREFIX = config.createEntry("prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»").withComment("The global prefix for the plugin");
-	public static final ConfigEntry LANGUAGE = config.createEntry("language", "english").withComment("The default language for the plugin");
-	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = config.createEntry("reward select always gives", true).withComment("If true, the reward picker menu will ignore reward chances");
+	public static final ConfigSetting PREFIX = new ConfigSetting(config, "prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»", "The global prefix for the plugin");
+	public static final ConfigSetting LANGUAGE = new ConfigSetting(config, "language", "english", "The default language for the plugin");
+	public static final ConfigSetting REWARD_PICK_IS_GUARANTEED = new ConfigSetting(config, "reward select always gives", true, "If true, the reward picker menu will ignore reward chances");
 
-	public static boolean setup() {
-		return config.init();
+	public static final ConfigSetting LOG_VOUCHER_GIVE_STATUS = new ConfigSetting(config, "log voucher give status", true, "If true, vouchers will log if the voucher was placed in the user's inventory or dropped");
+
+
+	@SneakyThrows
+	public static void setup() {
+		config.applySettings();
+		config.save();
 	}
 }
