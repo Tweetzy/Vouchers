@@ -18,16 +18,14 @@
 
 package ca.tweetzy.vouchers;
 
-import ca.tweetzy.feather.FeatherCore;
-import ca.tweetzy.feather.FeatherPlugin;
-import ca.tweetzy.feather.command.CommandManager;
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.config.tweetzy.TweetzyYamlConfig;
-import ca.tweetzy.feather.database.DataMigrationManager;
-import ca.tweetzy.feather.database.DatabaseConnector;
-import ca.tweetzy.feather.database.SQLiteConnector;
-import ca.tweetzy.feather.gui.GuiManager;
-import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.flight.FlightPlugin;
+import ca.tweetzy.flight.command.CommandManager;
+import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.flight.database.DataMigrationManager;
+import ca.tweetzy.flight.database.DatabaseConnector;
+import ca.tweetzy.flight.database.SQLiteConnector;
+import ca.tweetzy.flight.gui.GuiManager;
+import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.VouchersAPI;
 import ca.tweetzy.vouchers.commands.CommandGive;
 import ca.tweetzy.vouchers.commands.CommandImport;
@@ -42,16 +40,15 @@ import ca.tweetzy.vouchers.model.manager.RedeemManager;
 import ca.tweetzy.vouchers.model.manager.VoucherManager;
 import ca.tweetzy.vouchers.settings.Locale;
 import ca.tweetzy.vouchers.settings.Settings;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.List;
 
 
-public final class Vouchers extends FeatherPlugin {
+public final class Vouchers extends FlightPlugin {
 
 	private final TweetzyYamlConfig coreConfig = new TweetzyYamlConfig(this, "config.yml");
-	private TweetzyYamlConfig languageConfig;
+	private TweetzyYamlConfig langConfig;
+
 
 	private final GuiManager guiManager = new GuiManager(this);
 	private final CommandManager commandManager = new CommandManager(this);
@@ -69,22 +66,18 @@ public final class Vouchers extends FeatherPlugin {
 
 	@Override
 	protected void onFlight() {
-		FeatherCore.registerPlugin(this, 7, CompMaterial.PAPER.name());
+		Settings.setup();
 
-		if (Settings.setup()) {
-			this.languageConfig = new TweetzyYamlConfig(this, "locales" + File.separator + Settings.LANGUAGE.getString() + ".yml");
-			Locale.setup();
+		langConfig = new TweetzyYamlConfig(this, "locales" + File.separator + Settings.LANGUAGE.getString() + ".yml");
+		Locale.setup();
 
-			Common.setPrefix(Settings.PREFIX.getString());
-		}
+		Common.setPrefix(Settings.PREFIX.getString());
 
 		// Set up the database if enabled
 		this.databaseConnector = new SQLiteConnector(this);
 		this.dataManager = new DataManager(this.databaseConnector, this);
 
-		final DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
-				new _1_InitialMigration()
-		);
+		final DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager, new _1_InitialMigration());
 
 		// run migrations for tables
 		dataMigrationManager.runMigrations();
@@ -107,19 +100,13 @@ public final class Vouchers extends FeatherPlugin {
 		shutdownDataManager(this.dataManager);
 	}
 
-	@NotNull
-	@Override
-	public List<TweetzyYamlConfig> getConfigs() {
-		return List.of(this.coreConfig);
-	}
-
 	// instance
 	public static Vouchers getInstance() {
-		return (Vouchers) FeatherPlugin.getInstance();
+		return (Vouchers) FlightPlugin.getInstance();
 	}
 
 	public static TweetzyYamlConfig getLangConfig() {
-		return getInstance().languageConfig;
+		return getInstance().langConfig;
 	}
 
 	// data manager

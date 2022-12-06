@@ -18,11 +18,12 @@
 
 package ca.tweetzy.vouchers.gui;
 
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.gui.template.BaseGUI;
-import ca.tweetzy.feather.utils.Common;
-import ca.tweetzy.feather.utils.QuickItem;
-import ca.tweetzy.feather.utils.input.TitleInput;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.flight.utils.input.TitleInput;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.VoucherMessage;
@@ -48,7 +49,7 @@ public final class GUIMessageType extends BaseGUI {
 		if (this.voucher.getOptions().getMessages().stream().anyMatch(msg -> msg.getMessageType() == MessageType.TITLE)) {
 			setItem(1, 2, QuickItem.of(CompMaterial.PAPER).name("&B&lTitle").lore("&cYou already have a title message created", "&cdelete the existing one to make another.").make());
 		} else {
-			setButton(1, 2, QuickItem.of(CompMaterial.PAPER).name("&B&lTitle").lore("", "&b&lClick &8» &7To create title msg").make(), click -> new TitleInput(click.player, "&b&lNew Title", "&fEnter title into chat") {
+			setButton(1, 2, QuickItem.of(CompMaterial.PAPER).name("&B&lTitle").lore("", "&b&lClick &8» &7To create title msg").make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Title", "&fEnter title into chat") {
 
 				@Override
 				public void onExit(Player player) {
@@ -57,7 +58,7 @@ public final class GUIMessageType extends BaseGUI {
 
 				@Override
 				public boolean onResult(String inputTitle) {
-					new TitleInput(click.player, "&b&lNew Title", "&fEnter fade in and fade out duration") {
+					new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Title", "&fEnter fade in and fade out duration") {
 
 						@Override
 						public void onExit(Player player) {
@@ -75,7 +76,7 @@ public final class GUIMessageType extends BaseGUI {
 
 							final int fadeInOutRate = Integer.parseInt(fadeInOut);
 
-							new TitleInput(click.player, "&b&lNew Title", "&fEnter stay duration") {
+							new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Title", "&fEnter stay duration") {
 
 								@Override
 								public void onExit(Player player) {
@@ -112,7 +113,7 @@ public final class GUIMessageType extends BaseGUI {
 		if (this.voucher.getOptions().getMessages().stream().anyMatch(msg -> msg.getMessageType() == MessageType.SUBTITLE)) {
 			setItem(1, 3, QuickItem.of(CompMaterial.MAP).name("&B&lSubtitle").lore("&cYou already have a subtitle message created", "&cdelete the existing one to make another.").make());
 		} else {
-			setButton(1, 3, QuickItem.of(CompMaterial.MAP).name("&B&lSubtitle").lore("", "&b&lClick &8» &7To create subtitle msg").make(), click -> new TitleInput(click.player, "&b&lNew Subtitle", "&fEnter subtitle into chat") {
+			setButton(1, 3, QuickItem.of(CompMaterial.MAP).name("&B&lSubtitle").lore("", "&b&lClick &8» &7To create subtitle msg").make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Subtitle", "&fEnter subtitle into chat") {
 
 				@Override
 				public void onExit(Player player) {
@@ -121,7 +122,7 @@ public final class GUIMessageType extends BaseGUI {
 
 				@Override
 				public boolean onResult(String inputTitle) {
-					new TitleInput(click.player, "&b&lNew Subtitle", "&fEnter fade in and fade out duration") {
+					new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Subtitle", "&fEnter fade in and fade out duration") {
 
 						@Override
 						public void onExit(Player player) {
@@ -139,7 +140,7 @@ public final class GUIMessageType extends BaseGUI {
 
 							final int fadeInOutRate = Integer.parseInt(fadeInOut);
 
-							new TitleInput(click.player, "&b&lNew Subtitle", "&fEnter stay duration") {
+							new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Subtitle", "&fEnter stay duration") {
 
 								@Override
 								public void onExit(Player player) {
@@ -176,7 +177,7 @@ public final class GUIMessageType extends BaseGUI {
 		if (this.voucher.getOptions().getMessages().stream().anyMatch(msg -> msg.getMessageType() == MessageType.ACTION_BAR)) {
 			setItem(1, 4, QuickItem.of(CompMaterial.END_ROD).name("&B&lAction Bar").lore("&cYou already have an actionbar message created", "&cdelete the existing one to make another.").make());
 		} else {
-			setButton(1, 4, QuickItem.of(CompMaterial.END_ROD).name("&B&lAction Bar").lore("", "&b&lClick &8» &7To create actionbar msg").make(), click -> new TitleInput(click.player, "&b&lNew Actionbar", "&fEnter actionbar into chat") {
+			setButton(1, 4, QuickItem.of(CompMaterial.END_ROD).name("&B&lAction Bar").lore("", "&b&lClick &8» &7To create actionbar msg").make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Actionbar", "&fEnter actionbar into chat") {
 
 				@Override
 				public void onExit(Player player) {
@@ -193,7 +194,7 @@ public final class GUIMessageType extends BaseGUI {
 			});
 		}
 
-		setButton(1, 5, QuickItem.of(CompMaterial.OBSERVER).name("&B&lBroadcast").lore("", "&b&lClick &8» &7To create broadcast msg").make(), click -> new TitleInput(click.player, "&b&lNew Broadcast Message", "&fEnter broadcast message into chat") {
+		setButton(1, 5, QuickItem.of(CompMaterial.OBSERVER).name("&B&lBroadcast").lore("", "&b&lClick &8» &7To create broadcast msg").make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Broadcast Message", "&fEnter broadcast message into chat") {
 
 			@Override
 			public void onExit(Player player) {
@@ -209,7 +210,7 @@ public final class GUIMessageType extends BaseGUI {
 			}
 		});
 
-		setButton(1, 6, QuickItem.of(CompMaterial.DARK_OAK_SIGN).name("&B&lChat").lore("", "&b&lClick &8» &7To create chat msg").make(), click -> new TitleInput(click.player, "&b&lNew Chat Message", "&fEnter chat message into chat") {
+		setButton(1, 6, QuickItem.of(CompMaterial.DARK_OAK_SIGN).name("&B&lChat").lore("", "&b&lClick &8» &7To create chat msg").make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lNew Chat Message", "&fEnter chat message into chat") {
 
 			@Override
 			public void onExit(Player player) {

@@ -18,12 +18,12 @@
 
 package ca.tweetzy.vouchers.model.manager;
 
-import ca.tweetzy.feather.collection.ProbabilityCollection;
-import ca.tweetzy.feather.comp.Titles;
-import ca.tweetzy.feather.comp.enums.CompMaterial;
-import ca.tweetzy.feather.utils.Common;
-import ca.tweetzy.feather.utils.PlayerUtil;
-import ca.tweetzy.feather.utils.Replacer;
+import ca.tweetzy.flight.collection.ProbabilityCollection;
+import ca.tweetzy.flight.comp.Titles;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.PlayerUtil;
+import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
@@ -85,13 +85,13 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		// check permission
 		if (voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) {
 			Common.tell(player, Locale.NOT_ALLOWED_TO_USE.getString());
-			Common.callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_NO_PERMISSION));
+			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_NO_PERMISSION));
 			return;
 		}
 
 		if (isAtRedeemLimit(player, voucher) && !ignoreRedeemLimit) {
 			Common.tell(player, Locale.REDEEM_LIMIT_REACHED.getString());
-			Common.callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_AT_MAX_USES));
+			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_AT_MAX_USES));
 			return;
 		}
 
@@ -102,12 +102,15 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 				if (System.currentTimeMillis() < cooldownTime) {
 					Common.tell(player, Replacer.replaceVariables(Locale.WAIT_FOR_COOLDOWN.getString(), "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000F)));
-					Common.callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_HAS_COOLDOWN));
+					Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_HAS_COOLDOWN));
 					return;
 				}
 			}
 
-		if (!Common.callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.SUCCESS))) return;
+		final VoucherRedeemEvent voucherRedeemEvent = new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.SUCCESS);
+		Bukkit.getPluginManager().callEvent(voucherRedeemEvent);
+
+		if (voucherRedeemEvent.isCancelled()) return;
 
 		// collect titles
 		if (!voucher.getOptions().getMessages().isEmpty()) {

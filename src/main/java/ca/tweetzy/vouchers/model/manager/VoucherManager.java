@@ -18,7 +18,7 @@
 
 package ca.tweetzy.vouchers.model.manager;
 
-import ca.tweetzy.feather.comp.NBTEditor;
+import ca.tweetzy.flight.comp.NBTEditor;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import lombok.NonNull;

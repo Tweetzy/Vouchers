@@ -18,9 +18,9 @@
 
 package ca.tweetzy.vouchers.database;
 
-import ca.tweetzy.feather.database.Callback;
-import ca.tweetzy.feather.database.DataManagerAbstract;
-import ca.tweetzy.feather.database.DatabaseConnector;
+import ca.tweetzy.flight.database.Callback;
+import ca.tweetzy.flight.database.DataManagerAbstract;
+import ca.tweetzy.flight.database.DatabaseConnector;
 import ca.tweetzy.vouchers.api.voucher.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.RewardMode;

@@ -16,41 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher;
+package ca.tweetzy.vouchers.hook;
 
-import ca.tweetzy.vouchers.api.Synchronize;
+import lombok.experimental.UtilityClass;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public interface Voucher extends Synchronize {
+@UtilityClass
+public final class PAPIHook {
 
-	String getId();
+	public String tryReplace(Player player, String msg) {
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
+			msg = PlaceholderAPI.setPlaceholders(player, msg);
+		return msg;
+	}
 
-	String getName();
-
-	ItemStack getItem();
-
-	List<String> getDescription();
-
-	VoucherOptions getOptions();
-
-	RewardMode getRewardMode();
-
-	List<Reward> getRewards();
-
-	void setName(String name);
-
-	void setItem(ItemStack item);
-
-	void setRewardMode(RewardMode rewardMode);
-
-	void setDescription(List<String> description);
-
-	String getRewardJson();
-
-	ItemStack buildItem(Player player);
-
-	ItemStack buildItem(Player player, List<String> params);
+	public List<String> tryReplace(Player player, List<String> msgs) {
+		return msgs.stream().map(line -> tryReplace(player, line)).collect(Collectors.toList());
+	}
 }

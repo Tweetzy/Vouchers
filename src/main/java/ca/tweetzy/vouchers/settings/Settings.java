@@ -18,8 +18,8 @@
 
 package ca.tweetzy.vouchers.settings;
 
-import ca.tweetzy.feather.config.ConfigEntry;
-import ca.tweetzy.feather.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.flight.config.ConfigEntry;
+import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.vouchers.Vouchers;
 
 public final class Settings {
@@ -30,7 +30,10 @@ public final class Settings {
 	public static final ConfigEntry LANGUAGE = config.createEntry("language", "english").withComment("The default language for the plugin");
 	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = config.createEntry("reward select always gives", true).withComment("If true, the reward picker menu will ignore reward chances");
 
-	public static boolean setup() {
-		return config.init();
+	public static final ConfigEntry LOG_VOUCHER_GIVE_STATUS = config.createEntry("log voucher give status", true).withComment("If true, vouchers will log if the voucher was placed in the user's inventory or dropped");
+
+
+	public static void setup() {
+		config.init();
 	}
 }

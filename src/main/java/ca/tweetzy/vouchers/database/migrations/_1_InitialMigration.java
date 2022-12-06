@@ -18,7 +18,7 @@
 
 package ca.tweetzy.vouchers.database.migrations;
 
-import ca.tweetzy.feather.database.DataMigration;
+import ca.tweetzy.flight.database.DataMigration;
 
 import java.sql.Connection;
 import java.sql.SQLException;

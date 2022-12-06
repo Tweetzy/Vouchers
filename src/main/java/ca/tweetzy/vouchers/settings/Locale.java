@@ -18,8 +18,8 @@
 
 package ca.tweetzy.vouchers.settings;
 
-import ca.tweetzy.feather.config.ConfigEntry;
-import ca.tweetzy.feather.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.flight.config.ConfigEntry;
+import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.vouchers.Vouchers;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public final class Locale {
 			"&b&lClick &8» &7To select this reward"
 	));
 
-	public static boolean setup() {
-		return config.init();
+	public static void setup() {
+		config.init();
 	}
 }

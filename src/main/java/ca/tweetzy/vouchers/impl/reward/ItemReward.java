@@ -18,14 +18,15 @@
 
 package ca.tweetzy.vouchers.impl.reward;
 
-import ca.tweetzy.feather.utils.Common;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.AbstractReward;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.model.Chance;
+import ca.tweetzy.vouchers.model.Giver;
 import ca.tweetzy.vouchers.model.ItemEncoder;
 import com.google.gson.JsonObject;
 import lombok.Getter;
-import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,22 +42,23 @@ public final class ItemReward extends AbstractReward {
 		this.item = item;
 	}
 
+
 	@Override
 	public void execute(Player player, boolean guarantee, List<String> args) {
 		if (guarantee) {
 			if (this.getDelay() != -1)
-				Common.runLater(this.getDelay(), () -> giveItem(player));
+				Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> Giver.giveItem(player, this.item), this.getDelay());
 			else
-				giveItem(player);
+				Giver.giveItem(player, this.item);
 			return;
 		}
 
 		if (!Chance.tryChance(this.getChance())) return;
 
 		if (this.getDelay() != -1)
-			Common.runLater(this.getDelay(), () -> giveItem(player));
+			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> Giver.giveItem(player, this.item), this.getDelay());
 		else
-			giveItem(player);
+			Giver.giveItem(player, this.item);
 	}
 
 	@Override
@@ -70,10 +72,5 @@ public final class ItemReward extends AbstractReward {
 		return object.toString();
 	}
 
-	private void giveItem(@NonNull final Player player) {
-		if (player.getInventory().firstEmpty() == -1)
-			player.getWorld().dropItemNaturally(player.getLocation(), this.item);
-		else
-			player.getInventory().addItem(this.item);
-	}
+
 }
