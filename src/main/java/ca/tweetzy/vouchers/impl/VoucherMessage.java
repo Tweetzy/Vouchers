@@ -25,6 +25,7 @@ import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.Message;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.hook.PAPIHook;
 import ca.tweetzy.vouchers.settings.Settings;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
@@ -94,19 +95,21 @@ public final class VoucherMessage implements Message {
 			case BROADCAST -> Common.broadcast(null, false, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
 			case CHAT -> Common.tell(player, false, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
 			case ACTION_BAR -> ActionBar.sendActionBar(player, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
-			case TITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()), "");
-			case SUBTITLE -> Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, "", MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
+			case TITLE ->
+					Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()), "");
+			case SUBTITLE ->
+					Titles.sendTitle(player, this.fadeInDuration, this.stayDuration, this.fadeOutDuration, "", MessageFormat.format(getColouredAndReplaced(player, voucher), args.toArray()));
 		}
 	}
 
 	@Override
 	public String getColouredAndReplaced(@NonNull final Player player, @NonNull final Voucher voucher) {
-		return Common.colorize(Replacer.replaceVariables(this.message,
+		return Common.colorize(PAPIHook.tryReplace(player, Replacer.replaceVariables(this.message,
 				"player", player.getName(),
 				"voucher_id", voucher.getId(),
 				"voucher_name", voucher.getName(),
 				"pl_prefix", Settings.PREFIX.getString()
-		));
+		)));
 	}
 
 	@Override

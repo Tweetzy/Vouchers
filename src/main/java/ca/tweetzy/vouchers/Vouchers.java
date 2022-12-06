@@ -20,10 +20,10 @@ package ca.tweetzy.vouchers;
 
 import ca.tweetzy.flight.FlightPlugin;
 import ca.tweetzy.flight.command.CommandManager;
+import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.flight.database.DataMigrationManager;
 import ca.tweetzy.flight.database.DatabaseConnector;
 import ca.tweetzy.flight.database.SQLiteConnector;
-import ca.tweetzy.flight.files.file.YamlFile;
 import ca.tweetzy.flight.gui.GuiManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.VouchersAPI;
@@ -46,8 +46,9 @@ import java.io.File;
 
 public final class Vouchers extends FlightPlugin {
 
-	private final YamlFile coreConfig = new YamlFile(getDataFolder() + "/config.yml");
-	private YamlFile languageConfig;
+	private final TweetzyYamlConfig coreConfig = new TweetzyYamlConfig(this, "config.yml");
+	private TweetzyYamlConfig langConfig;
+
 
 	private final GuiManager guiManager = new GuiManager(this);
 	private final CommandManager commandManager = new CommandManager(this);
@@ -66,7 +67,8 @@ public final class Vouchers extends FlightPlugin {
 	@Override
 	protected void onFlight() {
 		Settings.setup();
-		this.languageConfig = new YamlFile(getDataFolder() + File.separator + Settings.LANGUAGE.getString() + ".yml");
+
+		langConfig = new TweetzyYamlConfig(this, "locales" + File.separator + Settings.LANGUAGE.getString() + ".yml");
 		Locale.setup();
 
 		Common.setPrefix(Settings.PREFIX.getString());
@@ -75,9 +77,7 @@ public final class Vouchers extends FlightPlugin {
 		this.databaseConnector = new SQLiteConnector(this);
 		this.dataManager = new DataManager(this.databaseConnector, this);
 
-		final DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
-				new _1_InitialMigration()
-		);
+		final DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager, new _1_InitialMigration());
 
 		// run migrations for tables
 		dataMigrationManager.runMigrations();
@@ -105,12 +105,12 @@ public final class Vouchers extends FlightPlugin {
 		return (Vouchers) FlightPlugin.getInstance();
 	}
 
-	public static YamlFile getLangConfig() {
-		return getInstance().languageConfig;
+	public static TweetzyYamlConfig getLangConfig() {
+		return getInstance().langConfig;
 	}
 
 	// data manager
-	public static YamlFile getCoreConfig() {
+	public static TweetzyYamlConfig getCoreConfig() {
 		return getInstance().coreConfig;
 	}
 

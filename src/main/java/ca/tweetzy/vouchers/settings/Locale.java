@@ -18,49 +18,46 @@
 
 package ca.tweetzy.vouchers.settings;
 
-import ca.tweetzy.flight.files.ConfigSetting;
-import ca.tweetzy.flight.files.file.YamlFile;
+import ca.tweetzy.flight.config.ConfigEntry;
+import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.vouchers.Vouchers;
-import lombok.SneakyThrows;
 
 import java.util.List;
 
 public final class Locale {
 
-	static final YamlFile config = Vouchers.getLangConfig();
+	static final TweetzyYamlConfig config = Vouchers.getLangConfig();
 
-	public static final ConfigSetting VOUCHER_EXISTS_ALREADY = new ConfigSetting(config, "Voucher Already Exists", "&cA voucher with that id already exists");
-	public static final ConfigSetting NOT_A_NUMBER = new ConfigSetting(config, "Not A Number", "&cThat is not a valid number!");
-	public static final ConfigSetting PLAYER_OFFLINE = new ConfigSetting(config, "Player Offline", "&cThat player is not currently online!");
-	public static final ConfigSetting REDEEM_LIMIT_REACHED = new ConfigSetting(config, "Redeem Limit Reached", "&cYou cannot redeem that voucher anymore!");
-	public static final ConfigSetting NOT_ALLOWED_TO_USE = new ConfigSetting(config, "Not Allowed To Use", "&cYou are not allowed to use that voucher");
-	public static final ConfigSetting WAIT_FOR_COOLDOWN = new ConfigSetting(config, "Wait For Cooldown", "&cYou can redeem that voucher in &4%cooldown_time% &cseconds");
+	public static final ConfigEntry VOUCHER_EXISTS_ALREADY = config.createEntry("Voucher Already Exists", "&cA voucher with that id already exists");
+	public static final ConfigEntry NOT_A_NUMBER = config.createEntry("Not A Number", "&cThat is not a valid number!");
+	public static final ConfigEntry PLAYER_OFFLINE = config.createEntry("Player Offline", "&cThat player is not currently online!");
+	public static final ConfigEntry REDEEM_LIMIT_REACHED = config.createEntry("Redeem Limit Reached", "&cYou cannot redeem that voucher anymore!");
+	public static final ConfigEntry NOT_ALLOWED_TO_USE = config.createEntry("Not Allowed To Use", "&cYou are not allowed to use that voucher");
+	public static final ConfigEntry WAIT_FOR_COOLDOWN = config.createEntry("Wait For Cooldown", "&cYou can redeem that voucher in &4%cooldown_time% &cseconds");
 
 
-	public static final ConfigSetting GUI_CONFIRM_TITLE = new ConfigSetting(config, "Gui.Confirm.Title", "&bVouchers &8> &7Confirm Action");
-	public static final ConfigSetting GUI_CONFIRM_ITEM_YES_NAME = new ConfigSetting(config, "Gui.Confirm.Items.Yes.Name", "&a&lConfirm");
-	public static final ConfigSetting GUI_CONFIRM_ITEM_YES_LORE = new ConfigSetting(config, "Gui.Confirm.Items.Yes.Lore", List.of("&b&lClick &8» &7To confirm action"));
-	public static final ConfigSetting GUI_CONFIRM_ITEM_NO_NAME = new ConfigSetting(config, "Gui.Confirm.Items.No.Name", "&c&lCancel");
-	public static final ConfigSetting GUI_CONFIRM_ITEM_NO_LORE = new ConfigSetting(config, "Gui.Confirm.Items.No.Lore", List.of("&b&lClick &8» &7To cancel action"));
+	public static final ConfigEntry GUI_CONFIRM_TITLE = config.createEntry("Gui.Confirm.Title", "&bVouchers &8> &7Confirm Action");
+	public static final ConfigEntry GUI_CONFIRM_ITEM_YES_NAME = config.createEntry("Gui.Confirm.Items.Yes.Name", "&a&lConfirm");
+	public static final ConfigEntry GUI_CONFIRM_ITEM_YES_LORE = config.createEntry("Gui.Confirm.Items.Yes.Lore", List.of("&b&lClick &8» &7To confirm action"));
+	public static final ConfigEntry GUI_CONFIRM_ITEM_NO_NAME = config.createEntry("Gui.Confirm.Items.No.Name", "&c&lCancel");
+	public static final ConfigEntry GUI_CONFIRM_ITEM_NO_LORE = config.createEntry("Gui.Confirm.Items.No.Lore", List.of("&b&lClick &8» &7To cancel action"));
 
-	public static final ConfigSetting GUI_REWARD_SELECT_TITLE = new ConfigSetting(config, "Gui.Select Reward.Title", "&bVouchers &8> &7Select Reward");
-	public static final ConfigSetting GUI_REWARD_SELECT_CMD_NAME = new ConfigSetting(config, "Gui.Select Reward.Items.Command.Name", "&B&lCommand Reward");
-	public static final ConfigSetting GUI_REWARD_SELECT_CMD_LORE = new ConfigSetting(config, "Gui.Select Reward.Items.Command.Lore", List.of(
+	public static final ConfigEntry GUI_REWARD_SELECT_TITLE = config.createEntry("Gui.Select Reward.Title", "&bVouchers &8> &7Select Reward");
+	public static final ConfigEntry GUI_REWARD_SELECT_CMD_NAME = config.createEntry("Gui.Select Reward.Items.Command.Name", "&B&lCommand Reward");
+	public static final ConfigEntry GUI_REWARD_SELECT_CMD_LORE = config.createEntry("Gui.Select Reward.Items.Command.Lore", List.of(
 			"&7Command&f: &b%reward_command%",
 			"&7Chance&F: &b%reward_chance%",
 			"",
 			"&b&lClick &8» &7To select this reward"
 	));
 
-	public static final ConfigSetting GUI_REWARD_SELECT_ITEM_LORE = new ConfigSetting(config, "Gui.Select Reward.Items.Item.Lore", List.of(
+	public static final ConfigEntry GUI_REWARD_SELECT_ITEM_LORE = config.createEntry("Gui.Select Reward.Items.Item.Lore", List.of(
 			"&7Chance&F: &b%reward_chance%",
 			"",
 			"&b&lClick &8» &7To select this reward"
 	));
 
-	@SneakyThrows
 	public static void setup() {
-		config.applySettings();
-		config.save();
+		config.init();
 	}
 }

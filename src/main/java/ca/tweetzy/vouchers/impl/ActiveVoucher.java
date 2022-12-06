@@ -24,10 +24,12 @@ import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.VoucherOptions;
+import ca.tweetzy.vouchers.hook.PAPIHook;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -117,11 +119,11 @@ public final class ActiveVoucher implements Voucher {
 	}
 
 	@Override
-	public ItemStack buildItem() {
+	public ItemStack buildItem(Player player) {
 		return QuickItem
 				.of(this.item)
-				.name(this.name)
-				.lore(this.description)
+				.name(PAPIHook.tryReplace(player, this.name))
+				.lore(PAPIHook.tryReplace(player, this.description))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
 				.unbreakable(true)
@@ -130,13 +132,13 @@ public final class ActiveVoucher implements Voucher {
 	}
 
 	@Override
-	public ItemStack buildItem(List<String> args) {
+	public ItemStack buildItem(Player player, List<String> args) {
 		String vArgs = String.join(" ", args);
 
 		return QuickItem
 				.of(this.item)
-				.name(java.text.MessageFormat.format(this.name, args.toArray()))
-				.lore(this.description.stream().map(line -> java.text.MessageFormat.format(line, args.toArray())).collect(Collectors.toList()))
+				.name(java.text.MessageFormat.format(PAPIHook.tryReplace(player, this.name), args.toArray()))
+				.lore(PAPIHook.tryReplace(player, this.description).stream().map(line -> java.text.MessageFormat.format(line, args.toArray())).collect(Collectors.toList()))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
 				.unbreakable(true)
