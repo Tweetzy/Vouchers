@@ -96,6 +96,11 @@ public final class Vouchers extends FlightPlugin {
 	}
 
 	@Override
+	protected int getBStatsId() {
+		return 10530;
+	}
+
+	@Override
 	protected void onSleep() {
 		shutdownDataManager(this.dataManager);
 	}
