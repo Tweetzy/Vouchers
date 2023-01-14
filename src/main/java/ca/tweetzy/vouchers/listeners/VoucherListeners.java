@@ -19,7 +19,6 @@
 package ca.tweetzy.vouchers.listeners;
 
 import ca.tweetzy.flight.comp.NBTEditor;
-import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
@@ -34,6 +33,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -62,6 +62,10 @@ public final class VoucherListeners implements Listener {
 
 			// invalid / deleted voucher
 			if (voucher == null) return;
+
+			if (event.getHand() == EquipmentSlot.OFF_HAND)
+				return;
+
 
 			event.setUseItemInHand(Event.Result.DENY);
 
