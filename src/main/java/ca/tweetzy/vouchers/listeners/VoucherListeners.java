@@ -51,9 +51,17 @@ public final class VoucherListeners implements Listener {
 
 		if (item == null) return;
 
+		// not even a voucher
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+
+
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			event.setCancelled(true);
+			event.setUseItemInHand(Event.Result.DENY);
+		}
+
 		if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-			// not even a voucher
-			if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+
 
 			final Voucher voucher = Vouchers.getVoucherManager().find(NBTEditor.getString(item, "Tweetzy:Vouchers"));
 			final String voucherArgsRaw = NBTEditor.getString(item, "Tweetzy:VouchersArgs");
@@ -68,6 +76,7 @@ public final class VoucherListeners implements Listener {
 
 
 			event.setUseItemInHand(Event.Result.DENY);
+			
 
 			if (!this.blockedFromDrop.contains(player.getUniqueId()))
 				this.blockedFromDrop.add(player.getUniqueId());
