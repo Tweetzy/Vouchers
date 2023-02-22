@@ -21,12 +21,13 @@ package ca.tweetzy.vouchers.gui;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
@@ -67,7 +68,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				string = ChatColor.stripColor(string.toLowerCase());
 
 				if (!NumberUtils.isNumber(string)) {
-					Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
 					return false;
 				}
 
@@ -99,7 +100,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				string = ChatColor.stripColor(string.toLowerCase());
 
 				if (!NumberUtils.isNumber(string)) {
-					Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
 					return false;
 				}
 

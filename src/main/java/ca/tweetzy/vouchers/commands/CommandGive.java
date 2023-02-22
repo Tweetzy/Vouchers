@@ -21,11 +21,12 @@ package ca.tweetzy.vouchers.commands;
 import ca.tweetzy.flight.command.AllowedExecutor;
 import ca.tweetzy.flight.command.Command;
 import ca.tweetzy.flight.command.ReturnType;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.model.Giver;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -52,7 +53,7 @@ public final class CommandGive extends Command {
 
 		if (!isGivingAll)
 			if (target == null) {
-				Common.tell(sender, Locale.PLAYER_OFFLINE.getString());
+				Common.tell(sender, TranslationManager.string(Translations.PLAYER_OFFLINE));
 				return ReturnType.FAIL;
 			}
 

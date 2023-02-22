@@ -21,6 +21,7 @@ package ca.tweetzy.vouchers.model.manager;
 import ca.tweetzy.flight.collection.ProbabilityCollection;
 import ca.tweetzy.flight.comp.Titles;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.flight.utils.Replacer;
@@ -30,7 +31,7 @@ import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.*;
 import ca.tweetzy.vouchers.gui.GUIRewardSelection;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -84,13 +85,13 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 	public void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown, List<String> args) {
 		// check permission
 		if (voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) {
-			Common.tell(player, Locale.NOT_ALLOWED_TO_USE.getString());
+			Common.tell(player, TranslationManager.string(Translations.NOT_ALLOWED_TO_USE));
 			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_NO_PERMISSION));
 			return;
 		}
 
 		if (isAtRedeemLimit(player, voucher) && !ignoreRedeemLimit) {
-			Common.tell(player, Locale.REDEEM_LIMIT_REACHED.getString());
+			Common.tell(player, TranslationManager.string(Translations.REDEEM_LIMIT_REACHED));
 			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_AT_MAX_USES));
 			return;
 		}
@@ -101,7 +102,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				long cooldownTime = Vouchers.getCooldownManager().getCooldownTime(player.getUniqueId(), voucher);
 
 				if (System.currentTimeMillis() < cooldownTime) {
-					Common.tell(player, Replacer.replaceVariables(Locale.WAIT_FOR_COOLDOWN.getString(), "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000F)));
+					Common.tell(player, TranslationManager.string(Translations.WAIT_FOR_COOLDOWN, "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000F)));
 					Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_HAS_COOLDOWN));
 					return;
 				}

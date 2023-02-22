@@ -38,17 +38,11 @@ import ca.tweetzy.vouchers.listeners.VoucherListeners;
 import ca.tweetzy.vouchers.model.manager.CooldownManager;
 import ca.tweetzy.vouchers.model.manager.RedeemManager;
 import ca.tweetzy.vouchers.model.manager.VoucherManager;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import ca.tweetzy.vouchers.settings.Settings;
-
-import java.io.File;
 
 
 public final class Vouchers extends FlightPlugin {
-
-	private final TweetzyYamlConfig coreConfig = new TweetzyYamlConfig(this, "config.yml");
-	private TweetzyYamlConfig langConfig;
-
 
 	private final GuiManager guiManager = new GuiManager(this);
 	private final CommandManager commandManager = new CommandManager(this);
@@ -66,10 +60,8 @@ public final class Vouchers extends FlightPlugin {
 
 	@Override
 	protected void onFlight() {
-		Settings.setup();
-
-		langConfig = new TweetzyYamlConfig(this, "locales" + File.separator + Settings.LANGUAGE.getString() + ".yml");
-		Locale.setup();
+		Settings.init();
+		Translations.init();
 
 		Common.setPrefix(Settings.PREFIX.getString());
 
@@ -110,14 +102,6 @@ public final class Vouchers extends FlightPlugin {
 		return (Vouchers) FlightPlugin.getInstance();
 	}
 
-	public static TweetzyYamlConfig getLangConfig() {
-		return getInstance().langConfig;
-	}
-
-	// data manager
-	public static TweetzyYamlConfig getCoreConfig() {
-		return getInstance().coreConfig;
-	}
 
 	// data manager
 	public static DataManager getDataManager() {

@@ -19,21 +19,20 @@
 package ca.tweetzy.vouchers.settings;
 
 import ca.tweetzy.flight.config.ConfigEntry;
-import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.flight.settings.FlightSettings;
 import ca.tweetzy.vouchers.Vouchers;
 
-public final class Settings {
-
-	static final TweetzyYamlConfig config = Vouchers.getCoreConfig();
-
-	public static final ConfigEntry PREFIX = config.createEntry("prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»").withComment("The global prefix for the plugin");
-	public static final ConfigEntry LANGUAGE = config.createEntry("language", "english").withComment("The default language for the plugin");
-	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = config.createEntry("reward select always gives", true).withComment("If true, the reward picker menu will ignore reward chances");
-
-	public static final ConfigEntry LOG_VOUCHER_GIVE_STATUS = config.createEntry("log voucher give status", true).withComment("If true, vouchers will log if the voucher was placed in the user's inventory or dropped");
+public final class Settings extends FlightSettings {
 
 
-	public static void setup() {
-		config.init();
+	public static final ConfigEntry PREFIX = create("prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»", "The global prefix for the plugin");
+	public static final ConfigEntry LANGUAGE = create("language", "en_us", "The default language for the plugin");
+	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = create("reward select always gives", true, "If true, the reward picker menu will ignore reward chances");
+
+	public static final ConfigEntry LOG_VOUCHER_GIVE_STATUS = create("log voucher give status", true, "If true, vouchers will log if the voucher was placed in the user's inventory or dropped");
+
+
+	public static void init() {
+		Vouchers.getCoreConfig().init();
 	}
 }

@@ -20,8 +20,9 @@ package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -32,7 +33,7 @@ public final class GUIConfirm extends BaseGUI {
 	private final Consumer<Boolean> onClick;
 
 	public GUIConfirm(@NonNull final Consumer<Boolean> onClick, @NonNull final Consumer<Player> onExit) {
-		super(null, Locale.GUI_CONFIRM_TITLE.getString(), 3);
+		super(null, TranslationManager.string(Translations.GUI_CONFIRM_TITLE), 3);
 		this.onClick = onClick;
 		setOnClose(close -> onExit.accept(close.player));
 		draw();
@@ -44,10 +45,18 @@ public final class GUIConfirm extends BaseGUI {
 		// 9 10 11 12 13 14 15 16 17
 
 		for (int i = 10; i <= 12; i++)
-			setButton(i, QuickItem.of(CompMaterial.RED_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_NO_NAME.getString()).lore(Locale.GUI_CONFIRM_ITEM_NO_LORE.getStringList()).make(), click -> this.onClick.accept(false));
+			setButton(i, QuickItem
+					.of(CompMaterial.RED_STAINED_GLASS_PANE)
+					.name(TranslationManager.string(Translations.GUI_CONFIRM_ITEM_NO_NAME))
+					.lore(TranslationManager.list(Translations.GUI_CONFIRM_ITEM_NO_LORE))
+					.make(), click -> this.onClick.accept(false));
 
 		for (int i = 14; i <= 16; i++)
-			setButton(i, QuickItem.of(CompMaterial.LIME_STAINED_GLASS_PANE).name(Locale.GUI_CONFIRM_ITEM_YES_NAME.getString()).lore(Locale.GUI_CONFIRM_ITEM_YES_LORE.getStringList()).make(), click -> this.onClick.accept(true));
+			setButton(i, QuickItem
+					.of(CompMaterial.LIME_STAINED_GLASS_PANE)
+					.name(TranslationManager.string(Translations.GUI_CONFIRM_ITEM_YES_NAME))
+					.lore(TranslationManager.list(Translations.GUI_CONFIRM_ITEM_YES_LORE))
+					.make(), click -> this.onClick.accept(true));
 
 	}
 }
