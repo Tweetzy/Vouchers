@@ -18,6 +18,7 @@
 
 package ca.tweetzy.vouchers.api.voucher;
 
+import ca.tweetzy.flight.comp.enums.CompSound;
 import ca.tweetzy.vouchers.api.Jsonable;
 
 import java.util.List;
@@ -55,4 +56,8 @@ public interface VoucherOptions extends Jsonable {
 	void setRemoveOnUse(boolean removeOnUse);
 
 	void setRequiresPermission(boolean requiresPermission);
+
+	CompSound getSound();
+
+	void setSound(CompSound sound);
 }
