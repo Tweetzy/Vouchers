@@ -71,7 +71,7 @@ public final class GUIMessageType extends BaseGUI {
 							fadeInOut = ChatColor.stripColor(fadeInOut.toLowerCase());
 
 							if (!NumberUtils.isNumber(fadeInOut)) {
-								Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+								Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, fadeInOut));
 								return false;
 							}
 
@@ -89,7 +89,7 @@ public final class GUIMessageType extends BaseGUI {
 									stay = ChatColor.stripColor(stay.toLowerCase());
 
 									if (!NumberUtils.isNumber(stay)) {
-										Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+										Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, stay));
 										return false;
 									}
 
@@ -135,7 +135,7 @@ public final class GUIMessageType extends BaseGUI {
 							fadeInOut = ChatColor.stripColor(fadeInOut.toLowerCase());
 
 							if (!NumberUtils.isNumber(fadeInOut)) {
-								Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+								Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, fadeInOut));
 								return false;
 							}
 
@@ -153,7 +153,7 @@ public final class GUIMessageType extends BaseGUI {
 									stay = ChatColor.stripColor(stay.toLowerCase());
 
 									if (!NumberUtils.isNumber(stay)) {
-										Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+										Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, stay));
 										return false;
 									}
 

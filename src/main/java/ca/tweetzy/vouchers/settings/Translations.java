@@ -31,12 +31,10 @@ public final class Translations extends TranslationManager {
 		this.mainLanguage = Settings.LANGUAGE.getString();
 	}
 
-	public static final TranslationEntry VOUCHER_EXISTS_ALREADY = create("Voucher Already Exists", "&cA voucher with that id already exists");
-	public static final TranslationEntry NOT_A_NUMBER = create("Not A Number", "&cThat is not a valid number!");
-	public static final TranslationEntry PLAYER_OFFLINE = create("Player Offline", "&cThat player is not currently online!");
-	public static final TranslationEntry REDEEM_LIMIT_REACHED = create("Redeem Limit Reached", "&cYou cannot redeem that voucher anymore!");
-	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("Not Allowed To Use", "&cYou are not allowed to use that voucher");
-	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("Wait For Cooldown", "&cYou can redeem that voucher in &4%cooldown_time% &cseconds");
+	public static final TranslationEntry VOUCHER_EXISTS_ALREADY = create("error.Voucher Already Exists", "&cA voucher with that id already exists");
+	public static final TranslationEntry REDEEM_LIMIT_REACHED = create("error.Redeem Limit Reached", "&cYou cannot redeem that voucher anymore!");
+	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.Not Allowed To Use", "&cYou are not allowed to use that voucher");
+	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.Wait For Cooldown", "&cYou can redeem that voucher in &4%cooldown_time% &cseconds");
 
 
 	public static final TranslationEntry GUI_CONFIRM_TITLE = create("Gui.Confirm.Title", "&bVouchers &8> &7Confirm Action");
@@ -59,6 +57,25 @@ public final class Translations extends TranslationManager {
 			"",
 			"&b&lClick &8» &7To select this reward"
 	);
+
+	public static final TranslationEntry VOUCHER_REWARD_INFO_HEADER = create("info.reward.structure.header",
+			"<center><GRADIENT:fc67fa>&lVoucher Rewards</GRADIENT:f4c4f3>",
+			""
+	);
+
+	public static final TranslationEntry VOUCHER_REWARD_INFO_FOOTER = create("info.reward.structure.footer",
+			""
+
+	);
+
+	public static final TranslationEntry VOUCHER_REWARD_INFO_COMMAND = create("info.reward.command",
+			"<center>&a&l+ &e%reward_command%"
+	);
+
+	public static final TranslationEntry VOUCHER_REWARD_INFO_ITEM = create("info.reward.item",
+			"<center>&a&l+ &fx&7%item_quantity% &e%item_name%"
+	);
+
 
 	public static void init() {
 		new Translations(Vouchers.getInstance()).setup();

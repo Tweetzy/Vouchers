@@ -103,7 +103,7 @@ public final class GUICreateReward extends BaseGUI {
 						string = ChatColor.stripColor(string.toLowerCase());
 
 						if (!NumberUtils.isNumber(string)) {
-							Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+							Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 							return false;
 						}
 
@@ -180,7 +180,7 @@ public final class GUICreateReward extends BaseGUI {
 					string = ChatColor.stripColor(string.toLowerCase());
 
 					if (!NumberUtils.isNumber(string)) {
-						Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+						Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 						return false;
 					}
 
@@ -222,7 +222,7 @@ public final class GUICreateReward extends BaseGUI {
 					string = ChatColor.stripColor(string.toLowerCase());
 
 					if (!NumberUtils.isNumber(string)) {
-						Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+						Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 						return false;
 					}
 
@@ -233,6 +233,39 @@ public final class GUICreateReward extends BaseGUI {
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
 							new CommandReward(GUICreateReward.this.commandReward.getCommand(), finalRate, GUICreateReward.this.commandReward.getDelay()),
+							null
+					));
+
+					return true;
+				}
+			});
+
+			setButton(3, 2, QuickItem
+					.of(CompMaterial.ACACIA_SIGN)
+					.name("&b&lReward Message")
+					.lore(
+							"&7The message that will shown only if",
+							"&7this reward is given to a player",
+							"",
+							"&7Current&f: &b" + (this.commandReward.getClaimMessage().isBlank() ? "No Message Set" : this.commandReward.getClaimMessage()),
+							"",
+							"&b&lClick &8» &7To edit message"
+					)
+					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Message", "&fEnter new reward message") {
+
+				@Override
+				public void onExit(Player player) {
+					click.manager.showGUI(click.player, GUICreateReward.this);
+				}
+
+				@Override
+				public boolean onResult(String string) {
+					GUICreateReward.this.commandReward.setClaimMessage(string);
+
+					click.manager.showGUI(click.player, new GUICreateReward(
+							GUICreateReward.this.voucher,
+							RewardType.COMMAND,
+							GUICreateReward.this.commandReward,
 							null
 					));
 

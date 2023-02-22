@@ -71,7 +71,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				string = ChatColor.stripColor(string.toLowerCase());
 
 				if (!NumberUtils.isNumber(string)) {
-					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 					return false;
 				}
 
@@ -122,7 +122,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				string = ChatColor.stripColor(string.toLowerCase());
 
 				if (!NumberUtils.isNumber(string)) {
-					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER));
+					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 					return false;
 				}
 

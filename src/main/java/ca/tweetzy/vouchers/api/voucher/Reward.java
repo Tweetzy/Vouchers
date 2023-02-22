@@ -35,5 +35,5 @@ public interface Reward extends Jsonable {
 
 	void setChance(double chance);
 
-	void execute(Player player, boolean guarantee, List<String> args);
+	boolean execute(Player player, boolean guarantee, List<String> args);
 }

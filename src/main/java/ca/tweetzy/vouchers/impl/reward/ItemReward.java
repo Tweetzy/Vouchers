@@ -44,21 +44,23 @@ public final class ItemReward extends AbstractReward {
 
 
 	@Override
-	public void execute(Player player, boolean guarantee, List<String> args) {
+	public boolean execute(Player player, boolean guarantee, List<String> args) {
 		if (guarantee) {
 			if (this.getDelay() != -1)
 				Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> Giver.giveItem(player, this.item), this.getDelay());
 			else
 				Giver.giveItem(player, this.item);
-			return;
+			return true;
 		}
 
-		if (!Chance.tryChance(this.getChance())) return;
+		if (!Chance.tryChance(this.getChance())) return false;
 
 		if (this.getDelay() != -1)
 			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> Giver.giveItem(player, this.item), this.getDelay());
 		else
 			Giver.giveItem(player, this.item);
+
+		return true;
 	}
 
 	@Override

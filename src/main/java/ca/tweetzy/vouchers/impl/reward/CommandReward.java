@@ -27,6 +27,7 @@ import ca.tweetzy.vouchers.model.Chance;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -41,29 +42,35 @@ public final class CommandReward extends AbstractReward {
 	@Getter
 	private final String command;
 
+	@Getter
+	@Setter
+	private String claimMessage = "";
+
 	public CommandReward(String command, double chance, int delay) {
 		super(RewardType.COMMAND, chance, delay);
 		this.command = command;
 	}
 
 	@Override
-	public void execute(Player player, boolean guarantee, List<String> args) {
+	public boolean execute(Player player, boolean guarantee, List<String> args) {
 		if (guarantee) {
 			if (this.getDelay() != -1)
 				Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> executeCommand(player, args), this.getDelay());
 			else
 				executeCommand(player, args);
 
-			return;
+			return true;
 		}
 
-		if (!Chance.tryChance(this.getChance())) return;
+		if (!Chance.tryChance(this.getChance())) return false;
 
 		if (this.getDelay() != -1)
 			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> executeCommand(player, args), this.getDelay());
 
 		else
 			executeCommand(player, args);
+
+		return true;
 	}
 
 	@Override
@@ -74,6 +81,7 @@ public final class CommandReward extends AbstractReward {
 		object.addProperty("chance", this.getChance());
 		object.addProperty("delay", this.getDelay());
 		object.addProperty("type", RewardType.COMMAND.name());
+		object.addProperty("claimMessage", this.claimMessage);
 
 		return object.toString();
 	}

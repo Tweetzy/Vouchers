@@ -72,7 +72,6 @@ public final class GUIRewardSelection extends PagedGUI<Reward> {
 
 	@Override
 	protected void onClick(Reward reward, GuiClickEvent click) {
-		reward.execute(click.player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean(), this.args);
 		this.selected.accept(reward);
 	}
 

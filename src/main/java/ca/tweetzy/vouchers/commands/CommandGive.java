@@ -53,7 +53,7 @@ public final class CommandGive extends Command {
 
 		if (!isGivingAll)
 			if (target == null) {
-				Common.tell(sender, TranslationManager.string(Translations.PLAYER_OFFLINE));
+				Common.tell(sender, TranslationManager.string(Translations.PLAYER_OFFLINE, "value", args[0]));
 				return ReturnType.FAIL;
 			}
 
