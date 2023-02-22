@@ -120,6 +120,7 @@ public final class ActiveVoucher implements Voucher {
 
 	@Override
 	public ItemStack buildItem(Player player) {
+		this.description =this.description.stream().filter(line -> !line.contains("-Blank-")).collect(Collectors.toList());
 		return QuickItem
 				.of(this.item)
 				.name(PAPIHook.tryReplace(player, this.name))
@@ -134,6 +135,7 @@ public final class ActiveVoucher implements Voucher {
 	@Override
 	public ItemStack buildItem(Player player, List<String> args) {
 		String vArgs = String.join(" ", args);
+		this.description =this.description.stream().filter(line -> !line.contains("-Blank-")).collect(Collectors.toList());
 
 		return QuickItem
 				.of(this.item)

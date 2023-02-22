@@ -52,7 +52,7 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 		return QuickItem
 				.of(voucher.getItem())
 				.name(voucher.getName())
-				.lore(voucher.getDescription())
+				.lore(voucher.getFilteredDescription())
 				.lore(
 						"",
 						"&b&lLeft Click &8» &7To take voucher",

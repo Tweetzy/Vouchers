@@ -50,7 +50,7 @@ public final class GUIListEditor extends PagedGUI<String> {
 	protected ItemStack makeDisplayItem(String line) {
 		return QuickItem
 				.of(CompMaterial.PAPER)
-				.name((line == null || line.trim().isBlank())  ? "&7-Blank Line-" : line)
+				.name((line == null || line.trim().isBlank()) ? "&7-Blank Line-" : line)
 				.lore(
 						"&b&lLeft Click &8» &7To swap with another line",
 						"&c&lPress 1 &8» &7To delete line"
@@ -65,7 +65,7 @@ public final class GUIListEditor extends PagedGUI<String> {
 				"&a&lRight Click &8» &7To add blank line"
 		).make(), click -> {
 			if (click.clickType == ClickType.LEFT) {
-				new TitleInput(Vouchers.getInstance(),click.player, "&b&lVoucher Edit", "&fEnter new line for lore") {
+				new TitleInput(Vouchers.getInstance(), click.player, "&b&lVoucher Edit", "&fEnter new line for lore") {
 
 					@Override
 					public void onExit(Player player) {
@@ -83,7 +83,9 @@ public final class GUIListEditor extends PagedGUI<String> {
 			}
 
 			if (click.clickType == ClickType.RIGHT) {
-				this.voucher.getDescription().add("");
+				long totalBlanks = this.voucher.getDescription().stream().filter(line -> line.isEmpty() || line.isBlank() || line.contains("-Blank-")).count();
+
+				this.voucher.getDescription().add("-Blank-" + (totalBlanks + 1));
 				this.voucher.sync(true);
 				click.manager.showGUI(click.player, new GUIListEditor(this.voucher));
 			}

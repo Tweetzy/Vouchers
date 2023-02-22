@@ -31,28 +31,28 @@ public final class Translations extends TranslationManager {
 		this.mainLanguage = Settings.LANGUAGE.getString();
 	}
 
-	public static final TranslationEntry VOUCHER_EXISTS_ALREADY = create("error.Voucher Already Exists", "&cA voucher with that id already exists");
-	public static final TranslationEntry REDEEM_LIMIT_REACHED = create("error.Redeem Limit Reached", "&cYou cannot redeem that voucher anymore!");
-	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.Not Allowed To Use", "&cYou are not allowed to use that voucher");
-	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.Wait For Cooldown", "&cYou can redeem that voucher in &4%cooldown_time% &cseconds");
+	public static final TranslationEntry VOUCHER_EXISTS_ALREADY = create("error.voucher already exists", "&cA voucher with that id already exists");
+	public static final TranslationEntry REDEEM_LIMIT_REACHED = create("error.redeem limit reached", "&cYou cannot redeem that voucher anymore!");
+	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.not allowed to use", "&cYou are not allowed to use that voucher");
+	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.wait for cooldown", "&cYou can redeem that voucher in &4%cooldown_time% &cseconds");
 
 
-	public static final TranslationEntry GUI_CONFIRM_TITLE = create("Gui.Confirm.Title", "&bVouchers &8> &7Confirm Action");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_NAME = create("Gui.Confirm.Items.Yes.Name", "&a&lConfirm");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_LORE = create("Gui.Confirm.Items.Yes.Lore", "&b&lClick &8» &7To confirm action");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_NAME = create("Gui.Confirm.Items.No.Name", "&c&lCancel");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_LORE = create("Gui.Confirm.Items.No.Lore", "&b&lClick &8» &7To cancel action");
+	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.confirm.title", "&bVouchers &8> &7Confirm Action");
+	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_NAME = create("gui.confirm.items.yes.name", "&a&lconfirm");
+	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_LORE = create("gui.confirm.items.yes.lore", "&b&lClick &8» &7To confirm action");
+	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_NAME = create("gui.confirm.items.no.name", "&c&lCancel");
+	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_LORE = create("gui.confirm.items.no.lore", "&b&lClick &8» &7To cancel action");
 
-	public static final TranslationEntry GUI_REWARD_SELECT_TITLE = create("Gui.Select Reward.Title", "&bVouchers &8> &7Select Reward");
-	public static final TranslationEntry GUI_REWARD_SELECT_CMD_NAME = create("Gui.Select Reward.Items.Command.Name", "&B&lCommand Reward");
-	public static final TranslationEntry GUI_REWARD_SELECT_CMD_LORE = create("Gui.Select Reward.Items.Command.Lore",
+	public static final TranslationEntry GUI_REWARD_SELECT_TITLE = create("gui.select reward.title", "&bVouchers &8> &7Select Reward");
+	public static final TranslationEntry GUI_REWARD_SELECT_CMD_NAME = create("gui.select reward.items.command.name", "&B&lCommand Reward");
+	public static final TranslationEntry GUI_REWARD_SELECT_CMD_LORE = create("gui.select reward.items.command.lore",
 			"&7Command&f: &b%reward_command%",
 			"&7Chance&F: &b%reward_chance%",
 			"",
 			"&b&lClick &8» &7To select this reward"
 	);
 
-	public static final TranslationEntry GUI_REWARD_SELECT_ITEM_LORE = create("Gui.Select Reward.Items.Item.Lore",
+	public static final TranslationEntry GUI_REWARD_SELECT_ITEM_LORE = create("gui.select reward.items.item.lore",
 			"&7Chance&F: &b%reward_chance%",
 			"",
 			"&b&lClick &8» &7To select this reward"

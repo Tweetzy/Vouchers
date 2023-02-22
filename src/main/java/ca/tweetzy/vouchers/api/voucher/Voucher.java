@@ -22,6 +22,7 @@ import ca.tweetzy.vouchers.api.Synchronize;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Voucher extends Synchronize {
@@ -53,4 +54,15 @@ public interface Voucher extends Synchronize {
 	ItemStack buildItem(Player player);
 
 	ItemStack buildItem(Player player, List<String> params);
+
+	default List<String> getFilteredDescription() {
+		List<String> desc = new ArrayList<>(getDescription());
+
+		for (int i = 0; i < desc.size(); i++) {
+			if (desc.get(i).contains("-Blank-"))
+				desc.set(i, "");
+		}
+
+		return desc;
+	}
 }
