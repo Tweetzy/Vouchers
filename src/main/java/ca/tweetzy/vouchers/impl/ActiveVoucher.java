@@ -120,11 +120,11 @@ public final class ActiveVoucher implements Voucher {
 
 	@Override
 	public ItemStack buildItem(Player player) {
-		this.description =this.description.stream().filter(line -> !line.contains("-Blank-")).collect(Collectors.toList());
+//		this.description =this.description.stream().filter(line -> !line.contains("-Blank-")).collect(Collectors.toList());
 		return QuickItem
 				.of(this.item)
 				.name(PAPIHook.tryReplace(player, this.name))
-				.lore(PAPIHook.tryReplace(player, this.description))
+				.lore(PAPIHook.tryReplace(player, this.getFilteredDescription()))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
 				.unbreakable(true)
@@ -135,12 +135,11 @@ public final class ActiveVoucher implements Voucher {
 	@Override
 	public ItemStack buildItem(Player player, List<String> args) {
 		String vArgs = String.join(" ", args);
-		this.description =this.description.stream().filter(line -> !line.contains("-Blank-")).collect(Collectors.toList());
 
 		return QuickItem
 				.of(this.item)
 				.name(java.text.MessageFormat.format(PAPIHook.tryReplace(player, this.name), args.toArray()))
-				.lore(PAPIHook.tryReplace(player, this.description).stream().map(line -> java.text.MessageFormat.format(line, args.toArray())).collect(Collectors.toList()))
+				.lore(PAPIHook.tryReplace(player, this.getFilteredDescription()).stream().map(line -> java.text.MessageFormat.format(line, args.toArray())).collect(Collectors.toList()))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
 				.unbreakable(true)
