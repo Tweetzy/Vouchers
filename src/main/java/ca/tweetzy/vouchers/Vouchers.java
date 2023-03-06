@@ -20,7 +20,6 @@ package ca.tweetzy.vouchers;
 
 import ca.tweetzy.flight.FlightPlugin;
 import ca.tweetzy.flight.command.CommandManager;
-import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.flight.database.DataMigrationManager;
 import ca.tweetzy.flight.database.DatabaseConnector;
 import ca.tweetzy.flight.database.SQLiteConnector;
@@ -38,8 +37,8 @@ import ca.tweetzy.vouchers.listeners.VoucherListeners;
 import ca.tweetzy.vouchers.model.manager.CooldownManager;
 import ca.tweetzy.vouchers.model.manager.RedeemManager;
 import ca.tweetzy.vouchers.model.manager.VoucherManager;
-import ca.tweetzy.vouchers.settings.Translations;
 import ca.tweetzy.vouchers.settings.Settings;
+import ca.tweetzy.vouchers.settings.Translations;
 
 
 public final class Vouchers extends FlightPlugin {

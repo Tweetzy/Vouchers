@@ -34,6 +34,7 @@ import lombok.NonNull;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public final class GUICreateReward extends BaseGUI {
 
@@ -282,7 +283,11 @@ public final class GUICreateReward extends BaseGUI {
 				.make(), click -> {
 
 			if (this.rewardType == RewardType.ITEM) {
-				this.itemReward = new ItemReward(getItem(1, 4), this.itemReward.getChance());
+				final ItemStack itemReward = getItem(1, 4);
+
+				if (itemReward == null)return;
+
+				this.itemReward = new ItemReward(itemReward, this.itemReward.getChance());
 				this.voucher.getRewards().add(this.itemReward);
 			}
 

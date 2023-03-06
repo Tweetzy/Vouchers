@@ -18,6 +18,7 @@
 
 package ca.tweetzy.vouchers.impl;
 
+import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Reward;
@@ -25,6 +26,7 @@ import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.VoucherOptions;
 import ca.tweetzy.vouchers.hook.PAPIHook;
+import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -73,7 +75,13 @@ public final class ActiveVoucher implements Voucher {
 
 	@Override
 	public List<Reward> getRewards() {
-		return this.rewards;
+		return this.rewards.stream().filter(reward -> {
+			if (reward instanceof ItemReward itemReward) {
+				if (itemReward.getItem() == null || itemReward.getItem().getType() == CompMaterial.AIR.parseMaterial())
+					return false;
+			}
+			return true;
+		}).collect(Collectors.toList());
 	}
 
 	@Override

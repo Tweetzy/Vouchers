@@ -36,6 +36,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class GUIRewardList extends PagedGUI<Reward> {
 
@@ -44,6 +46,7 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 
 	public GUIRewardList(@NonNull final Voucher voucher) {
 		super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Rewards", 6, voucher.getRewards());
+
 		this.voucher = voucher;
 		draw();
 	}
@@ -52,7 +55,7 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 	protected ItemStack makeDisplayItem(Reward reward) {
 		ItemStack displayItem = reward instanceof ItemReward ? ((ItemReward) reward).getItem() : CompMaterial.PAPER.parseItem();
 
-		final QuickItem quickItem = QuickItem.of(displayItem);
+		final QuickItem quickItem = QuickItem.of(displayItem == null ? Objects.requireNonNull(CompMaterial.PAPER.parseItem()) : displayItem);
 
 		if (reward instanceof CommandReward)
 			quickItem.name("&B&lCommand Reward");
