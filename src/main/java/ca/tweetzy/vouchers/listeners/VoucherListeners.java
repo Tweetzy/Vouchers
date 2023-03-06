@@ -55,12 +55,12 @@ public final class VoucherListeners implements Listener {
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
 
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			event.setCancelled(true);
-			event.setUseItemInHand(Event.Result.DENY);
-		}
+//		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+//			event.setCancelled(true);
+//			event.setUseItemInHand(Event.Result.DENY);
+//		}
 
-		if (event.getAction() == Action.RIGHT_CLICK_AIR) {
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
 
 
 			final Voucher voucher = Vouchers.getVoucherManager().find(NBTEditor.getString(item, "Tweetzy:Vouchers"));

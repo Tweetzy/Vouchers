@@ -163,13 +163,16 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		switch (voucher.getRewardMode()) {
 			case AUTOMATIC -> {
 				// automatic means it will give them every reward added to the voucher
-				showRewardHeader(player);
-				voucher.getRewards().forEach(reward -> {
-					boolean wasGiven = reward.execute(player, false, args);
-					if (wasGiven)
-						showActualRewardGiven(player, reward);
-				});
-				showRewardFooter(player);
+
+				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
+					showRewardHeader(player);
+					voucher.getRewards().forEach(reward -> {
+						boolean wasGiven = reward.execute(player, false, args);
+						if (wasGiven)
+							showActualRewardGiven(player, reward);
+					});
+					showRewardFooter(player);
+				}
 
 
 				takeHand(player, voucher);
@@ -180,10 +183,13 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(voucher, args, selected -> {
 				boolean given = selected.execute(player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean(), args);
 
-				showRewardHeader(player);
-				if (given)
-					showActualRewardGiven(player, selected);
-				showRewardFooter(player);
+				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
+					showRewardHeader(player);
+					if (given)
+						showActualRewardGiven(player, selected);
+					showRewardFooter(player);
+				}
+
 
 				takeHand(player, voucher);
 				player.closeInventory();
@@ -198,7 +204,8 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 				Reward selectedReward = rewardProbabilityCollection.get();
 				selectedReward.execute(player, true, args);
-				showRewardInfo(player, selectedReward);
+				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
+					showRewardInfo(player, selectedReward);
 
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
