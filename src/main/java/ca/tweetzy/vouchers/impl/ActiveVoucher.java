@@ -18,7 +18,6 @@
 
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Reward;
@@ -26,6 +25,7 @@ import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.VoucherOptions;
 import ca.tweetzy.vouchers.hook.PAPIHook;
+import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -34,6 +34,7 @@ import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,13 +76,11 @@ public final class ActiveVoucher implements Voucher {
 
 	@Override
 	public List<Reward> getRewards() {
-		return this.rewards.stream().filter(reward -> {
-			if (reward instanceof ItemReward itemReward) {
-				if (itemReward.getItem() == null || itemReward.getItem().getType() == CompMaterial.AIR.parseMaterial())
-					return false;
-			}
-			return true;
-		}).collect(Collectors.toList());
+		final List<Reward> commandRewards = new ArrayList<>(this.rewards).stream().filter(reward -> reward instanceof CommandReward).collect(Collectors.toList());
+
+		commandRewards.addAll(new ArrayList<>(this.rewards).stream().filter(reward -> reward instanceof ItemReward).map(reward -> (ItemReward) reward).filter(reward -> reward.getItem() != null).toList());
+
+		return commandRewards;
 	}
 
 	@Override
