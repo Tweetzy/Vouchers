@@ -8,7 +8,7 @@
 
     <name>Vouchers</name>
     <description>An easy to use voucher plugin</description>
-    <version>3.9.0</version>
+    <version>3.10.0</version>
     <packaging>jar</packaging>
 
     <properties>
