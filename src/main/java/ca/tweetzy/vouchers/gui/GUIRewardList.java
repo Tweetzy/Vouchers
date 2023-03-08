@@ -128,8 +128,7 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 		}
 
 		if (click.clickType == ClickType.NUMBER_KEY) {
-			this.voucher.getRewards().remove(reward);
-			this.voucher.sync(true);
+			this.voucher.removeReward(reward);
 			click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
 		}
 	}

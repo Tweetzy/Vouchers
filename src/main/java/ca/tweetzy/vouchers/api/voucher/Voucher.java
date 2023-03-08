@@ -67,4 +67,5 @@ public interface Voucher extends Synchronize {
 	}
 
 	 void addReward(Reward reward);
+	 void removeReward(Reward reward);
 }

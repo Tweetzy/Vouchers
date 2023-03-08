@@ -160,4 +160,10 @@ public final class ActiveVoucher implements Voucher {
 		this.rewards.add(reward);
 		sync(true);
 	}
+
+	@Override
+	public void removeReward(Reward reward) {
+		this.rewards.remove(reward);
+		sync(true);
+	}
 }
