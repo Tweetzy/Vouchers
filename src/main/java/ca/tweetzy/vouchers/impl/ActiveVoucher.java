@@ -154,4 +154,10 @@ public final class ActiveVoucher implements Voucher {
 				.tag("Tweetzy:VouchersArgs", vArgs)
 				.make();
 	}
+
+	@Override
+	public void addReward(Reward reward) {
+		this.rewards.add(reward);
+		sync(true);
+	}
 }

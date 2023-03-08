@@ -283,19 +283,18 @@ public final class GUICreateReward extends BaseGUI {
 				.make(), click -> {
 
 			if (this.rewardType == RewardType.ITEM) {
-				final ItemStack itemReward = getItem(1, 4);
+				final ItemStack itemStackForReward = getItem(1, 4);
 
-				if (itemReward == null)return;
+				if (itemStackForReward == null)return;
 
-				this.itemReward = new ItemReward(itemReward, this.itemReward.getChance());
-				this.voucher.getRewards().add(this.itemReward);
+				this.itemReward = new ItemReward(itemStackForReward, this.itemReward.getChance());
+				this.voucher.addReward(this.itemReward);
+
+			} else if (this.rewardType == RewardType.COMMAND) {
+				this.voucher.addReward(this.commandReward);
 			}
 
-			if (this.rewardType == RewardType.COMMAND) {
-				this.voucher.getRewards().add(this.commandReward);
-			}
-
-			this.voucher.sync(true);
+//			this.voucher.sync(true);
 			click.manager.showGUI(click.player, new GUIRewardList(this.voucher));
 
 		});
