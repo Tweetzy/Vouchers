@@ -36,6 +36,9 @@ public final class Translations extends TranslationManager {
 	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.not allowed to use", "&cYou are not allowed to use that voucher");
 	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.wait for cooldown", "&cYou can redeem that voucher in &4%cooldown_time% &cseconds");
 
+	public static final TranslationEntry DROP_NEAR_PLAYER = create("info.give.dropped near player", "Voucher was dropped near player: %player_name% (full inventory)");
+	public static final TranslationEntry GIVEN_TO_PLAYER = create("info.give.placed into inventory", "Voucher was placed in player: %player_name%'s inventory");
+
 
 	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.confirm.title", "&bVouchers &8> &7Confirm Action");
 	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_NAME = create("gui.confirm.items.yes.name", "&a&lconfirm");

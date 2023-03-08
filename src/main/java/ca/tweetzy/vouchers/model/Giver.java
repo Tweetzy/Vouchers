@@ -18,8 +18,11 @@
 
 package ca.tweetzy.vouchers.model;
 
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.settings.Settings;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
@@ -36,11 +39,12 @@ public final class Giver {
 		if (player.getInventory().firstEmpty() == -1) {
 			player.getWorld().dropItemNaturally(player.getLocation(), item);
 			if (voucher && Settings.LOG_VOUCHER_GIVE_STATUS.getBoolean())
-				Common.log("Voucher was dropped near player: " + player.getName() + " (full inventory)");
+				Common.log(TranslationManager.string(Translations.DROP_NEAR_PLAYER, "player_name", player.getName()));
 		} else {
 			player.getInventory().addItem(item);
 			if (voucher && Settings.LOG_VOUCHER_GIVE_STATUS.getBoolean())
-				Common.log("Voucher was placed in player: " + player.getName() + "'s inventory");
+				Common.log(TranslationManager.string(Translations.GIVEN_TO_PLAYER, "player_name", player.getName()));
+
 		}
 	}
 }
