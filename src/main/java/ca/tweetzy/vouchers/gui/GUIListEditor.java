@@ -50,7 +50,7 @@ public final class GUIListEditor extends PagedGUI<String> {
 	protected ItemStack makeDisplayItem(String line) {
 		return QuickItem
 				.of(CompMaterial.PAPER)
-				.name(line)
+				.name((line == null || line.trim().isBlank()) ? "&7-Blank Line-" : line)
 				.lore(
 						"&b&lLeft Click &8» &7To swap with another line",
 						"&c&lPress 1 &8» &7To delete line"
@@ -61,20 +61,33 @@ public final class GUIListEditor extends PagedGUI<String> {
 	@Override
 	protected void drawAdditional() {
 		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL).name("&a&lNew Line").lore(
-				"&b&lClick &8» &7To add new line"
-		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lVoucher Edit", "&fEnter new line for lore") {
+				"&b&lLeft Click &8» &7To add new line",
+				"&a&lRight Click &8» &7To add blank line"
+		).make(), click -> {
+			if (click.clickType == ClickType.LEFT) {
+				new TitleInput(Vouchers.getInstance(), click.player, "&b&lVoucher Edit", "&fEnter new line for lore") {
 
-			@Override
-			public void onExit(Player player) {
-				click.manager.showGUI(click.player, GUIListEditor.this);
+					@Override
+					public void onExit(Player player) {
+						click.manager.showGUI(click.player, GUIListEditor.this);
+					}
+
+					@Override
+					public boolean onResult(String string) {
+						GUIListEditor.this.voucher.getDescription().add(string);
+						GUIListEditor.this.voucher.sync(true);
+						click.manager.showGUI(click.player, new GUIListEditor(GUIListEditor.this.voucher));
+						return true;
+					}
+				};
 			}
 
-			@Override
-			public boolean onResult(String string) {
-				GUIListEditor.this.voucher.getDescription().add(string);
-				GUIListEditor.this.voucher.sync(true);
-				click.manager.showGUI(click.player, new GUIListEditor(GUIListEditor.this.voucher));
-				return true;
+			if (click.clickType == ClickType.RIGHT) {
+				long totalBlanks = this.voucher.getDescription().stream().filter(line -> line.isEmpty() || line.isBlank() || line.contains("-Blank-")).count();
+
+				this.voucher.getDescription().add("-Blank-" + (totalBlanks + 1));
+				this.voucher.sync(true);
+				click.manager.showGUI(click.player, new GUIListEditor(this.voucher));
 			}
 		});
 	}

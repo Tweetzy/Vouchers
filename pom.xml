@@ -8,7 +8,7 @@
 
     <name>Vouchers</name>
     <description>An easy to use voucher plugin</description>
-    <version>3.6.0</version>
+    <version>3.11.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -16,7 +16,7 @@
         <jarName>${project.name}</jarName>
         <main.class>${project.groupId}.${project.artifactId}.${project.name}</main.class>
         <java.version>16</java.version>
-        <flight.version>3.7.0</flight.version>
+        <flight.version>3.11.0</flight.version>
         <flight.path>ca.tweetzy</flight.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -66,6 +66,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.6</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
@@ -123,6 +124,7 @@
                     <artifactSet>
                         <includes>
                             <include>${flight.path}:flight*</include>
+                            <include>com.google.code.gson:gson</include>
                         </includes>
                     </artifactSet>
                     <filters>
@@ -140,6 +142,10 @@
                         <relocation>
                             <pattern>ca.tweetzy.flight</pattern>
                             <shadedPattern>${project.groupId}.${project.artifactId}.flight</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.gson</pattern>
+                            <shadedPattern>${project.groupId}.${project.artifactId}.gson</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

@@ -21,16 +21,20 @@ package ca.tweetzy.vouchers.gui;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.gui.template.SoundPickerGUI;
+import ca.tweetzy.flight.settings.TranslationManager;
+import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
 public final class GUIVoucherSettings extends BaseGUI {
 
@@ -55,7 +59,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				"&7Current&f: &b" + this.voucher.getOptions().getMaxUses(),
 				"",
 				"&b&lClick &8» &7To edit max uses"
-		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new maximum uses") {
+		).make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&B&lVoucher Edit", "&fEnter new maximum uses") {
 
 			@Override
 			public void onExit(Player player) {
@@ -67,7 +71,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				string = ChatColor.stripColor(string.toLowerCase());
 
 				if (!NumberUtils.isNumber(string)) {
-					Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 					return false;
 				}
 
@@ -79,6 +83,25 @@ public final class GUIVoucherSettings extends BaseGUI {
 			}
 		});
 
+		setButton(2, 2, QuickItem
+				.of(CompMaterial.JUKEBOX)
+				.name("&b&lVoucher Sound")
+				.lore(
+						"",
+						"&7Current&f: " + ChatUtil.capitalizeFully(this.voucher.getOptions().getSound()),
+						"",
+						"&b&lClick &8» &7To change with picker"
+				)
+				.make(), click -> {
+
+			if (click.clickType == ClickType.LEFT)
+				click.manager.showGUI(click.player, new SoundPickerGUI(this, "&bVouchers &8> &7Select Sound", null, (event, selected) -> {
+					this.voucher.getOptions().setSound(selected);
+					this.voucher.sync(true);
+					click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher));
+				}));
+		});
+
 		setButton(1, 3, QuickItem.of(CompMaterial.PACKED_ICE).name("&b&lCooldown").lore(
 				"&7In seconds, how long do you want the player",
 				"&7to wait before they can redeem this voucher,",
@@ -87,7 +110,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				"&7Current&f: &b" + this.voucher.getOptions().getCooldown(),
 				"",
 				"&b&lClick &8» &7To edit use cooldown"
-		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new cooldown") {
+		).make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&B&lVoucher Edit", "&fEnter new cooldown") {
 
 			@Override
 			public void onExit(Player player) {
@@ -99,7 +122,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				string = ChatColor.stripColor(string.toLowerCase());
 
 				if (!NumberUtils.isNumber(string)) {
-					Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+					Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 					return false;
 				}
 
@@ -169,7 +192,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 				"&7Current&f: &b" + this.voucher.getOptions().getPermission(),
 				"",
 				"&b&lClick &8» &7To edit permission"
-		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new voucher permission") {
+		).make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&B&lVoucher Edit", "&fEnter new voucher permission") {
 
 			@Override
 			public void onExit(Player player) {

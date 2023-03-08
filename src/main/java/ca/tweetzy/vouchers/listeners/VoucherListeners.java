@@ -19,7 +19,6 @@
 package ca.tweetzy.vouchers.listeners;
 
 import ca.tweetzy.flight.comp.NBTEditor;
-import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
@@ -34,6 +33,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -51,9 +51,17 @@ public final class VoucherListeners implements Listener {
 
 		if (item == null) return;
 
-		if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-			// not even a voucher
-			if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+		// not even a voucher
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+
+
+//		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+//			event.setCancelled(true);
+//			event.setUseItemInHand(Event.Result.DENY);
+//		}
+
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+
 
 			final Voucher voucher = Vouchers.getVoucherManager().find(NBTEditor.getString(item, "Tweetzy:Vouchers"));
 			final String voucherArgsRaw = NBTEditor.getString(item, "Tweetzy:VouchersArgs");
@@ -63,7 +71,12 @@ public final class VoucherListeners implements Listener {
 			// invalid / deleted voucher
 			if (voucher == null) return;
 
+			if (event.getHand() == EquipmentSlot.OFF_HAND)
+				return;
+
+
 			event.setUseItemInHand(Event.Result.DENY);
+			
 
 			if (!this.blockedFromDrop.contains(player.getUniqueId()))
 				this.blockedFromDrop.add(player.getUniqueId());

@@ -108,7 +108,7 @@ public final class GUIVoucherEdit extends BaseGUI {
 						"",
 						"&7Current&f: "
 				)
-				.lore(this.voucher.getDescription())
+				.lore(this.voucher.getFilteredDescription())
 				.lore(
 						"",
 						"&b&lClick &8» &7To edit description"

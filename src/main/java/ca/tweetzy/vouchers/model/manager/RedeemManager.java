@@ -21,16 +21,20 @@ package ca.tweetzy.vouchers.model.manager;
 import ca.tweetzy.flight.collection.ProbabilityCollection;
 import ca.tweetzy.flight.comp.Titles;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.ItemUtil;
 import ca.tweetzy.flight.utils.PlayerUtil;
-import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.*;
 import ca.tweetzy.vouchers.gui.GUIRewardSelection;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.impl.reward.CommandReward;
+import ca.tweetzy.vouchers.impl.reward.ItemReward;
+import ca.tweetzy.vouchers.settings.Settings;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -84,13 +88,13 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 	public void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown, List<String> args) {
 		// check permission
 		if (voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) {
-			Common.tell(player, Locale.NOT_ALLOWED_TO_USE.getString());
+			Common.tell(player, TranslationManager.string(Translations.NOT_ALLOWED_TO_USE));
 			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_NO_PERMISSION));
 			return;
 		}
 
 		if (isAtRedeemLimit(player, voucher) && !ignoreRedeemLimit) {
-			Common.tell(player, Locale.REDEEM_LIMIT_REACHED.getString());
+			Common.tell(player, TranslationManager.string(Translations.REDEEM_LIMIT_REACHED));
 			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_AT_MAX_USES));
 			return;
 		}
@@ -101,7 +105,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				long cooldownTime = Vouchers.getCooldownManager().getCooldownTime(player.getUniqueId(), voucher);
 
 				if (System.currentTimeMillis() < cooldownTime) {
-					Common.tell(player, Replacer.replaceVariables(Locale.WAIT_FOR_COOLDOWN.getString(), "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000F)));
+					Common.tell(player, TranslationManager.string(Translations.WAIT_FOR_COOLDOWN, "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000F)));
 					Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_HAS_COOLDOWN));
 					return;
 				}
@@ -111,6 +115,9 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		Bukkit.getPluginManager().callEvent(voucherRedeemEvent);
 
 		if (voucherRedeemEvent.isCancelled()) return;
+
+		// play sound
+		voucher.getOptions().getSound().play(player);
 
 		// collect titles
 		if (!voucher.getOptions().getMessages().isEmpty()) {
@@ -153,19 +160,40 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		}
 
 		// rewards
-
 		switch (voucher.getRewardMode()) {
 			case AUTOMATIC -> {
 				// automatic means it will give them every reward added to the voucher
-				voucher.getRewards().forEach(reward -> reward.execute(player, false, args));
+
+				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
+					showRewardHeader(player);
+					voucher.getRewards().forEach(reward -> {
+						boolean wasGiven = reward.execute(player, false, args);
+						if (wasGiven)
+							showActualRewardGiven(player, reward);
+					});
+					showRewardFooter(player);
+				}
+
+
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
 				registerRedeemIfApplicable(player, voucher);
 			}
 			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(voucher, args, selected -> {
+				boolean given = selected.execute(player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean(), args);
+
+				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
+					showRewardHeader(player);
+					if (given)
+						showActualRewardGiven(player, selected);
+					showRewardFooter(player);
+				}
+
+
 				takeHand(player, voucher);
 				player.closeInventory();
+
 				if (!ignoreCooldown)
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
 				registerRedeemIfApplicable(player, voucher);
@@ -174,14 +202,46 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				final ProbabilityCollection<Reward> rewardProbabilityCollection = new ProbabilityCollection<>();
 				voucher.getRewards().forEach(reward -> rewardProbabilityCollection.add(reward, (int) reward.getChance()));
 
-				final Reward selectedReward = rewardProbabilityCollection.get();
-				selectedReward.execute(player, false, args);
+				Reward selectedReward = rewardProbabilityCollection.get();
+				selectedReward.execute(player, true, args);
+				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
+					showRewardInfo(player, selectedReward);
+
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+
+
 				registerRedeemIfApplicable(player, voucher);
 			}
 		}
+	}
+
+	private void showRewardInfo(@NonNull final Player player, @NonNull final Reward reward) {
+		showRewardHeader(player);
+		showActualRewardGiven(player, reward);
+		showRewardFooter(player);
+	}
+
+	private void showRewardHeader(@NonNull final Player player) {
+		Common.tellNoPrefix(player, TranslationManager.list(Translations.VOUCHER_REWARD_INFO_HEADER).toArray(new String[0]));
+	}
+
+	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Reward reward) {
+		if (reward instanceof final ItemReward itemReward)
+			TranslationManager.list(Translations.VOUCHER_REWARD_INFO_ITEM, "item_quantity", itemReward.getItem().getAmount(), "item_name", ItemUtil.getStackName(itemReward.getItem())).forEach(line -> Common.tellNoPrefix(player, line));
+
+		if (reward instanceof final CommandReward commandReward) {
+			if (commandReward.getClaimMessage().isEmpty())
+				TranslationManager.list(Translations.VOUCHER_REWARD_INFO_COMMAND, "reward_command", commandReward.getCommand()).forEach(line -> Common.tellNoPrefix(player, line));
+			else
+				Common.tellNoPrefix(player, commandReward.getClaimMessage());
+
+		}
+	}
+
+	private void showRewardFooter(@NonNull final Player player) {
+		Common.tellNoPrefix(player, TranslationManager.list(Translations.VOUCHER_REWARD_INFO_FOOTER).toArray(new String[0]));
 	}
 
 	public void registerRedeemIfApplicable(@NonNull final Player player, @NonNull final Voucher voucher) {

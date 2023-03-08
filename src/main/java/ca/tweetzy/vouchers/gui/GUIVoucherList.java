@@ -22,6 +22,7 @@ import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.gui.template.PagedGUI;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
@@ -30,7 +31,7 @@ import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -51,7 +52,7 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 		return QuickItem
 				.of(voucher.getItem())
 				.name(voucher.getName())
-				.lore(voucher.getDescription())
+				.lore(voucher.getFilteredDescription())
 				.lore(
 						"",
 						"&b&lLeft Click &8» &7To take voucher",
@@ -65,7 +66,7 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 	protected void drawAdditional() {
 		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL).name("&a&lNew Voucher").lore(
 				"&b&lClick &8» &7To create new voucher"
-		).make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lVouchers", "&fEnter id for voucher into chat") {
+		).make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&b&lVouchers", "&fEnter id for voucher into chat") {
 
 			@Override
 			public void onExit(Player player) {
@@ -76,7 +77,8 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 			public boolean onResult(String string) {
 				string = ChatColor.stripColor(string.toLowerCase());
 				if (Vouchers.getVoucherManager().find(string) != null) {
-					Common.tell(click.player, Locale.VOUCHER_EXISTS_ALREADY.getString());
+					Common.tell(click.player, TranslationManager.string(Translations.VOUCHER_EXISTS_ALREADY));
+
 					return false;
 				}
 

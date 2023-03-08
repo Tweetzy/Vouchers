@@ -23,16 +23,21 @@ import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.gui.template.PagedGUI;
 import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.flight.utils.input.TitleInput;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class GUIRewardList extends PagedGUI<Reward> {
 
@@ -41,6 +46,7 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 
 	public GUIRewardList(@NonNull final Voucher voucher) {
 		super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Rewards", 6, voucher.getRewards());
+
 		this.voucher = voucher;
 		draw();
 	}
@@ -49,7 +55,7 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 	protected ItemStack makeDisplayItem(Reward reward) {
 		ItemStack displayItem = reward instanceof ItemReward ? ((ItemReward) reward).getItem() : CompMaterial.PAPER.parseItem();
 
-		final QuickItem quickItem = QuickItem.of(displayItem);
+		final QuickItem quickItem = QuickItem.of(displayItem == null ? Objects.requireNonNull(CompMaterial.PAPER.parseItem()) : displayItem);
 
 		if (reward instanceof CommandReward)
 			quickItem.name("&B&lCommand Reward");
@@ -57,15 +63,22 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 
 		quickItem.lore("");
 
-		if (reward instanceof CommandReward)
-			quickItem.lore("&7Command&f: &b" + ((CommandReward) reward).getCommand());
+		if (reward instanceof final CommandReward commandReward) {
+			quickItem.lore("&7Command&f: &b" + commandReward.getCommand());
+			quickItem.lore("&7Message&f: &b" + (commandReward.getClaimMessage().isEmpty() ? "No Message Set" : commandReward.getClaimMessage()));
+		}
 
 		quickItem.lore(
 				"&7Chance&f: &b" + reward.getChance(),
 				"&7Delay&f: &b" + reward.getDelay(),
-				"",
-				"&c&lPress 1 &8» &7To delete this reward"
+				""
+
 		);
+
+		if (reward instanceof CommandReward)
+			quickItem.lore("&b&lRight Click &8» &7To edit message");
+
+		quickItem.lore("&c&lPress 1 &8» &7To delete this reward");
 
 		return quickItem.make();
 	}
@@ -94,9 +107,28 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 			}
 		}
 
+		if (click.clickType == ClickType.RIGHT && reward instanceof final CommandReward commandReward) {
+			click.gui.exit();
+			new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Message", "&fEnter new reward message") {
+
+				@Override
+				public void onExit(Player player) {
+					click.manager.showGUI(click.player, GUIRewardList.this);
+				}
+
+				@Override
+				public boolean onResult(String string) {
+					commandReward.setClaimMessage(string);
+					GUIRewardList.this.voucher.sync(true);
+
+					click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+					return true;
+				}
+			};
+		}
+
 		if (click.clickType == ClickType.NUMBER_KEY) {
-			this.voucher.getRewards().remove(reward);
-			this.voucher.sync(true);
+			this.voucher.removeReward(reward);
 			click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
 		}
 	}

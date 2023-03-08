@@ -20,6 +20,7 @@ package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
@@ -28,11 +29,12 @@ import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public final class GUICreateReward extends BaseGUI {
 
@@ -102,7 +104,7 @@ public final class GUICreateReward extends BaseGUI {
 						string = ChatColor.stripColor(string.toLowerCase());
 
 						if (!NumberUtils.isNumber(string)) {
-							Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+							Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 							return false;
 						}
 
@@ -179,7 +181,7 @@ public final class GUICreateReward extends BaseGUI {
 					string = ChatColor.stripColor(string.toLowerCase());
 
 					if (!NumberUtils.isNumber(string)) {
-						Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+						Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 						return false;
 					}
 
@@ -221,7 +223,7 @@ public final class GUICreateReward extends BaseGUI {
 					string = ChatColor.stripColor(string.toLowerCase());
 
 					if (!NumberUtils.isNumber(string)) {
-						Common.tell(click.player, Locale.NOT_A_NUMBER.getString());
+						Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
 						return false;
 					}
 
@@ -239,6 +241,39 @@ public final class GUICreateReward extends BaseGUI {
 				}
 			});
 
+			setButton(3, 2, QuickItem
+					.of(CompMaterial.ACACIA_SIGN)
+					.name("&b&lReward Message")
+					.lore(
+							"&7The message that will shown only if",
+							"&7this reward is given to a player",
+							"",
+							"&7Current&f: &b" + (this.commandReward.getClaimMessage().isBlank() ? "No Message Set" : this.commandReward.getClaimMessage()),
+							"",
+							"&b&lClick &8» &7To edit message"
+					)
+					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Message", "&fEnter new reward message") {
+
+				@Override
+				public void onExit(Player player) {
+					click.manager.showGUI(click.player, GUICreateReward.this);
+				}
+
+				@Override
+				public boolean onResult(String string) {
+					GUICreateReward.this.commandReward.setClaimMessage(string);
+
+					click.manager.showGUI(click.player, new GUICreateReward(
+							GUICreateReward.this.voucher,
+							RewardType.COMMAND,
+							GUICreateReward.this.commandReward,
+							null
+					));
+
+					return true;
+				}
+			});
+
 		}
 
 		setButton(5, 4, QuickItem
@@ -248,15 +283,18 @@ public final class GUICreateReward extends BaseGUI {
 				.make(), click -> {
 
 			if (this.rewardType == RewardType.ITEM) {
-				this.itemReward = new ItemReward(getItem(1, 4), this.itemReward.getChance());
-				this.voucher.getRewards().add(this.itemReward);
+				final ItemStack itemStackForReward = getItem(1, 4);
+
+				if (itemStackForReward == null)return;
+
+				this.itemReward = new ItemReward(itemStackForReward, this.itemReward.getChance());
+				this.voucher.addReward(this.itemReward);
+
+			} else if (this.rewardType == RewardType.COMMAND) {
+				this.voucher.addReward(this.commandReward);
 			}
 
-			if (this.rewardType == RewardType.COMMAND) {
-				this.voucher.getRewards().add(this.commandReward);
-			}
-
-			this.voucher.sync(true);
+//			this.voucher.sync(true);
 			click.manager.showGUI(click.player, new GUIRewardList(this.voucher));
 
 		});

@@ -22,13 +22,14 @@ import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.gui.template.PagedGUI;
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
-import ca.tweetzy.vouchers.settings.Locale;
+import ca.tweetzy.vouchers.settings.Translations;
 import ca.tweetzy.vouchers.settings.Settings;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
@@ -42,7 +43,7 @@ public final class GUIRewardSelection extends PagedGUI<Reward> {
 	private final Consumer<Reward> selected;
 
 	public GUIRewardSelection(@NonNull final Voucher voucher, List<String> args, @NonNull final Consumer<Reward> selected) {
-		super(null, Locale.GUI_REWARD_SELECT_TITLE.getString(), 6, voucher.getRewards());
+		super(null, TranslationManager.string(Translations.GUI_REWARD_SELECT_TITLE), 6, voucher.getRewards());
 		this.args = args;
 		this.selected = selected;
 		draw();
@@ -55,15 +56,15 @@ public final class GUIRewardSelection extends PagedGUI<Reward> {
 		final QuickItem quickItem = QuickItem.of(displayItem);
 
 		if (reward instanceof CommandReward)
-			quickItem.name(Locale.GUI_REWARD_SELECT_CMD_NAME.getString());
+			quickItem.name(TranslationManager.string(Translations.GUI_REWARD_SELECT_CMD_NAME));
 
 
 		quickItem.lore("");
 
 		if (reward instanceof final CommandReward commandReward) {
-			quickItem.lore(Replacer.replaceVariables(Locale.GUI_REWARD_SELECT_CMD_LORE.getStringList(), "reward_command", commandReward.getCommand(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : commandReward.getChance()));
+			quickItem.lore(TranslationManager.list(Translations.GUI_REWARD_SELECT_CMD_LORE, "reward_command", commandReward.getCommand(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : commandReward.getChance()));
 		} else {
-			quickItem.lore(Replacer.replaceVariables(Locale.GUI_REWARD_SELECT_ITEM_LORE.getStringList(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : reward.getChance()));
+			quickItem.lore(TranslationManager.list(Translations.GUI_REWARD_SELECT_ITEM_LORE, "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : reward.getChance()));
 		}
 
 		return quickItem.make();
@@ -71,7 +72,6 @@ public final class GUIRewardSelection extends PagedGUI<Reward> {
 
 	@Override
 	protected void onClick(Reward reward, GuiClickEvent click) {
-		reward.execute(click.player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean(), this.args);
 		this.selected.accept(reward);
 	}
 

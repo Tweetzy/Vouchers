@@ -18,6 +18,7 @@
 
 package ca.tweetzy.vouchers.impl.importer;
 
+import ca.tweetzy.flight.comp.enums.CompSound;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.Importer;
 import ca.tweetzy.vouchers.api.voucher.*;
@@ -132,6 +133,7 @@ public final class VouchersImporter implements Importer {
 					section.getBoolean(voucherNode + ".setting.ask confirm"),
 					true,
 					section.getBoolean(voucherNode + ".setting.require permission"),
+					CompSound.ENTITY_EXPERIENCE_ORB_PICKUP,
 					section.getString(voucherNode + ".setting.permission"),
 					messages
 			);
