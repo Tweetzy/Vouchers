@@ -172,6 +172,8 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 							showActualRewardGiven(player, reward);
 					});
 					showRewardFooter(player);
+				} else {
+					voucher.getRewards().forEach(reward -> reward.execute(player, false, args));
 				}
 
 
@@ -189,7 +191,6 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 						showActualRewardGiven(player, selected);
 					showRewardFooter(player);
 				}
-
 
 				takeHand(player, voucher);
 				player.closeInventory();
