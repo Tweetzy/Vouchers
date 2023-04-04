@@ -178,7 +178,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 						"&7If true, vouchers will check if the player",
 						"&7has permission to redeem the voucher.",
 						"",
-						"&7Current&f: " + (this.voucher.getOptions().isRemoveOnUse() ? "&aTrue" : "&cFalse"),
+						"&7Current&f: " + (this.voucher.getOptions().isRequiresPermission() ? "&aTrue" : "&cFalse"),
 						"",
 						"&b&lClick &8» &7To toggle require permission"
 				).make(), click -> {
