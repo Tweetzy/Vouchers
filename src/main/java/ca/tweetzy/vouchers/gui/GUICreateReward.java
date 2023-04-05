@@ -36,6 +36,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public final class GUICreateReward extends BaseGUI {
 
 	private final Voucher voucher;
@@ -147,10 +150,12 @@ public final class GUICreateReward extends BaseGUI {
 
 				@Override
 				public boolean onResult(String string) {
+
+
 					click.manager.showGUI(click.player, new GUICreateReward(
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
-							new CommandReward(ChatColor.stripColor(string), GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
+							new CommandReward(string, GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
 							null
 					));
 

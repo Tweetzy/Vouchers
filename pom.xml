@@ -8,7 +8,7 @@
 
     <name>Vouchers</name>
     <description>An easy to use voucher plugin</description>
-    <version>3.11.1</version>
+    <version>3.11.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -16,7 +16,7 @@
         <jarName>${project.name}</jarName>
         <main.class>${project.groupId}.${project.artifactId}.${project.name}</main.class>
         <java.version>16</java.version>
-        <flight.version>3.11.0</flight.version>
+        <flight.version>3.12.0</flight.version>
         <flight.path>ca.tweetzy</flight.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -161,10 +161,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:\Dev\Minecraft\latest\plugins</outputDirectory>
+                            <outputDirectory>D:\Development\Spigot Servers\Latest Version\plugins</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>C:\Users\Kiran\Documents\Development\Minecraft\Active\${project.name}\target</directory>
+                                    <directory>${project.build.directory}</directory>
                                     <include>${project.name}.jar</include>
                                     <filtering>false</filtering>
                                 </resource>
