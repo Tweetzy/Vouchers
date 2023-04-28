@@ -117,7 +117,8 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		if (voucherRedeemEvent.isCancelled()) return;
 
 		// play sound
-		voucher.getOptions().getSound().play(player);
+		if (voucher.getOptions().isPlayingSound())
+			voucher.getOptions().getSound().play(player);
 
 		// collect titles
 		if (!voucher.getOptions().getMessages().isEmpty()) {

@@ -40,12 +40,13 @@ public final class VoucherSettings implements VoucherOptions {
 	private boolean askConfirm;
 	private boolean removeOnUse;
 	private boolean requiresPermission;
+	private boolean playSound;
 	private CompSound sound;
 	private String permission;
 	private List<Message> messages;
 
 	public VoucherSettings() {
-		this(-1, -1, true, true, true, true, CompSound.ENTITY_EXPERIENCE_ORB_PICKUP, "vouchers.usevoucher", new ArrayList<>());
+		this(-1, -1, true, true, true, true, true,CompSound.ENTITY_EXPERIENCE_ORB_PICKUP, "vouchers.usevoucher", new ArrayList<>());
 	}
 
 	@Override
@@ -58,6 +59,7 @@ public final class VoucherSettings implements VoucherOptions {
 		object.addProperty("askConfirm", this.askConfirm);
 		object.addProperty("removeOnUse", this.removeOnUse);
 		object.addProperty("requiresPermission", this.requiresPermission);
+		object.addProperty("playSound", this.playSound);
 		object.addProperty("permission", this.permission);
 		object.addProperty("sound", this.sound.name());
 
@@ -98,6 +100,7 @@ public final class VoucherSettings implements VoucherOptions {
 		});
 
 		CompSound sound = object.has("sound") ? CompSound.matchCompSound(object.get("sound").getAsString()).orElse(CompSound.ENTITY_EXPERIENCE_ORB_PICKUP) : CompSound.ENTITY_EXPERIENCE_ORB_PICKUP;
+		boolean playSound = !object.has("playSound") || object.get("playSound").getAsBoolean();
 
 		return new VoucherSettings(
 				object.get("maxUses").getAsInt(),
@@ -106,6 +109,7 @@ public final class VoucherSettings implements VoucherOptions {
 				object.get("askConfirm").getAsBoolean(),
 				object.get("removeOnUse").getAsBoolean(),
 				object.get("requiresPermission").getAsBoolean(),
+				playSound,
 				sound,
 				object.get("permission").getAsString(),
 				messages
@@ -140,6 +144,11 @@ public final class VoucherSettings implements VoucherOptions {
 	@Override
 	public boolean isRequiresPermission() {
 		return this.requiresPermission;
+	}
+
+	@Override
+	public boolean isPlayingSound() {
+		return this.playSound;
 	}
 
 	@Override
@@ -190,6 +199,11 @@ public final class VoucherSettings implements VoucherOptions {
 	@Override
 	public void setRequiresPermission(boolean requiresPermission) {
 		this.requiresPermission = requiresPermission;
+	}
+
+	@Override
+	public void setPlayingSound(boolean playSound) {
+		this.playSound = playSound;
 	}
 
 	@Override

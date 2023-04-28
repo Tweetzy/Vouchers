@@ -37,6 +37,8 @@ public interface VoucherOptions extends Jsonable {
 
 	boolean isRequiresPermission();
 
+	boolean isPlayingSound();
+
 	String getPermission();
 
 	List<Message> getMessages();
@@ -56,6 +58,8 @@ public interface VoucherOptions extends Jsonable {
 	void setRemoveOnUse(boolean removeOnUse);
 
 	void setRequiresPermission(boolean requiresPermission);
+
+	void setPlayingSound(boolean playSound);
 
 	CompSound getSound();
 

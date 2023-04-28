@@ -133,6 +133,7 @@ public final class VouchersImporter implements Importer {
 					section.getBoolean(voucherNode + ".setting.ask confirm"),
 					true,
 					section.getBoolean(voucherNode + ".setting.require permission"),
+					true,
 					CompSound.ENTITY_EXPERIENCE_ORB_PICKUP,
 					section.getString(voucherNode + ".setting.permission"),
 					messages
