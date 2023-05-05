@@ -70,11 +70,11 @@ public final class CommandGive extends Command {
 		if (isGivingAll)
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				for (int i = 0; i < amount; i++)
-					Giver.giveItem(player, optionalArgs.isEmpty() ? voucherFound.buildItem(player) : voucherFound.buildItem(player,optionalArgs), true);
+					Giver.giveItem(player, optionalArgs.isEmpty() ? voucherFound.buildItem(player) : voucherFound.buildItem(player, optionalArgs), true);
 			}
 		else {
 			for (int i = 0; i < amount; i++)
-				Giver.giveItem(target, optionalArgs.isEmpty() ? voucherFound.buildItem(target) : voucherFound.buildItem(target,optionalArgs), true);
+				Giver.giveItem(target, optionalArgs.isEmpty() ? voucherFound.buildItem(target) : voucherFound.buildItem(target, optionalArgs), true);
 		}
 
 		return ReturnType.SUCCESS;

@@ -18,7 +18,6 @@
 
 package ca.tweetzy.vouchers.impl.reward;
 
-import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.AbstractReward;
@@ -30,7 +29,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
@@ -100,6 +98,7 @@ public final class CommandReward extends AbstractReward {
 	}
 
 	private final Pattern STRIP_COLOR_PATTERN = Pattern.compile("^([&§])([0-9A-FK-OR])", Pattern.CASE_INSENSITIVE);
+
 	public String stripFirstColor(String input) {
 		if (input == null) {
 			return null;

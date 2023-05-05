@@ -25,7 +25,6 @@ import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.GUIConfirm;
-import ca.tweetzy.vouchers.model.manager.VoucherManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -57,7 +56,7 @@ public final class VoucherListeners implements Listener {
 		// not even a voucher
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
 
 			final Voucher voucher = Vouchers.getVoucherManager().find(NBTEditor.getString(item, "Tweetzy:Vouchers"));
@@ -73,7 +72,7 @@ public final class VoucherListeners implements Listener {
 
 
 			event.setUseItemInHand(Event.Result.DENY);
-			
+
 
 			if (!this.blockedFromDrop.contains(player.getUniqueId()))
 				this.blockedFromDrop.add(player.getUniqueId());

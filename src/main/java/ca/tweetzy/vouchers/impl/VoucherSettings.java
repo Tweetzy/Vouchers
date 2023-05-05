@@ -46,7 +46,7 @@ public final class VoucherSettings implements VoucherOptions {
 	private List<Message> messages;
 
 	public VoucherSettings() {
-		this(-1, -1, true, true, true, true, true,CompSound.ENTITY_EXPERIENCE_ORB_PICKUP, "vouchers.usevoucher", new ArrayList<>());
+		this(-1, -1, true, true, true, true, true, CompSound.ENTITY_EXPERIENCE_ORB_PICKUP, "vouchers.usevoucher", new ArrayList<>());
 	}
 
 	@Override
