@@ -103,7 +103,7 @@ public interface VouchersAPI {
 	 * Get the total number of times a player has redeemed a voucher
 	 *
 	 * @param playerUUID The UUID of the player you want to get the total redeems for.
-	 * @param voucherId The id of the voucher.
+	 * @param voucherId  The id of the voucher.
 	 * @return The total number of times the player has redeemed the voucher.
 	 */
 	int getTotalRedeems(@NonNull final UUID playerUUID, @NonNull final String voucherId);
@@ -111,7 +111,7 @@ public interface VouchersAPI {
 	/**
 	 * Get the total number of times a player has redeemed a voucher
 	 *
-	 * @param player The player you want to get the total redeems for.
+	 * @param player  The player you want to get the total redeems for.
 	 * @param voucher The voucher you want to get the total redeems of.
 	 * @return The total number of times a player has redeemed a voucher.
 	 */
@@ -120,7 +120,7 @@ public interface VouchersAPI {
 	/**
 	 * > Returns true if the player has reached the maximum number of times they can redeem the voucher
 	 *
-	 * @param player The player who is redeeming the voucher.
+	 * @param player  The player who is redeeming the voucher.
 	 * @param voucher The voucher to check the limit for.
 	 * @return A boolean value.
 	 */
@@ -129,28 +129,28 @@ public interface VouchersAPI {
 	/**
 	 * Redeem a voucher for a player
 	 *
-	 * @param player The player who is redeeming the voucher.
-	 * @param voucher The voucher to redeem.
+	 * @param player            The player who is redeeming the voucher.
+	 * @param voucher           The voucher to redeem.
 	 * @param ignoreRedeemLimit If true, the player will be able to redeem the voucher even if they have reached the redeem limit.
-	 * @param ignoreCooldown If true, the player will be able to redeem the voucher even if they are on cooldown.
-	 * @param args The arguments that the player provided when redeeming the voucher.
+	 * @param ignoreCooldown    If true, the player will be able to redeem the voucher even if they are on cooldown.
+	 * @param args              The arguments that the player provided when redeeming the voucher.
 	 */
 	void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown, List<String> args);
 
 	/**
 	 * Redeem a voucher for a player
 	 *
-	 * @param player The player who is redeeming the voucher.
-	 * @param voucher The voucher to redeem.
+	 * @param player            The player who is redeeming the voucher.
+	 * @param voucher           The voucher to redeem.
 	 * @param ignoreRedeemLimit If true, the player will be able to redeem the voucher even if they have reached the redeem limit.
-	 * @param ignoreCooldown If true, the player will be able to redeem the voucher even if they are on cooldown.
+	 * @param ignoreCooldown    If true, the player will be able to redeem the voucher even if they are on cooldown.
 	 */
 	void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown);
 
 	/**
 	 * If the player has not redeemed the voucher, then redeem it
 	 *
-	 * @param player The player who redeemed the voucher.
+	 * @param player  The player who redeemed the voucher.
 	 * @param voucher The voucher that the player is redeeming.
 	 */
 	void registerRedeemIfApplicable(@NonNull final Player player, @NonNull final Voucher voucher);
@@ -160,7 +160,7 @@ public interface VouchersAPI {
 	/**
 	 * Adds a player to the cooldown list for a specific voucher
 	 *
-	 * @param player The player's UUID
+	 * @param player  The player's UUID
 	 * @param voucher The voucher that the player is using.
 	 */
 	void addPlayerToCooldown(@NonNull final UUID player, @NonNull final Voucher voucher);
@@ -176,7 +176,7 @@ public interface VouchersAPI {
 	/**
 	 * Returns true if the player is in cooldown for the given voucher
 	 *
-	 * @param player The UUID of the player you want to check.
+	 * @param player  The UUID of the player you want to check.
 	 * @param voucher The voucher you want to check if the player is in cooldown for.
 	 * @return A boolean value.
 	 */
@@ -185,7 +185,7 @@ public interface VouchersAPI {
 	/**
 	 * Returns the time in milliseconds until the player can use the voucher again
 	 *
-	 * @param player The UUID of the player you want to check the cooldown time for.
+	 * @param player  The UUID of the player you want to check the cooldown time for.
 	 * @param voucher The voucher to check the cooldown time for.
 	 * @return The cooldown time in milliseconds.
 	 */

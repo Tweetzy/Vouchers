@@ -102,6 +102,20 @@ public final class GUIVoucherSettings extends BaseGUI {
 				}));
 		});
 
+		setButton(2, 4, QuickItem
+				.of(this.voucher.getOptions().isPlayingSound() ? CompMaterial.LIME_STAINED_GLASS_PANE : CompMaterial.RED_STAINED_GLASS_PANE)
+				.name("&b&lPlay Sound")
+				.lore(
+						"",
+						"&7Current&f: " + (this.voucher.getOptions().isPlayingSound() ? "&aTrue" : "&cFalse"),
+						"",
+						"&b&lClick &8» &7To toggle voucher sound"
+				)
+				.make(), click -> {
+			this.voucher.getOptions().setPlayingSound(!this.voucher.getOptions().isPlayingSound());
+			syncReopen(click);
+		});
+
 		setButton(1, 3, QuickItem.of(CompMaterial.PACKED_ICE).name("&b&lCooldown").lore(
 				"&7In seconds, how long do you want the player",
 				"&7to wait before they can redeem this voucher,",
@@ -178,7 +192,7 @@ public final class GUIVoucherSettings extends BaseGUI {
 						"&7If true, vouchers will check if the player",
 						"&7has permission to redeem the voucher.",
 						"",
-						"&7Current&f: " + (this.voucher.getOptions().isRemoveOnUse() ? "&aTrue" : "&cFalse"),
+						"&7Current&f: " + (this.voucher.getOptions().isRequiresPermission() ? "&aTrue" : "&cFalse"),
 						"",
 						"&b&lClick &8» &7To toggle require permission"
 				).make(), click -> {

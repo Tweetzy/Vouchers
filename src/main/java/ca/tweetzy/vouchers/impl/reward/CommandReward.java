@@ -29,7 +29,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
@@ -89,10 +88,32 @@ public final class CommandReward extends AbstractReward {
 	private void executeCommand(@NonNull final Player player, List<String> args) {
 		// a 'cheat' way of dealing with this, TODO: create custom voucher command implementation where designed for variable (ie. {0}, {1}) vouchers
 
-		if (this.command.matches(".*\\{\\d+\\}.*"))
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MessageFormat.format(Replacer.replaceVariables(ChatColor.stripColor(PAPIHook.tryReplace(player, this.command)), "player", player.getName()), args.toArray()));
+		final String formattedCommand = stripFirstColor(this.command);
 
-		else Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), Replacer.replaceVariables(ChatColor.stripColor(PAPIHook.tryReplace(player, this.command)), "player", player.getName()));
+		if (this.command.matches(".*\\{\\d+\\}.*"))
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MessageFormat.format(Replacer.replaceVariables(PAPIHook.tryReplace(player, formattedCommand), "player", player.getName()), args.toArray()));
+
+		else Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), Replacer.replaceVariables(PAPIHook.tryReplace(player, formattedCommand), "player", player.getName()));
 
 	}
+
+	private final Pattern STRIP_COLOR_PATTERN = Pattern.compile("^([&§])([0-9A-FK-OR])", Pattern.CASE_INSENSITIVE);
+
+	public String stripFirstColor(String input) {
+		if (input == null) {
+			return null;
+		}
+		Matcher matcher = STRIP_COLOR_PATTERN.matcher(input);
+		StringBuilder sb = new StringBuilder(input);
+		while (matcher.find()) {
+			String colorCode = matcher.group(1);
+			String colorLetter = matcher.group(2);
+			String colorSubstring = colorCode + colorLetter;
+			sb.replace(matcher.start(), matcher.end(), "");
+			matcher = STRIP_COLOR_PATTERN.matcher(sb.toString());
+		}
+		return sb.toString();
+	}
+
+
 }
