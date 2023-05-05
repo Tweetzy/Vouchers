@@ -87,7 +87,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 	public void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown, List<String> args) {
 		// check permission
-		if (voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) {
+		if ((voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) || (Settings.HAVING_VOUCHER_PERM_BLOCKS_USAGE.getBoolean() && player.hasPermission(voucher.getOptions().getPermission()))) {
 			Common.tell(player, TranslationManager.string(Translations.NOT_ALLOWED_TO_USE));
 			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_NO_PERMISSION));
 			return;
