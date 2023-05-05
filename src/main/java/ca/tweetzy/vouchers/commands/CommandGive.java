@@ -45,7 +45,7 @@ public final class CommandGive extends Command {
 
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
-		if (args.length < 3) return ReturnType.FAIL;
+		if (args.length < 3) return ReturnType.INVALID_SYNTAX;
 
 		final boolean isGivingAll = args[0].equals("*");
 
@@ -63,7 +63,10 @@ public final class CommandGive extends Command {
 			amount = Integer.parseInt(args[1]);
 
 		final Voucher voucherFound = Vouchers.getVoucherManager().find(args[2]);
-		if (voucherFound == null) return ReturnType.FAIL;
+		if (voucherFound == null) {
+			Common.tell(sender, TranslationManager.string(Translations.VOUCHER_NOT_FOUND, "voucher_id", args[2]));
+			return ReturnType.FAIL;
+		}
 
 		final List<String> optionalArgs = new ArrayList<>(Arrays.asList(args).subList(3, args.length));
 
