@@ -18,7 +18,7 @@
 
 package ca.tweetzy.vouchers.model.manager;
 
-import ca.tweetzy.flight.comp.NBTEditor;
+import ca.tweetzy.flight.nbtapi.NBT;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import lombok.NonNull;
@@ -49,7 +49,7 @@ public final class VoucherManager extends Manager<String, Voucher> {
 	}
 
 	public boolean isVoucher(@NonNull final ItemStack item) {
-		return NBTEditor.contains(item, "Tweetzy:Vouchers");
+		return NBT.get(item, nbt -> nbt.hasTag("Tweetzy:Vouchers"));
 	}
 
 	@Override
