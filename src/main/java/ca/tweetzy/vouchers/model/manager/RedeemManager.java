@@ -231,7 +231,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Reward reward) {
 		if (reward instanceof final ItemReward itemReward)
-			TranslationManager.list(Translations.VOUCHER_REWARD_INFO_ITEM, "item_quantity", itemReward.getItem().getAmount(), "item_name", ItemUtil.getStackName(itemReward.getItem())).forEach(line -> Common.tellNoPrefix(player, line));
+			TranslationManager.list(Translations.VOUCHER_REWARD_INFO_ITEM, "item_quantity", itemReward.getItem().getAmount(), "item_name", ItemUtil.getItemName(itemReward.getItem())).forEach(line -> Common.tellNoPrefix(player, line));
 
 		if (reward instanceof final CommandReward commandReward) {
 			if (commandReward.getClaimMessage().isEmpty())
