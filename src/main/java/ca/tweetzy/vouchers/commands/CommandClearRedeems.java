@@ -38,32 +38,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class CommandGive extends Command {
+public final class CommandClearRedeems extends Command {
 
-	public CommandGive() {
-		super(AllowedExecutor.BOTH, "give");
+	public CommandClearRedeems() {
+		super(AllowedExecutor.BOTH, "clearredeems");
 	}
 
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
-		if (args.length < 3) return ReturnType.INVALID_SYNTAX;
+		if (args.length < 2) return ReturnType.INVALID_SYNTAX;
 
-		final boolean isGivingAll = args[0].equals("*");
-
+		final boolean clearingAllPlayers = args[0].equals("*");
 		final Player target = Bukkit.getPlayerExact(args[0]);
 
-		if (!isGivingAll)
+		if (!clearingAllPlayers)
 			if (target == null) {
 				Common.tell(sender, TranslationManager.string(Translations.PLAYER_OFFLINE, "value", args[0]));
 				return ReturnType.FAIL;
 			}
 
-		int amount = 1;
 
-		if (NumberUtils.isNumber(args[1]))
-			amount = Integer.parseInt(args[1]);
-
-		final String voucherId = FlagExtractor.grabWordsUntilFlag(args, 2, "-a");
+		final String voucherId = FlagExtractor.grabWordsUntilFlag(args, 1, "-a");
 		final Voucher voucherFound = Vouchers.getVoucherManager().find(voucherId);
 
 		if (voucherFound == null) {
@@ -71,34 +66,26 @@ public final class CommandGive extends Command {
 			return ReturnType.FAIL;
 		}
 
-		final List<String> optionalArgs = FlagExtractor.grabFlagArguments(args, "-a");
-
-		if (isGivingAll)
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				for (int i = 0; i < amount; i++)
-					Giver.giveItem(player, optionalArgs.isEmpty() ? voucherFound.buildItem(player) : voucherFound.buildItem(player, optionalArgs), true);
-			}
-		else {
-			for (int i = 0; i < amount; i++)
-				Giver.giveItem(target, optionalArgs.isEmpty() ? voucherFound.buildItem(target) : voucherFound.buildItem(target, optionalArgs), true);
+		if (clearingAllPlayers) {
+			Vouchers.getRedeemManager().deleteAllRedeems(voucherFound.getId());
+		} else {
+			Vouchers.getRedeemManager().deleteRedeems(target, voucherFound.getId());
 		}
 
+		Common.tell(sender, TranslationManager.string(Translations.REDEEM_HISTORY_CLEARED));
 		return ReturnType.SUCCESS;
 	}
 
 	@Override
 	protected List<String> tab(CommandSender sender, String... args) {
 		if (args.length == 1) {
-			final List<String> options = new java.util.ArrayList<>(List.of("*"));
+			final List<String> options = new ArrayList<>(List.of("*"));
 
 			options.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
 			return options;
 		}
 
 		if (args.length == 2)
-			return List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
-
-		if (args.length == 3)
 			return Vouchers.getVoucherManager().getAll().stream().map(Voucher::getId).collect(Collectors.toList());
 
 		return null;
@@ -106,16 +93,16 @@ public final class CommandGive extends Command {
 
 	@Override
 	public String getPermissionNode() {
-		return "vouchers.command.give";
+		return "vouchers.command.clearredeems";
 	}
 
 	@Override
 	public String getSyntax() {
-		return "<player/*> <#> <voucherId> [args]";
+		return "vouchers clearredeems <player/*> <voucherId>";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Gives select users a voucher";
+		return "Clears redeem history for player(s)";
 	}
 }

@@ -22,6 +22,8 @@ import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.gui.template.PagedGUI;
+import ca.tweetzy.flight.settings.TranslationManager;
+import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
@@ -29,11 +31,15 @@ import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
+import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -86,8 +92,47 @@ public final class GUIRewardList extends PagedGUI<Reward> {
 	protected void drawAdditional() {
 		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL)
 				.name("&a&lNew Reward")
-				.lore("&b&lClick &8» &7To add a reward")
-				.make(), click -> click.manager.showGUI(click.player, new GUIRewardType(this.voucher)));
+				.lore("&b&lLeft Click &8» &7To add a reward")
+				.lore("&a&lRight Click &8» &7To quick-add inventory")
+				.make(), click -> {
+
+			if (click.clickType == ClickType.LEFT)
+				click.manager.showGUI(click.player, new GUIRewardType(this.voucher));
+
+			if (click.clickType == ClickType.RIGHT) {
+				final List<ItemStack> toAdd = Arrays.stream(click.player.getInventory().getStorageContents()).filter(item -> item != null && item.getType() != CompMaterial.AIR.parseMaterial() && item.getAmount() != 0 && !Vouchers.getVoucherManager().isVoucher(item)).toList();
+
+				new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Chance", "&fEnter new reward chance") {
+
+					@Override
+					public void onExit(Player player) {
+						click.manager.showGUI(click.player, GUIRewardList.this);
+					}
+
+					@Override
+					public boolean onResult(String string) {
+						string = ChatColor.stripColor(string.toLowerCase());
+
+						if (!NumberUtils.isNumber(string)) {
+							Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
+							return false;
+						}
+
+						final double rate = Double.parseDouble(string);
+						double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
+
+						click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+						toAdd.forEach(item -> GUIRewardList.this.voucher.addReward(new ItemReward(
+								item,
+								finalRate
+						)));
+
+						click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+						return true;
+					}
+				};
+			}
+		});
 	}
 
 	@Override

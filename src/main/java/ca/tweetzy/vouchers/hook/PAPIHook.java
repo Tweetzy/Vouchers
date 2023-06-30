@@ -18,24 +18,66 @@
 
 package ca.tweetzy.vouchers.hook;
 
-import lombok.experimental.UtilityClass;
+import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.model.FlagExtractor;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UtilityClass
-public final class PAPIHook {
+public final class PAPIHook extends PlaceholderExpansion {
 
-	public String tryReplace(Player player, String msg) {
+	public static String tryReplace(Player player, String msg) {
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
 			msg = PlaceholderAPI.setPlaceholders(player, msg);
 		return msg;
 	}
 
-	public List<String> tryReplace(Player player, List<String> msgs) {
+	public static List<String> tryReplace(Player player, List<String> msgs) {
 		return msgs.stream().map(line -> tryReplace(player, line)).collect(Collectors.toList());
+	}
+
+	@Override
+	public @NotNull
+	String getIdentifier() {
+		return "vouchers";
+	}
+
+	@Override
+	public @NotNull
+	String getAuthor() {
+		return "KiranHart";
+	}
+
+	@Override
+	public @NotNull
+	String getVersion() {
+		return "1.0.0";
+	}
+
+	@Override
+	public boolean persist() {
+		return true;
+	}
+
+	@Override
+	public String onRequest(OfflinePlayer player, @NotNull String params) {
+		final String[] paramSplit = params.split("_");
+
+		if (paramSplit[0].equalsIgnoreCase("redeems")) {
+			if (paramSplit.length < 2) return null;
+
+			final String voucherId = FlagExtractor.grabWordsUntilFlag(paramSplit, 1, "-a");
+			final int totalRedeems = Vouchers.getRedeemManager().getTotalRedeems(player.getUniqueId(), voucherId);
+
+			return String.valueOf(totalRedeems);
+		}
+
+		return null;
 	}
 }
