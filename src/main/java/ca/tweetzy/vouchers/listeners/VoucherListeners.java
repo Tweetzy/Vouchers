@@ -25,6 +25,7 @@ import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.GUIConfirm;
+import ca.tweetzy.vouchers.hook.PAPIHook;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -32,6 +33,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -131,5 +133,10 @@ public final class VoucherListeners implements Listener {
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
 		event.setResult(CompMaterial.AIR.parseItem());
+	}
+
+	@EventHandler
+	public void onChat(final AsyncPlayerChatEvent event) {
+		event.setMessage(PAPIHook.tryReplace(event.getPlayer(), event.getMessage()));
 	}
 }
