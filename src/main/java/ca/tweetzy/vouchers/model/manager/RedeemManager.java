@@ -21,6 +21,7 @@ package ca.tweetzy.vouchers.model.manager;
 import ca.tweetzy.flight.collection.ProbabilityCollection;
 import ca.tweetzy.flight.comp.Titles;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.database.Callback;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.ItemUtil;
@@ -253,6 +254,51 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 			else
 				error.printStackTrace();
 		});
+	}
+
+	public void deleteRedeems(@NonNull final Player player, @NonNull final String voucherId) {
+		Vouchers.getDataManager().deleteRedeems(player.getUniqueId(), voucherId, (error, deleted) -> {
+			if (error == null && deleted) {
+				getRedeemIds(player, voucherId).forEach(this::remove);
+			}
+		});
+	}
+
+	public void deleteAllRedeems(@NonNull final Player player) {
+		Vouchers.getDataManager().deleteAllRedeems(player.getUniqueId(), (error, deleted) -> {
+			if (error == null && deleted) {
+				getRedeemIds(player).forEach(this::remove);
+			}
+		});
+	}
+
+	public void deleteAllRedeems(@NonNull final String voucherId) {
+		Vouchers.getDataManager().deleteAllRedeems(voucherId, (error, deleted) -> {
+			if (error == null && deleted) {
+				getRedeemIds(voucherId).forEach(this::remove);
+			}
+		});
+	}
+
+	public void deleteAllRedeems() {
+		Vouchers.getDataManager().deleteAllRedeems((error, deleted) -> {
+			if (error == null && deleted) {
+				this.contents.clear();
+			}
+		});
+	}
+
+
+	private List<UUID> getRedeemIds(@NonNull final Player player, @NonNull final String voucherId) {
+		return this.contents.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId()) && redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
+	}
+
+	private List<UUID> getRedeemIds(@NonNull final Player player) {
+		return this.contents.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId())).toList().stream().map(Redeem::getId).collect(Collectors.toList());
+	}
+
+	private List<UUID> getRedeemIds(@NonNull final String voucherId) {
+		return this.contents.values().stream().filter(redeem -> redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
 	}
 
 	private void takeHand(@NonNull final Player player, @NonNull final Voucher voucher) {
