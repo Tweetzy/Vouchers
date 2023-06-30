@@ -26,6 +26,7 @@ import ca.tweetzy.flight.database.SQLiteConnector;
 import ca.tweetzy.flight.gui.GuiManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.VouchersAPI;
+import ca.tweetzy.vouchers.commands.CommandClearRedeems;
 import ca.tweetzy.vouchers.commands.CommandGive;
 import ca.tweetzy.vouchers.commands.CommandImport;
 import ca.tweetzy.vouchers.commands.VouchersCommand;
@@ -83,7 +84,7 @@ public final class Vouchers extends FlightPlugin {
 		this.API = new VouchersAPIImplementation();
 
 		this.guiManager.init();
-		this.commandManager.registerCommandDynamically(new VouchersCommand()).addSubCommands(new CommandImport(), new CommandGive());
+		this.commandManager.registerCommandDynamically(new VouchersCommand()).addSubCommands(new CommandImport(), new CommandGive(), new CommandClearRedeems());
 	}
 
 	@Override
