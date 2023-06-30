@@ -25,6 +25,7 @@ import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.model.FlagExtractor;
 import ca.tweetzy.vouchers.model.Giver;
 import ca.tweetzy.vouchers.settings.Translations;
 import org.apache.commons.lang.math.NumberUtils;
@@ -57,9 +58,11 @@ public final class CommandClearRedeems extends Command {
 			}
 
 
-		final Voucher voucherFound = Vouchers.getVoucherManager().find(args[1]);
+		final String voucherId = FlagExtractor.grabWordsUntilFlag(args, 1, "-a");
+		final Voucher voucherFound = Vouchers.getVoucherManager().find(voucherId);
+
 		if (voucherFound == null) {
-			Common.tell(sender, TranslationManager.string(Translations.VOUCHER_NOT_FOUND, "voucher_id", args[1]));
+			Common.tell(sender, TranslationManager.string(Translations.VOUCHER_NOT_FOUND, "voucher_id", voucherId));
 			return ReturnType.FAIL;
 		}
 

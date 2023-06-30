@@ -25,6 +25,7 @@ import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.model.FlagExtractor;
 import ca.tweetzy.vouchers.model.Giver;
 import ca.tweetzy.vouchers.settings.Translations;
 import org.apache.commons.lang.math.NumberUtils;
@@ -62,13 +63,15 @@ public final class CommandGive extends Command {
 		if (NumberUtils.isNumber(args[1]))
 			amount = Integer.parseInt(args[1]);
 
-		final Voucher voucherFound = Vouchers.getVoucherManager().find(args[2]);
+		final String voucherId = FlagExtractor.grabWordsUntilFlag(args, 2, "-a");
+		final Voucher voucherFound = Vouchers.getVoucherManager().find(voucherId);
+
 		if (voucherFound == null) {
-			Common.tell(sender, TranslationManager.string(Translations.VOUCHER_NOT_FOUND, "voucher_id", args[2]));
+			Common.tell(sender, TranslationManager.string(Translations.VOUCHER_NOT_FOUND, "voucher_id", voucherId));
 			return ReturnType.FAIL;
 		}
 
-		final List<String> optionalArgs = new ArrayList<>(Arrays.asList(args).subList(3, args.length));
+		final List<String> optionalArgs = FlagExtractor.grabFlagArguments(args, "-a");
 
 		if (isGivingAll)
 			for (Player player : Bukkit.getOnlinePlayers()) {
