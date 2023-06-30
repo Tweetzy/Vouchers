@@ -45,7 +45,7 @@ public final class CommandClearRedeems extends Command {
 
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
-		if (args.length < 3) return ReturnType.INVALID_SYNTAX;
+		if (args.length < 2) return ReturnType.INVALID_SYNTAX;
 
 		final boolean clearingAllPlayers = args[0].equals("*");
 		final Player target = Bukkit.getPlayerExact(args[0]);
@@ -95,7 +95,7 @@ public final class CommandClearRedeems extends Command {
 
 	@Override
 	public String getSyntax() {
-		return "<player/*> <voucherId>";
+		return "vouchers clearredeems <player/*> <voucherId>";
 	}
 
 	@Override

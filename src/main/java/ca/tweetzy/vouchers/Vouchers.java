@@ -64,6 +64,7 @@ public final class Vouchers extends FlightPlugin {
 		Translations.init();
 
 		Common.setPrefix(Settings.PREFIX.getString());
+		Common.setPluginName("<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3>");
 
 		// Set up the database if enabled
 		this.databaseConnector = new SQLiteConnector(this);
