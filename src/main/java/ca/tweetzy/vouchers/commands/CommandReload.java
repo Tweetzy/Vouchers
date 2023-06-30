@@ -51,7 +51,7 @@ public final class CommandReload extends Command {
 
 	@Override
 	public String getPermissionNode() {
-		return "vouchers.command.import";
+		return "vouchers.command.reload";
 	}
 
 	@Override
