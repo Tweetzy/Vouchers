@@ -90,7 +90,7 @@ public final class CommandClearRedeems extends Command {
 
 	@Override
 	public String getPermissionNode() {
-		return "vouchers.command.give";
+		return "vouchers.command.clearredeems";
 	}
 
 	@Override
