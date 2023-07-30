@@ -97,7 +97,7 @@ public final class VoucherListeners implements Listener {
 					Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
 				else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
 
-				this.blockedFromDrop.add(player.getUniqueId());
+				this.blockedFromDrop.remove(player.getUniqueId());
 			}
 		}
 	}
