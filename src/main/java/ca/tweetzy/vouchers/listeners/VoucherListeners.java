@@ -33,10 +33,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -99,8 +96,18 @@ public final class VoucherListeners implements Listener {
 				if (voucherArgs == null)
 					Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
 				else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
+
+				this.blockedFromDrop.add(player.getUniqueId());
 			}
 		}
+	}
+
+	@EventHandler
+	public void onVoucherSlotChange(final PlayerItemHeldEvent event) {
+		final Player player = event.getPlayer();
+		if (!this.blockedFromDrop.contains(player.getUniqueId())) return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
