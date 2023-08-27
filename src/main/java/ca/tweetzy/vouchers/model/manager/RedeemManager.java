@@ -33,6 +33,7 @@ import ca.tweetzy.vouchers.gui.GUIRewardSelection;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
+import ca.tweetzy.vouchers.model.QuickReplace;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
@@ -142,8 +143,6 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				stay = Math.max(subtitleMessage.getStayDuration(), stay);
 			}
 
-			args.forEach(Bukkit::broadcastMessage);
-
 			if (!(titleMessage == null && subtitleMessage == null)) {
 				Titles.sendTitle(
 						player,
@@ -171,7 +170,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 					voucher.getRewards().forEach(reward -> {
 						boolean wasGiven = reward.execute(player, false, args);
 						if (wasGiven)
-							showActualRewardGiven(player, reward, args);
+							showActualRewardGiven(player, voucher, reward, args);
 					});
 					showRewardFooter(player);
 				} else {
@@ -190,7 +189,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
 					showRewardHeader(player);
 					if (given)
-						showActualRewardGiven(player, selected, args);
+						showActualRewardGiven(player, voucher, selected, args);
 					showRewardFooter(player);
 				}
 
@@ -208,7 +207,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				Reward selectedReward = rewardProbabilityCollection.get();
 				selectedReward.execute(player, true, args);
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
-					showRewardInfo(player, selectedReward, args);
+					showRewardInfo(player, voucher, selectedReward, args);
 
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
@@ -220,9 +219,9 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		}
 	}
 
-	private void showRewardInfo(@NonNull final Player player, @NonNull final Reward reward, List<String> args) {
+	private void showRewardInfo(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final Reward reward, List<String> args) {
 		showRewardHeader(player);
-		showActualRewardGiven(player, reward, args);
+		showActualRewardGiven(player, voucher, reward, args);
 		showRewardFooter(player);
 	}
 
@@ -230,7 +229,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		Common.tellNoPrefix(player, TranslationManager.list(Translations.VOUCHER_REWARD_INFO_HEADER).toArray(new String[0]));
 	}
 
-	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Reward reward, List<String> args) {
+	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final Reward reward, List<String> args) {
 		if (reward instanceof final ItemReward itemReward)
 			TranslationManager.list(Translations.VOUCHER_REWARD_INFO_ITEM, "item_quantity", itemReward.getItem().getAmount(), "item_name", ItemUtil.getItemName(itemReward.getItem())).forEach(line -> Common.tellNoPrefix(player, line));
 
@@ -238,7 +237,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 			if (commandReward.getClaimMessage().isEmpty())
 				TranslationManager.list(Translations.VOUCHER_REWARD_INFO_COMMAND, "reward_command", MessageFormat.format(commandReward.getCommand().replace("%player%", player.getName()), args.toArray())).forEach(line -> Common.tellNoPrefix(player, line));
 			else
-				Common.tellNoPrefix(player, commandReward.getClaimMessage());
+				Common.tellNoPrefix(player, QuickReplace.getColouredAndReplaced(player, commandReward.getClaimMessage(), voucher));
 
 		}
 	}

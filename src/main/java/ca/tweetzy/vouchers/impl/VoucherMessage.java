@@ -26,6 +26,7 @@ import ca.tweetzy.vouchers.api.voucher.Message;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.hook.PAPIHook;
+import ca.tweetzy.vouchers.model.QuickReplace;
 import ca.tweetzy.vouchers.settings.Settings;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
@@ -104,12 +105,7 @@ public final class VoucherMessage implements Message {
 
 	@Override
 	public String getColouredAndReplaced(@NonNull final Player player, @NonNull final Voucher voucher) {
-		return Common.colorize(PAPIHook.tryReplace(player, Replacer.replaceVariables(this.message,
-				"player", player.getName(),
-				"voucher_id", voucher.getId(),
-				"voucher_name", voucher.getName(),
-				"pl_prefix", Settings.PREFIX.getString()
-		)));
+		return QuickReplace.getColouredAndReplaced(player, this.message, voucher);
 	}
 
 	@Override
@@ -124,4 +120,5 @@ public final class VoucherMessage implements Message {
 
 		return object.toString();
 	}
+
 }
