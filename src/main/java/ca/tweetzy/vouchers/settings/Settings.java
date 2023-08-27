@@ -32,8 +32,6 @@ public final class Settings extends FlightSettings {
 
 	public static final ConfigEntry LOG_VOUCHER_GIVE_STATUS = create("log voucher give status", true, "If true, vouchers will log if the voucher was placed in the user's inventory or dropped");
 	public static final ConfigEntry SHOW_VOUCHER_REWARD_INFO = create("show voucher reward info", true, "If true, vouchers will tell the player what they got");
-	public static final ConfigEntry REPLACE_PLACEHOLDERS_IN_CHAT = create("replace placeholders in chat", true, "If true, vouchers will replace PlaceholderAPI placeholders in chat messages");
-
 
 	public static void init() {
 		Vouchers.getCoreConfig().init();
