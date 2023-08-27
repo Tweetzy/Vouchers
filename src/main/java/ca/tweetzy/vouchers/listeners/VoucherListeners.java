@@ -26,6 +26,7 @@ import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.GUIConfirm;
 import ca.tweetzy.vouchers.hook.PAPIHook;
+import ca.tweetzy.vouchers.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -144,6 +145,8 @@ public final class VoucherListeners implements Listener {
 
 	@EventHandler
 	public void onChat(final AsyncPlayerChatEvent event) {
-		event.setMessage(PAPIHook.tryReplace(event.getPlayer(), event.getMessage()));
+		if(Settings.REPLACE_PLACEHOLDERS_IN_CHAT.getBoolean()) {
+			event.setMessage(PAPIHook.tryReplace(event.getPlayer(), event.getMessage()));
+		}
 	}
 }
