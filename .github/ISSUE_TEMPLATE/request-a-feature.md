@@ -11,5 +11,6 @@ assignees: ''
 Describe how this feature will work
 
 **Additional Information**
+
 - You can provide image links
 - You can provide video links

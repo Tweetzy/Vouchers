@@ -28,6 +28,7 @@ public final class Settings extends FlightSettings {
 	public static final ConfigEntry PREFIX = create("prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»", "The global prefix for the plugin");
 	public static final ConfigEntry LANGUAGE = create("language", "en_us", "The default language for the plugin");
 	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = create("reward select always gives", true, "If true, the reward picker menu will ignore reward chances");
+	public static final ConfigEntry HAVING_VOUCHER_PERM_BLOCKS_USAGE = create("voucher permission blocks usage", false, "If true, anyone can redeem a voucher, but if they have the permission, it prevents redeems");
 
 	public static final ConfigEntry LOG_VOUCHER_GIVE_STATUS = create("log voucher give status", true, "If true, vouchers will log if the voucher was placed in the user's inventory or dropped");
 	public static final ConfigEntry SHOW_VOUCHER_REWARD_INFO = create("show voucher reward info", true, "If true, vouchers will tell the player what they got");

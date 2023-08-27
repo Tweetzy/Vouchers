@@ -24,13 +24,12 @@ import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.gui.template.PagedGUI;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
-import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
-import ca.tweetzy.vouchers.settings.Translations;
 import ca.tweetzy.vouchers.settings.Settings;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
 

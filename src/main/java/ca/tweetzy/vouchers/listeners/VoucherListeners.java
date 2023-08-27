@@ -18,7 +18,8 @@
 
 package ca.tweetzy.vouchers.listeners;
 
-import ca.tweetzy.flight.comp.NBTEditor;
+import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.nbtapi.NBT;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
@@ -30,8 +31,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -54,17 +57,11 @@ public final class VoucherListeners implements Listener {
 		// not even a voucher
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
-
-//		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-//			event.setCancelled(true);
-//			event.setUseItemInHand(Event.Result.DENY);
-//		}
-
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
 
-			final Voucher voucher = Vouchers.getVoucherManager().find(NBTEditor.getString(item, "Tweetzy:Vouchers"));
-			final String voucherArgsRaw = NBTEditor.getString(item, "Tweetzy:VouchersArgs");
+			final Voucher voucher = Vouchers.getVoucherManager().find(NBT.get(item, nbt -> nbt.getString("Tweetzy:Vouchers")));
+			final String voucherArgsRaw = NBT.get(item, nbt -> nbt.getString("Tweetzy:VouchersArgs"));
 
 			final List<String> voucherArgs = voucherArgsRaw == null ? null : voucherArgsRaw.split(" ").length == 0 ? null : List.of(voucherArgsRaw.split(" "));
 
@@ -76,7 +73,7 @@ public final class VoucherListeners implements Listener {
 
 
 			event.setUseItemInHand(Event.Result.DENY);
-			
+
 
 			if (!this.blockedFromDrop.contains(player.getUniqueId()))
 				this.blockedFromDrop.add(player.getUniqueId());
@@ -101,8 +98,18 @@ public final class VoucherListeners implements Listener {
 				if (voucherArgs == null)
 					Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
 				else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
+
+				this.blockedFromDrop.remove(player.getUniqueId());
 			}
 		}
+	}
+
+	@EventHandler
+	public void onVoucherSlotChange(final PlayerItemHeldEvent event) {
+		final Player player = event.getPlayer();
+		if (!this.blockedFromDrop.contains(player.getUniqueId())) return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
@@ -125,5 +132,15 @@ public final class VoucherListeners implements Listener {
 		if ((itemMain != null && Vouchers.getVoucherManager().isVoucher(itemMain)) || (itemOff != null && Vouchers.getVoucherManager().isVoucher(itemOff))) {
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void onRenameAttempt(final PrepareAnvilEvent event) {
+		final ItemStack item = event.getResult();
+
+		if (item == null) return;
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+
+		event.setResult(CompMaterial.AIR.parseItem());
 	}
 }

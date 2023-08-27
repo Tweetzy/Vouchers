@@ -92,7 +92,7 @@ public final class GUICreateReward extends BaseGUI {
 
 				this.itemReward = new ItemReward(getItem(1, 4), this.itemReward.getChance());
 
-				new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Chance", "&fEnter new reward chance") {
+				new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Chance", "&fEnter new reward chance") {
 
 					@Override
 					public void onExit(Player player) {
@@ -138,7 +138,7 @@ public final class GUICreateReward extends BaseGUI {
 							"",
 							"&b&lClick &8» &7To edit reward command"
 					)
-					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Command", "&fEnter new reward command") {
+					.make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Command", "&fEnter new reward command") {
 
 				@Override
 				public void onExit(Player player) {
@@ -147,10 +147,12 @@ public final class GUICreateReward extends BaseGUI {
 
 				@Override
 				public boolean onResult(String string) {
+
+
 					click.manager.showGUI(click.player, new GUICreateReward(
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
-							new CommandReward(ChatColor.stripColor(string), GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
+							new CommandReward(string, GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
 							null
 					));
 
@@ -169,7 +171,7 @@ public final class GUICreateReward extends BaseGUI {
 							"",
 							"&b&lClick &8» &7To edit reward delay"
 					)
-					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Delay", "&fEnter new reward delay") {
+					.make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Delay", "&fEnter new reward delay") {
 
 				@Override
 				public void onExit(Player player) {
@@ -211,7 +213,7 @@ public final class GUICreateReward extends BaseGUI {
 							"",
 							"&b&lClick &8» &7To edit reward chance"
 					)
-					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Chance", "&fEnter new reward chance") {
+					.make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Chance", "&fEnter new reward chance") {
 
 				@Override
 				public void onExit(Player player) {
@@ -252,7 +254,7 @@ public final class GUICreateReward extends BaseGUI {
 							"",
 							"&b&lClick &8» &7To edit message"
 					)
-					.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&b&lReward Message", "&fEnter new reward message") {
+					.make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Message", "&fEnter new reward message") {
 
 				@Override
 				public void onExit(Player player) {
@@ -285,7 +287,7 @@ public final class GUICreateReward extends BaseGUI {
 			if (this.rewardType == RewardType.ITEM) {
 				final ItemStack itemStackForReward = getItem(1, 4);
 
-				if (itemStackForReward == null)return;
+				if (itemStackForReward == null) return;
 
 				this.itemReward = new ItemReward(itemStackForReward, this.itemReward.getChance());
 				this.voucher.addReward(this.itemReward);

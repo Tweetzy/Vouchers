@@ -54,7 +54,7 @@ public final class GUIVoucherEdit extends BaseGUI {
 						"",
 						"&b&lClick &8» &7To change display name"
 				)
-				.make(), click -> new TitleInput(Vouchers.getInstance(),click.player, "&B&lVoucher Edit", "&fEnter new name into chat") {
+				.make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&B&lVoucher Edit", "&fEnter new name into chat") {
 
 			@Override
 			public void onExit(Player player) {

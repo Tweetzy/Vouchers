@@ -183,6 +183,65 @@ public final class DataManager extends DataManagerAbstract {
 		}));
 	}
 
+	public void deleteRedeems(@NonNull final UUID player, @NonNull final String voucherId, Callback<Boolean> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + this.getTablePrefix() + "voucher_redeem WHERE user = ? AND voucher = ?")) {
+				statement.setString(1, player.toString());
+				statement.setString(2, voucherId.toLowerCase());
+
+				int result = statement.executeUpdate();
+				callback.accept(null, result > 0);
+
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+				e.printStackTrace();
+			}
+		}));
+	}
+
+	public void deleteAllRedeems(@NonNull final UUID player, Callback<Boolean> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + this.getTablePrefix() + "voucher_redeem WHERE user = ?")) {
+				statement.setString(1, player.toString());
+
+				int result = statement.executeUpdate();
+				callback.accept(null, result > 0);
+
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+				e.printStackTrace();
+			}
+		}));
+	}
+
+	public void deleteAllRedeems(Callback<Boolean> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + this.getTablePrefix() + "voucher_redeem")) {
+
+				int result = statement.executeUpdate();
+				callback.accept(null, result > 0);
+
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+				e.printStackTrace();
+			}
+		}));
+	}
+
+	public void deleteAllRedeems(@NonNull final String voucherId, Callback<Boolean> callback) {
+		this.runAsync(() -> this.databaseConnector.connect(connection -> {
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + this.getTablePrefix() + "voucher_redeem WHERE voucher = ?")) {
+				statement.setString(1, voucherId.toLowerCase());
+
+				int result = statement.executeUpdate();
+				callback.accept(null, result > 0);
+
+			} catch (Exception e) {
+				resolveCallback(callback, e);
+				e.printStackTrace();
+			}
+		}));
+	}
 
 	private Voucher extractVoucher(final ResultSet resultSet) throws SQLException {
 		final JsonArray object = JsonParser.parseString(resultSet.getString("rewards")).getAsJsonArray();

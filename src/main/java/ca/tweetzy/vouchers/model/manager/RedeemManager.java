@@ -33,12 +33,14 @@ import ca.tweetzy.vouchers.gui.GUIRewardSelection;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
+import ca.tweetzy.vouchers.model.QuickReplace;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -87,7 +89,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 	public void redeemVoucher(@NonNull final Player player, @NonNull final Voucher voucher, final boolean ignoreRedeemLimit, final boolean ignoreCooldown, List<String> args) {
 		// check permission
-		if (voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) {
+		if ((voucher.getOptions().isRequiresPermission() && !player.hasPermission(voucher.getOptions().getPermission())) || (Settings.HAVING_VOUCHER_PERM_BLOCKS_USAGE.getBoolean() && player.hasPermission(voucher.getOptions().getPermission()))) {
 			Common.tell(player, TranslationManager.string(Translations.NOT_ALLOWED_TO_USE));
 			Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_NO_PERMISSION));
 			return;
@@ -117,7 +119,8 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		if (voucherRedeemEvent.isCancelled()) return;
 
 		// play sound
-		voucher.getOptions().getSound().play(player);
+		if (voucher.getOptions().isPlayingSound())
+			voucher.getOptions().getSound().play(player);
 
 		// collect titles
 		if (!voucher.getOptions().getMessages().isEmpty()) {
@@ -139,8 +142,6 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				fadeOut = Math.max(subtitleMessage.getFadeOutDuration(), fadeOut);
 				stay = Math.max(subtitleMessage.getStayDuration(), stay);
 			}
-
-			args.forEach(Bukkit::broadcastMessage);
 
 			if (!(titleMessage == null && subtitleMessage == null)) {
 				Titles.sendTitle(
@@ -169,9 +170,11 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 					voucher.getRewards().forEach(reward -> {
 						boolean wasGiven = reward.execute(player, false, args);
 						if (wasGiven)
-							showActualRewardGiven(player, reward);
+							showActualRewardGiven(player, voucher, reward, args);
 					});
 					showRewardFooter(player);
+				} else {
+					voucher.getRewards().forEach(reward -> reward.execute(player, false, args));
 				}
 
 
@@ -186,10 +189,9 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
 					showRewardHeader(player);
 					if (given)
-						showActualRewardGiven(player, selected);
+						showActualRewardGiven(player, voucher, selected, args);
 					showRewardFooter(player);
 				}
-
 
 				takeHand(player, voucher);
 				player.closeInventory();
@@ -205,7 +207,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				Reward selectedReward = rewardProbabilityCollection.get();
 				selectedReward.execute(player, true, args);
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
-					showRewardInfo(player, selectedReward);
+					showRewardInfo(player, voucher, selectedReward, args);
 
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
@@ -217,9 +219,9 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		}
 	}
 
-	private void showRewardInfo(@NonNull final Player player, @NonNull final Reward reward) {
+	private void showRewardInfo(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final Reward reward, List<String> args) {
 		showRewardHeader(player);
-		showActualRewardGiven(player, reward);
+		showActualRewardGiven(player, voucher, reward, args);
 		showRewardFooter(player);
 	}
 
@@ -227,15 +229,15 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		Common.tellNoPrefix(player, TranslationManager.list(Translations.VOUCHER_REWARD_INFO_HEADER).toArray(new String[0]));
 	}
 
-	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Reward reward) {
+	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final Reward reward, List<String> args) {
 		if (reward instanceof final ItemReward itemReward)
-			TranslationManager.list(Translations.VOUCHER_REWARD_INFO_ITEM, "item_quantity", itemReward.getItem().getAmount(), "item_name", ItemUtil.getStackName(itemReward.getItem())).forEach(line -> Common.tellNoPrefix(player, line));
+			TranslationManager.list(Translations.VOUCHER_REWARD_INFO_ITEM, "item_quantity", itemReward.getItem().getAmount(), "item_name", ItemUtil.getItemName(itemReward.getItem())).forEach(line -> Common.tellNoPrefix(player, line));
 
 		if (reward instanceof final CommandReward commandReward) {
 			if (commandReward.getClaimMessage().isEmpty())
-				TranslationManager.list(Translations.VOUCHER_REWARD_INFO_COMMAND, "reward_command", commandReward.getCommand()).forEach(line -> Common.tellNoPrefix(player, line));
+				TranslationManager.list(Translations.VOUCHER_REWARD_INFO_COMMAND, "reward_command", MessageFormat.format(commandReward.getCommand().replace("%player%", player.getName()), args.toArray())).forEach(line -> Common.tellNoPrefix(player, line));
 			else
-				Common.tellNoPrefix(player, commandReward.getClaimMessage());
+				Common.tellNoPrefix(player, QuickReplace.getColouredAndReplaced(player, commandReward.getClaimMessage(), voucher));
 
 		}
 	}
@@ -251,6 +253,51 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 			else
 				error.printStackTrace();
 		});
+	}
+
+	public void deleteRedeems(@NonNull final Player player, @NonNull final String voucherId) {
+		Vouchers.getDataManager().deleteRedeems(player.getUniqueId(), voucherId, (error, deleted) -> {
+			if (error == null && deleted) {
+				getRedeemIds(player, voucherId).forEach(this::remove);
+			}
+		});
+	}
+
+	public void deleteAllRedeems(@NonNull final Player player) {
+		Vouchers.getDataManager().deleteAllRedeems(player.getUniqueId(), (error, deleted) -> {
+			if (error == null && deleted) {
+				getRedeemIds(player).forEach(this::remove);
+			}
+		});
+	}
+
+	public void deleteAllRedeems(@NonNull final String voucherId) {
+		Vouchers.getDataManager().deleteAllRedeems(voucherId, (error, deleted) -> {
+			if (error == null && deleted) {
+				getRedeemIds(voucherId).forEach(this::remove);
+			}
+		});
+	}
+
+	public void deleteAllRedeems() {
+		Vouchers.getDataManager().deleteAllRedeems((error, deleted) -> {
+			if (error == null && deleted) {
+				this.contents.clear();
+			}
+		});
+	}
+
+
+	private List<UUID> getRedeemIds(@NonNull final Player player, @NonNull final String voucherId) {
+		return this.contents.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId()) && redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
+	}
+
+	private List<UUID> getRedeemIds(@NonNull final Player player) {
+		return this.contents.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId())).toList().stream().map(Redeem::getId).collect(Collectors.toList());
+	}
+
+	private List<UUID> getRedeemIds(@NonNull final String voucherId) {
+		return this.contents.values().stream().filter(redeem -> redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
 	}
 
 	private void takeHand(@NonNull final Player player, @NonNull final Voucher voucher) {

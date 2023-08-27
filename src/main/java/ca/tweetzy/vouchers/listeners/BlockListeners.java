@@ -23,7 +23,9 @@ import ca.tweetzy.vouchers.Vouchers;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -44,5 +46,25 @@ public final class BlockListeners implements Listener {
 
 		if (Vouchers.getVoucherManager().isVoucher(toBePlaced))
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onHandSwapWithVoucher(final PlayerSwapHandItemsEvent event) {
+		final ItemStack itemMain = event.getMainHandItem();
+		final ItemStack itemOff = event.getOffHandItem();
+
+		if ((itemMain != null && Vouchers.getVoucherManager().isVoucher(itemMain)) || (itemOff != null && Vouchers.getVoucherManager().isVoucher(itemOff))) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onRenameAttempt(final PrepareAnvilEvent event) {
+		final ItemStack item = event.getResult();
+
+		if (item == null) return;
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+
+		event.setResult(CompMaterial.AIR.parseItem());
 	}
 }

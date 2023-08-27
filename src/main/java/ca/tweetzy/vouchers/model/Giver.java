@@ -20,7 +20,6 @@ package ca.tweetzy.vouchers.model;
 
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
-import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
