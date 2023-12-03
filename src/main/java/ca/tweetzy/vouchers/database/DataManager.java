@@ -33,6 +33,7 @@ import ca.tweetzy.vouchers.model.RewardFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,8 +117,8 @@ public final class DataManager extends DataManagerAbstract {
                 preparedStatement.setString(4, voucher.getOptions().toJsonString());
                 preparedStatement.setString(5, voucher.getRewardJson());
                 preparedStatement.setString(6, voucher.getRewardMode().name());
-                preparedStatement.setString(7, voucher.getId().toLowerCase());
-                preparedStatement.setInt(8, voucher.getRewardCount());
+                preparedStatement.setInt(7, voucher.getRewardCount());
+                preparedStatement.setString(8, voucher.getId().toLowerCase());
 
                 int result = preparedStatement.executeUpdate();
 
