@@ -48,10 +48,17 @@ public final class ActiveVoucher implements Voucher {
 	private RewardMode rewardMode;
 	private VoucherOptions options;
 	private List<Reward> rewards;
+	private int rewardCount;
 
 	@Override
 	public String getId() {
 		return this.id;
+	}
+
+
+	@Override
+	public int getRewardCount() {
+		return this.rewardCount;
 	}
 
 	@Override
@@ -96,6 +103,11 @@ public final class ActiveVoucher implements Voucher {
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public void setRewardCount(int rewardCount) {
+		this.rewardCount = rewardCount;
 	}
 
 	@Override

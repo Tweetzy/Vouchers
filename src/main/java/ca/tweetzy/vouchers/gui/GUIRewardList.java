@@ -46,139 +46,143 @@ import java.util.Objects;
 
 public final class GUIRewardList extends PagedGUI<Reward> {
 
-	private final Voucher voucher;
-	private int selectedIndex = -1;
+    private final Voucher voucher;
+    private int selectedIndex = -1;
 
-	public GUIRewardList(@NonNull final Voucher voucher) {
-		super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Rewards", 6, voucher.getRewards());
+    public GUIRewardList(@NonNull final Voucher voucher) {
+        super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Rewards", 6, voucher.getRewards());
 
-		this.voucher = voucher;
-		draw();
-	}
+        this.voucher = voucher;
+        draw();
+    }
 
-	@Override
-	protected ItemStack makeDisplayItem(Reward reward) {
-		ItemStack displayItem = reward instanceof ItemReward ? ((ItemReward) reward).getItem() : CompMaterial.PAPER.parseItem();
+    @Override
+    protected ItemStack makeDisplayItem(Reward reward) {
+        ItemStack displayItem = reward instanceof ItemReward ? ((ItemReward) reward).getItem() : CompMaterial.PAPER.parseItem();
 
-		final QuickItem quickItem = QuickItem.of(displayItem == null ? Objects.requireNonNull(CompMaterial.PAPER.parseItem()) : displayItem);
+        final QuickItem quickItem = QuickItem.of(displayItem == null ? Objects.requireNonNull(CompMaterial.PAPER.parseItem()) : displayItem);
 
-		if (reward instanceof CommandReward)
-			quickItem.name("&B&lCommand Reward");
+        if (reward instanceof CommandReward)
+            quickItem.name("&B&lCommand Reward");
 
 
-		quickItem.lore("");
+        quickItem.lore("");
 
-		if (reward instanceof final CommandReward commandReward) {
-			quickItem.lore("&7Command&f: &b" + commandReward.getCommand());
-			quickItem.lore("&7Message&f: &b" + (commandReward.getClaimMessage().isEmpty() ? "No Message Set" : commandReward.getClaimMessage()));
-		}
+        if (reward instanceof final CommandReward commandReward) {
+            quickItem.lore("&7Command&f: &b" + commandReward.getCommand());
+            quickItem.lore("&7Message&f: &b" + (commandReward.getClaimMessage().isEmpty() ? "No Message Set" : commandReward.getClaimMessage()));
+        }
 
-		quickItem.lore(
-				"&7Chance&f: &b" + reward.getChance(),
-				"&7Delay&f: &b" + reward.getDelay(),
-				""
+        quickItem.lore(
+                "&7Chance&f: &b" + reward.getChance(),
+                "&7Delay&f: &b" + reward.getDelay()
 
-		);
+        );
 
-		if (reward instanceof CommandReward)
-			quickItem.lore("&b&lRight Click &8» &7To edit message");
+        if (reward instanceof final CommandReward commandReward) {
+            quickItem.lore("&7&o(Only if Random Mode)",
+                    "&7Run Always&f: &b" + commandReward.isRunAlways(),
+                    ""
+            );
+            quickItem.lore("&b&lRight Click &8» &7To edit message");
+        }
 
-		quickItem.lore("&c&lPress 1 &8» &7To delete this reward");
+        quickItem.lore("&c&lPress 1 &8» &7To delete this reward");
 
-		return quickItem.make();
-	}
+        return quickItem.make();
+    }
 
-	@Override
-	protected void drawAdditional() {
-		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL)
-				.name("&a&lNew Reward")
-				.lore("&b&lLeft Click &8» &7To add a reward")
-				.lore("&a&lRight Click &8» &7To quick-add inventory")
-				.make(), click -> {
+    @Override
+    protected void drawAdditional() {
+        setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL)
+                .name("&a&lNew Reward")
+                .lore("&b&lLeft Click &8» &7To add a reward")
+                .lore("&a&lRight Click &8» &7To quick-add inventory")
+                .make(), click -> {
 
-			if (click.clickType == ClickType.LEFT)
-				click.manager.showGUI(click.player, new GUIRewardType(this.voucher));
+            if (click.clickType == ClickType.LEFT)
+                click.manager.showGUI(click.player, new GUIRewardType(this.voucher));
 
-			if (click.clickType == ClickType.RIGHT) {
-				final List<ItemStack> toAdd = Arrays.stream(click.player.getInventory().getStorageContents()).filter(item -> item != null && item.getType() != CompMaterial.AIR.parseMaterial() && item.getAmount() != 0 && !Vouchers.getVoucherManager().isVoucher(item)).toList();
+            if (click.clickType == ClickType.RIGHT) {
+                final List<ItemStack> toAdd = Arrays.stream(click.player.getInventory().getStorageContents()).filter(item -> item != null && item.getType() != CompMaterial.AIR.parseMaterial() && item.getAmount() != 0 && !Vouchers.getVoucherManager().isVoucher(item)).toList();
 
-				new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Chance", "&fEnter new reward chance") {
+                new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Chance", "&fEnter new reward chance") {
 
-					@Override
-					public void onExit(Player player) {
-						click.manager.showGUI(click.player, GUIRewardList.this);
-					}
+                    @Override
+                    public void onExit(Player player) {
+                        click.manager.showGUI(click.player, GUIRewardList.this);
+                    }
 
-					@Override
-					public boolean onResult(String string) {
-						string = ChatColor.stripColor(string.toLowerCase());
+                    @Override
+                    public boolean onResult(String string) {
+                        string = ChatColor.stripColor(string.toLowerCase());
 
-						if (!NumberUtils.isNumber(string)) {
-							Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
-							return false;
-						}
+                        if (!NumberUtils.isNumber(string)) {
+                            Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, string));
+                            return false;
+                        }
 
-						final double rate = Double.parseDouble(string);
-						double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
+                        final double rate = Double.parseDouble(string);
+                        double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
 
-						click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
-						toAdd.forEach(item -> GUIRewardList.this.voucher.addReward(new ItemReward(
-								item,
-								finalRate
-						)));
+                        click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+                        toAdd.forEach(item -> GUIRewardList.this.voucher.addReward(new ItemReward(
+                                item,
+                                finalRate
+                        )));
 
-						click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
-						return true;
-					}
-				};
-			}
-		});
-	}
+                        click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+                        return true;
+                    }
+                };
+            }
+        });
+    }
 
-	@Override
-	protected void onClick(Reward reward, GuiClickEvent click) {
-		if (click.clickType == ClickType.LEFT) {
-			final int clickedIndex = this.voucher.getRewards().indexOf(reward);
+    @Override
+    protected void onClick(Reward reward, GuiClickEvent click) {
+        if (click.clickType == ClickType.LEFT) {
+            final int clickedIndex = this.voucher.getRewards().indexOf(reward);
 
-			if (this.selectedIndex == -1)
-				this.selectedIndex = clickedIndex;
-			else {
-				if (this.selectedIndex == clickedIndex) return;
-				Collections.swap(this.voucher.getRewards(), this.selectedIndex, clickedIndex);
-				this.voucher.sync(true);
+            if (this.selectedIndex == -1)
+                this.selectedIndex = clickedIndex;
+            else {
+                if (this.selectedIndex == clickedIndex) return;
+                Collections.swap(this.voucher.getRewards(), this.selectedIndex, clickedIndex);
+                this.voucher.sync(true);
 
-				click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
-			}
-		}
+                click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+            }
+        }
 
-		if (click.clickType == ClickType.RIGHT && reward instanceof final CommandReward commandReward) {
-			click.gui.exit();
-			new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Message", "&fEnter new reward message") {
+        if (click.clickType == ClickType.RIGHT && reward instanceof final CommandReward commandReward) {
+            click.gui.exit();
+            new TitleInput(Vouchers.getInstance(), click.player, "&b&lReward Message", "&fEnter new reward message") {
 
-				@Override
-				public void onExit(Player player) {
-					click.manager.showGUI(click.player, GUIRewardList.this);
-				}
+                @Override
+                public void onExit(Player player) {
+                    click.manager.showGUI(click.player, GUIRewardList.this);
+                }
 
-				@Override
-				public boolean onResult(String string) {
-					commandReward.setClaimMessage(string);
-					GUIRewardList.this.voucher.sync(true);
+                @Override
+                public boolean onResult(String string) {
+                    commandReward.setClaimMessage(string);
+                    GUIRewardList.this.voucher.sync(true);
 
-					click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
-					return true;
-				}
-			};
-		}
+                    click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+                    return true;
+                }
+            };
+        }
 
-		if (click.clickType == ClickType.NUMBER_KEY) {
-			this.voucher.removeReward(reward);
-			click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
-		}
-	}
+        if (click.clickType == ClickType.NUMBER_KEY) {
+            this.voucher.removeReward(reward);
+            click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+        }
+    }
 
-	@Override
-	protected List<Integer> fillSlots() {
-		return InventoryBorder.getInsideBorders(5);
-	}
+    @Override
+    protected List<Integer> fillSlots() {
+        return InventoryBorder.getInsideBorders(5);
+    }
 }

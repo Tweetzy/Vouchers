@@ -29,6 +29,8 @@ public interface Voucher extends Synchronize {
 
 	String getId();
 
+	int getRewardCount();
+
 	String getName();
 
 	ItemStack getItem();
@@ -42,6 +44,7 @@ public interface Voucher extends Synchronize {
 	List<Reward> getRewards();
 
 	void setName(String name);
+	void setRewardCount(int rewardCount);
 
 	void setItem(ItemStack item);
 
