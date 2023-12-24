@@ -27,6 +27,7 @@ import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import ca.tweetzy.vouchers.settings.Translations;
@@ -36,7 +37,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public final class GUICreateReward extends BaseGUI {
+public final class GUICreateReward extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 	private final RewardType rewardType;

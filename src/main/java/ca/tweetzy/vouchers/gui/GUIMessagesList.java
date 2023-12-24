@@ -27,6 +27,7 @@ import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.api.voucher.Message;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersPagedGUI;
 import lombok.NonNull;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class GUIMessagesList extends PagedGUI<Message> {
+public final class GUIMessagesList extends VouchersPagedGUI<Message> {
 
 	private final Voucher voucher;
 	private int selectedIndex = -1;

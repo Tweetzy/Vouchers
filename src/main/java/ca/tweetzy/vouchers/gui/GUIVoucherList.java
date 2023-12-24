@@ -29,6 +29,7 @@ import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
 import ca.tweetzy.vouchers.settings.Translations;
@@ -40,7 +41,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GUIVoucherList extends PagedGUI<Voucher> {
+public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 
 	public GUIVoucherList() {
 		super(new GUIVouchersAdmin(), "&bVouchers &8> &7Listing Vouchers", 6, Vouchers.getVoucherManager().getAll());

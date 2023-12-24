@@ -26,6 +26,7 @@ import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import ca.tweetzy.vouchers.settings.Settings;
@@ -36,7 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.function.Consumer;
 
-public final class GUIRewardSelection extends PagedGUI<Reward> {
+public final class GUIRewardSelection extends VouchersPagedGUI<Reward> {
 
 	private List<String> args;
 	private final Consumer<Reward> selected;

@@ -26,6 +26,7 @@ import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersPagedGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public final class GUIVoucherRedeemList extends PagedGUI<Redeem> {
+public final class GUIVoucherRedeemList extends VouchersPagedGUI<Redeem> {
 
 	public GUIVoucherRedeemList() {
 		super(new GUIVouchersAdmin(), "&bVouchers &8> &7Listing Redeems", 6, Vouchers.getRedeemManager().getAll());

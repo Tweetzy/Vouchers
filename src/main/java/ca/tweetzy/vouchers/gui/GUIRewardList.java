@@ -29,6 +29,7 @@ import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import ca.tweetzy.vouchers.settings.Translations;
@@ -44,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public final class GUIRewardList extends PagedGUI<Reward> {
+public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 
 	private final Voucher voucher;
 	private int selectedIndex = -1;

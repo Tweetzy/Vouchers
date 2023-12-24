@@ -25,6 +25,7 @@ import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.GUIConfirm;
+import ca.tweetzy.vouchers.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -52,13 +53,16 @@ public final class VoucherListeners implements Listener {
 		final Player player = event.getPlayer();
 		final ItemStack item = event.getItem();
 
+		// prevent if sneaking
+		if (Settings.PREVENT_REDEEM_WHILE_SNEAKING.getBoolean() && player.isSneaking())
+			return;
+
 		if (item == null) return;
 
 		// not even a voucher
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
 		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
 
 			final Voucher voucher = Vouchers.getVoucherManager().find(NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:Vouchers")));
 			final String voucherArgsRaw = NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:VouchersArgs"));

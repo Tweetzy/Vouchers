@@ -27,6 +27,7 @@ import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
 import ca.tweetzy.vouchers.impl.VoucherMessage;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
@@ -34,7 +35,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public final class GUIMessageType extends BaseGUI {
+public final class GUIMessageType extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 
