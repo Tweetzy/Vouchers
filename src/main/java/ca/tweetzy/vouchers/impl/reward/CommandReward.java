@@ -43,11 +43,16 @@ public final class CommandReward extends AbstractReward {
 
 	@Getter
 	@Setter
+	private boolean runAlways;
+
+	@Getter
+	@Setter
 	private String claimMessage = "";
 
-	public CommandReward(String command, double chance, int delay) {
+	public CommandReward(String command, double chance, int delay, boolean runAlways) {
 		super(RewardType.COMMAND, chance, delay);
 		this.command = command;
+		this.runAlways = runAlways;
 	}
 
 	@Override
@@ -81,6 +86,7 @@ public final class CommandReward extends AbstractReward {
 		object.addProperty("delay", this.getDelay());
 		object.addProperty("type", RewardType.COMMAND.name());
 		object.addProperty("claimMessage", this.claimMessage);
+		object.addProperty("runAlways", this.runAlways);
 
 		return object.toString();
 	}

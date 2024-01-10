@@ -66,7 +66,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 
 		} else {
 			if (commandReward == null)
-				this.commandReward = new CommandReward("heal %player%", 100D, 20);
+				this.commandReward = new CommandReward("heal %player%", 100D, 20, false);
 			else
 				this.commandReward = commandReward;
 		}
@@ -153,7 +153,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 					click.manager.showGUI(click.player, new GUICreateReward(
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
-							new CommandReward(string, GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
+							new CommandReward(string, GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay(), GUICreateReward.this.commandReward.isRunAlways()),
 							null
 					));
 
@@ -196,7 +196,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 					click.manager.showGUI(click.player, new GUICreateReward(
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
-							new CommandReward(GUICreateReward.this.commandReward.getCommand(), GUICreateReward.this.commandReward.getChance(), finalRate),
+							new CommandReward(GUICreateReward.this.commandReward.getCommand(), GUICreateReward.this.commandReward.getChance(), finalRate, GUICreateReward.this.commandReward.isRunAlways()),
 							null
 					));
 
@@ -236,7 +236,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 					click.manager.showGUI(click.player, new GUICreateReward(
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
-							new CommandReward(GUICreateReward.this.commandReward.getCommand(), finalRate, GUICreateReward.this.commandReward.getDelay()),
+							new CommandReward(GUICreateReward.this.commandReward.getCommand(), finalRate, GUICreateReward.this.commandReward.getDelay(), GUICreateReward.this.commandReward.isRunAlways()),
 							null
 					));
 
@@ -275,6 +275,26 @@ public final class GUICreateReward extends VouchersBaseGUI {
 
 					return true;
 				}
+			});
+			setButton(3, 6, QuickItem
+					.of(CompMaterial.PAPER)
+					.name("&b&lRun Always")
+					.lore(
+							"&7&o*Only if on Random Mode*",
+							"&7Should this reward always run?",
+							"",
+							"&7Current&f: &b" + this.commandReward.isRunAlways(),
+							"",
+							"&b&lClick &8» &7To set to true"
+					)
+					.make(), click -> {
+				this.commandReward.setRunAlways(true);
+				click.manager.showGUI(click.player, new GUICreateReward(
+						GUICreateReward.this.voucher,
+						RewardType.COMMAND,
+						GUICreateReward.this.commandReward,
+						null
+				));
 			});
 
 		}

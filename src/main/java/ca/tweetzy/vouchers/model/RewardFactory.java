@@ -22,6 +22,7 @@ import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.NonNull;
@@ -37,7 +38,11 @@ public final class RewardFactory {
 
 		return switch (rewardType) {
 			case COMMAND -> {
-				CommandReward reward = new CommandReward(object.get("command").getAsString(), object.get("chance").getAsDouble(), object.get("delay").getAsInt());
+				boolean runAlways = false;
+				if (object.has("runAlways")) {
+					runAlways = object.get("runAlways").getAsBoolean();
+				}
+				CommandReward reward = new CommandReward(object.get("command").getAsString(), object.get("chance").getAsDouble(), object.get("delay").getAsInt(), runAlways);
 
 				if (object.has("claimMessage"))
 					reward.setClaimMessage(object.get("claimMessage").getAsString());

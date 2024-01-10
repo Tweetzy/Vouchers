@@ -73,7 +73,8 @@ public final class VouchersImporter implements Importer {
 						voucherRewards.add(new CommandReward(
 								rewardSection.getString(rewardKey + ".command").replace("{player}", "%player%"),
 								rewardSection.getDouble(rewardKey + ".chance"),
-								0
+								0,
+								rewardSection.getBoolean(rewardKey + ".runAlways")
 						));
 					} else {
 						if (rewardSection.contains(rewardKey + ".item"))
@@ -147,7 +148,8 @@ public final class VouchersImporter implements Importer {
 					section.getStringList(voucherNode + ".description"),
 					RewardMode.valueOf(section.getString(voucherNode + ".setting.reward mode").toUpperCase()),
 					options,
-					voucherRewards
+					voucherRewards,
+					1
 			);
 
 			Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {

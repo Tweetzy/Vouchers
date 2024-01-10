@@ -34,122 +34,152 @@ import org.bukkit.inventory.ItemStack;
 
 public final class GUIVoucherEdit extends VouchersBaseGUI {
 
-	private final Voucher voucher;
+    private final Voucher voucher;
 
-	public GUIVoucherEdit(@NonNull final Voucher voucher) {
-		super(new GUIVoucherList(), "&bVouchers &8> &7Edit &8> &7" + voucher.getId(), 6);
-		this.voucher = voucher;
-		setAcceptsItems(true);
-		draw();
-	}
+    public GUIVoucherEdit(@NonNull final Voucher voucher) {
+        super(new GUIVoucherList(), "&bVouchers &8> &7Edit &8> &7" + voucher.getId(), 6);
+        this.voucher = voucher;
+        setAcceptsItems(true);
+        draw();
+    }
 
-	@Override
-	protected void draw() {
+    @Override
+    protected void draw() {
 
-		setButton(1, 1, QuickItem
-				.of(CompMaterial.NAME_TAG)
-				.name("&b&lVoucher Name")
-				.lore(
-						"",
-						"&7Current&f: " + this.voucher.getName(),
-						"",
-						"&b&lClick &8» &7To change display name"
-				)
-				.make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&B&lVoucher Edit", "&fEnter new name into chat") {
+        setButton(1, 1, QuickItem
+                .of(CompMaterial.NAME_TAG)
+                .name("&b&lVoucher Name")
+                .lore(
+                        "",
+                        "&7Current&f: " + this.voucher.getName(),
+                        "",
+                        "&b&lClick &8» &7To change display name"
+                )
+                .make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&B&lVoucher Edit", "&fEnter new name into chat") {
 
-			@Override
-			public void onExit(Player player) {
-				click.manager.showGUI(click.player, GUIVoucherEdit.this);
-			}
+            @Override
+            public void onExit(Player player) {
+                click.manager.showGUI(click.player, GUIVoucherEdit.this);
+            }
 
-			@Override
-			public boolean onResult(String string) {
-				if (string.length() < 1) return false;
-				GUIVoucherEdit.this.voucher.setName(string);
-				GUIVoucherEdit.this.voucher.sync(true);
+            @Override
+            public boolean onResult(String string) {
+                if (string.length() < 1) return false;
+                GUIVoucherEdit.this.voucher.setName(string);
+                GUIVoucherEdit.this.voucher.sync(true);
 
-				click.manager.showGUI(click.player, new GUIVoucherEdit(GUIVoucherEdit.this.voucher));
-				return true;
-			}
-		});
+                click.manager.showGUI(click.player, new GUIVoucherEdit(GUIVoucherEdit.this.voucher));
+                return true;
+            }
+        });
 
-		setButton(1, 4, QuickItem
-				.of(this.voucher.getItem())
-				.name("&b&lVoucher Item")
-				.lore(
-						"",
-						"&7Current&f: " + ChatUtil.capitalizeFully(this.voucher.getItem().getType()),
-						"",
-						"&b&lLeft Click &8» &7To change with picker",
-						"&b&lRight Click &8» &7To select held item"
-				)
-				.make(), click -> {
+        setButton(1, 4, QuickItem
+                .of(this.voucher.getItem())
+                .name("&b&lVoucher Item")
+                .lore(
+                        "",
+                        "&7Current&f: " + ChatUtil.capitalizeFully(this.voucher.getItem().getType()),
+                        "",
+                        "&b&lLeft Click &8» &7To change with picker",
+                        "&b&lRight Click &8» &7To select held item"
+                )
+                .make(), click -> {
 
-			if (click.clickType == ClickType.LEFT)
-				click.manager.showGUI(click.player, new MaterialPickerGUI(this, "&bVouchers &8> &7Select Material", null, (event, selected) -> {
-					this.voucher.setItem(selected.parseItem());
-					this.voucher.sync(true);
-					click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
-				}));
+            if (click.clickType == ClickType.LEFT)
+                click.manager.showGUI(click.player, new MaterialPickerGUI(this, "&bVouchers &8> &7Select Material", null, (event, selected) -> {
+                    this.voucher.setItem(selected.parseItem());
+                    this.voucher.sync(true);
+                    click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
+                }));
 
-			if (click.clickType == ClickType.RIGHT) {
-				final ItemStack cursor = click.cursor;
-				if (cursor == null || cursor.getType() == CompMaterial.AIR.parseMaterial()) return;
+            if (click.clickType == ClickType.RIGHT) {
+                final ItemStack cursor = click.cursor;
+                if (cursor == null || cursor.getType() == CompMaterial.AIR.parseMaterial()) return;
 
-				this.voucher.setItem(cursor.clone());
-				this.voucher.sync(true);
-				click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
-			}
-		});
+                this.voucher.setItem(cursor.clone());
+                this.voucher.sync(true);
+                click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
+            }
+        });
 
-		setButton(1, 7, QuickItem
-				.of(CompMaterial.WRITABLE_BOOK)
-				.name("&b&lVoucher Description")
-				.lore(
-						"",
-						"&7Current&f: "
-				)
-				.lore(this.voucher.getFilteredDescription())
-				.lore(
-						"",
-						"&b&lClick &8» &7To edit description"
-				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIListEditor(this.voucher)));
+        setButton(1, 7, QuickItem
+                .of(CompMaterial.WRITABLE_BOOK)
+                .name("&b&lVoucher Description")
+                .lore(
+                        "",
+                        "&7Current&f: "
+                )
+                .lore(this.voucher.getFilteredDescription())
+                .lore(
+                        "",
+                        "&b&lClick &8» &7To edit description"
+                )
+                .make(), click -> click.manager.showGUI(click.player, new GUIListEditor(this.voucher)));
 
-		setButton(3, 1, QuickItem
-				.of(CompMaterial.REPEATER)
-				.name("&b&lVoucher Settings")
-				.lore(
-						"",
-						"&b&lClick &8» &7To adjust settings"
-				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher)));
+        setButton(3, 1, QuickItem
+                .of(CompMaterial.REPEATER)
+                .name("&b&lVoucher Settings")
+                .lore(
+                        "",
+                        "&b&lClick &8» &7To adjust settings"
+                )
+                .make(), click -> click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher)));
 
-		setButton(3, 4, QuickItem
-				.of(CompMaterial.HEART_OF_THE_SEA)
-				.name("&b&lVoucher Reward Mode")
-				.lore(
-						"",
-						"&7Current&f: &b" + ChatUtil.capitalizeFully(this.voucher.getRewardMode()),
-						"",
-						"&b&lClick &8» &7To switch mode"
-				)
-				.make(), click -> {
+        setButton(3, 4, QuickItem
+                .of(CompMaterial.HEART_OF_THE_SEA)
+                .name("&b&lVoucher Reward Mode")
+                .lore(
+                        "",
+                        "&7Current&f: &b" + ChatUtil.capitalizeFully(this.voucher.getRewardMode()),
+                        "",
+                        "&b&lClick &8» &7To switch mode"
+                )
+                .make(), click -> {
 
-			this.voucher.setRewardMode(this.voucher.getRewardMode().next());
-			this.voucher.sync(true);
-			click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
-		});
+            this.voucher.setRewardMode(this.voucher.getRewardMode().next());
+            this.voucher.sync(true);
+            click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
+        });
 
-		setButton(3, 7, QuickItem
-				.of(CompMaterial.DIAMOND)
-				.name("&b&lVoucher Rewards")
-				.lore(
-						"",
-						"&b&lClick &8» &7To edit rewards"
-				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIRewardList(this.voucher)));
+        setButton(3, 7, QuickItem
+                .of(CompMaterial.DIAMOND)
+                .name("&b&lVoucher Rewards")
+                .lore(
+                        "",
+                        "&b&lClick &8» &7To edit rewards"
+                )
+                .make(), click -> click.manager.showGUI(click.player, new GUIRewardList(this.voucher)));
+        setButton(5, 4, QuickItem
+                .of(CompMaterial.GOLD_INGOT)
+                .name("&b&lVoucher Reward Amount")
+                .lore(
+                        "&7Only applicable if Reward Mode: Random",
+                        "&7Current&f: &b" + this.voucher.getRewardCount(),
+                        "",
+                        "&b&lClick &8» &7To adjust Reward Count"
+                )
+                .make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&B&lVoucher Edit", "&fEnter new amount into chat") {
 
-		applyBackExit();
-	}
+            @Override
+            public void onExit(Player player) {
+                click.manager.showGUI(click.player, GUIVoucherEdit.this);
+            }
+
+            @Override
+            public boolean onResult(String string) {
+                try {
+                    int rewardCount = Integer.parseInt(string);
+                    if (rewardCount == 0) return false;
+                    GUIVoucherEdit.this.voucher.setRewardCount(Integer.parseInt(string));
+                } catch (NumberFormatException e1) {
+                    return false;
+                }
+                GUIVoucherEdit.this.voucher.sync(true);
+
+                click.manager.showGUI(click.player, new GUIVoucherEdit(GUIVoucherEdit.this.voucher));
+                return true;
+            }
+        });
+        applyBackExit();
+    }
 }

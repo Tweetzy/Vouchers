@@ -201,14 +201,24 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				registerRedeemIfApplicable(player, voucher);
 			}));
 			case RANDOM -> {
-				final ProbabilityCollection<Reward> rewardProbabilityCollection = new ProbabilityCollection<>();
-				voucher.getRewards().forEach(reward -> rewardProbabilityCollection.add(reward, (int) reward.getChance()));
+				voucher.getRewards().forEach(reward -> {
+					if (reward instanceof CommandReward commandReward) {
+						if (commandReward.isRunAlways()) {
+							if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
+								showRewardInfo(player, voucher, reward, args);
+							reward.execute(player, true, args);
+						}
+					}
+				});
+				for (int i = 0; i < voucher.getRewardCount(); i++) {
+					final ProbabilityCollection<Reward> rewardProbabilityCollection = new ProbabilityCollection<>();
+					voucher.getRewards().forEach(reward -> rewardProbabilityCollection.add(reward, (int) reward.getChance()));
 
-				Reward selectedReward = rewardProbabilityCollection.get();
-				selectedReward.execute(player, true, args);
-				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
-					showRewardInfo(player, voucher, selectedReward, args);
-
+					Reward selectedReward = rewardProbabilityCollection.get();
+					selectedReward.execute(player, true, args);
+					if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
+						showRewardInfo(player, voucher, selectedReward, args);
+				}
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
