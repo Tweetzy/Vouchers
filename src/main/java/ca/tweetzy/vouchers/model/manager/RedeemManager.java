@@ -155,7 +155,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 			}
 
 			// the other message types
-			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE).collect(Collectors.toList()).forEach(msg -> {
+			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE && msg.getMessageType() != MessageType.BROADCAST).toList().forEach(msg -> {
 				msg.send(player, voucher, args);
 			});
 		}
@@ -169,12 +169,18 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 					showRewardHeader(player);
 					voucher.getRewards().forEach(reward -> {
 						boolean wasGiven = reward.execute(player, false, args);
-						if (wasGiven)
+						if (wasGiven) {
 							showActualRewardGiven(player, voucher, reward, args);
+							sendBroadcastMsg(player, voucher, args);
+						}
 					});
 					showRewardFooter(player);
 				} else {
-					voucher.getRewards().forEach(reward -> reward.execute(player, false, args));
+					voucher.getRewards().forEach(reward -> {
+						boolean given = reward.execute(player, false, args);
+						if (given)
+							sendBroadcastMsg(player, voucher, args);
+					});
 				}
 
 
@@ -188,8 +194,10 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
 					showRewardHeader(player);
-					if (given)
+					if (given) {
 						showActualRewardGiven(player, voucher, selected, args);
+						sendBroadcastMsg(player, voucher, args);
+					}
 					showRewardFooter(player);
 				}
 
@@ -205,9 +213,16 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				voucher.getRewards().forEach(reward -> rewardProbabilityCollection.add(reward, (int) reward.getChance()));
 
 				Reward selectedReward = rewardProbabilityCollection.get();
-				selectedReward.execute(player, true, args);
-				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
-					showRewardInfo(player, voucher, selectedReward, args);
+				boolean given = selectedReward.execute(player, true, args);
+
+				if (given)
+					if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
+						showRewardHeader(player);
+						showRewardInfo(player, voucher, selectedReward, args);
+						showRewardFooter(player);
+					} else {
+						sendBroadcastMsg(player, voucher, args);
+					}
 
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
@@ -217,6 +232,12 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				registerRedeemIfApplicable(player, voucher);
 			}
 		}
+	}
+
+	private void sendBroadcastMsg(Player player, Voucher voucher, List<String> args) {
+		if (voucher.getOptions().getMessages().isEmpty()) return;
+		voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.BROADCAST).forEach(broadcastMsg -> broadcastMsg.send(player, voucher, args));
+
 	}
 
 	private void showRewardInfo(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final Reward reward, List<String> args) {
