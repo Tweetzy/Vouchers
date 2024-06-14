@@ -18,16 +18,14 @@
 
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.flight.comp.ActionBar;
-import ca.tweetzy.flight.comp.Titles;
 import ca.tweetzy.flight.utils.Common;
-import ca.tweetzy.flight.utils.Replacer;
+import ca.tweetzy.flight.utils.messages.ActionBar;
+import ca.tweetzy.flight.utils.messages.Titles;
 import ca.tweetzy.vouchers.api.voucher.Message;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
+import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.hook.PAPIHook;
 import ca.tweetzy.vouchers.model.QuickReplace;
-import ca.tweetzy.vouchers.settings.Settings;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -104,8 +102,23 @@ public final class VoucherMessage implements Message {
 	}
 
 	@Override
+	public void send(Player player, Voucher voucher, List<String> args, Reward reward) {
+		if (this.type != MessageType.BROADCAST) {
+			send(player, voucher, args);
+			return;
+		}
+
+		Common.broadcast(null, false, MessageFormat.format(getColouredAndReplaced(player, voucher, reward), args.toArray()));
+	}
+
+	@Override
 	public String getColouredAndReplaced(@NonNull final Player player, @NonNull final Voucher voucher) {
-		return QuickReplace.getColouredAndReplaced(player, this.message, voucher);
+		return QuickReplace.getColouredAndReplaced(player, this.message, voucher, null);
+	}
+
+	@Override
+	public String getColouredAndReplaced(Player player, Voucher voucher, Reward reward) {
+		return QuickReplace.getColouredAndReplaced(player, this.message, voucher, reward);
 	}
 
 	@Override

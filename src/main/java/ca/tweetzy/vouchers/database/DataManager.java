@@ -21,6 +21,7 @@ package ca.tweetzy.vouchers.database;
 import ca.tweetzy.flight.database.Callback;
 import ca.tweetzy.flight.database.DataManagerAbstract;
 import ca.tweetzy.flight.database.DatabaseConnector;
+import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.voucher.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.RewardMode;
@@ -34,6 +35,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -249,11 +251,15 @@ public final class DataManager extends DataManagerAbstract {
 		final List<Reward> rewardList = new ArrayList<>();
 		object.forEach(el -> rewardList.add(RewardFactory.decode(el.getAsJsonObject().toString())));
 
+		List<String> desc = Arrays.asList(resultSet.getString("description").split(";;;"));
+		if (desc.size() == 1 && desc.get(0).isBlank())
+			desc = new ArrayList<>();
+
 		return new ActiveVoucher(
 				resultSet.getString("id"),
 				resultSet.getString("name"),
 				ItemEncoder.decodeItem(resultSet.getString("item")),
-				new ArrayList<>(Arrays.asList(resultSet.getString("description").split(";;;"))),
+				new ArrayList<>(desc),
 				RewardMode.valueOf(resultSet.getString("reward_mode").toUpperCase()),
 				VoucherSettings.decode(resultSet.getString("options")),
 				rewardList
