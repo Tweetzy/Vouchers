@@ -1,0 +1,44 @@
+item: "PAPER"
+
+display name: "&bVoucher Name"
+
+description:
+  - "Voucher Description 1"
+  - "Voucher Description 2"
+
+max uses: -1
+cooldown: -1
+
+ask for confirmation: true
+remove on use: true
+glowing: true
+
+permission:
+  required: true
+  permission: vouchers.use.test
+
+sound:
+  play sound: true
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+
+messages:
+  broadcast: []
+  chat: []
+  action bar: []
+  title:
+    message: "Congratulations"
+    fade in: 10
+    stay: 40
+    fade out: 10
+
+  subtitle:
+    message: "Redeemed Voucher"
+    fade in: 10
+    stay: 40
+    fade out: 10
+
+rewards:
+  - type: COMMAND
+    chance: 50.0
+    delay: -1
+    command: "give %player% cake 1"
