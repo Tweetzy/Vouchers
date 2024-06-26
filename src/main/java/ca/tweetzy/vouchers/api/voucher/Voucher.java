@@ -21,13 +21,9 @@ package ca.tweetzy.vouchers.api.voucher;
 import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.Synchronize;
-import ca.tweetzy.vouchers.commands.CommandReload;
-import ca.tweetzy.vouchers.impl.reward.CommandReward;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,6 +62,10 @@ public interface Voucher extends Synchronize {
 	void addReward(Reward reward);
 
 	void removeReward(Reward reward);
+
+	void setVoucherHand(EquipmentSlot hand);
+
+	EquipmentSlot getVoucherHand();
 
 	default List<String> getFilteredDescription() {
 		List<String> desc = new ArrayList<>(getDescription());

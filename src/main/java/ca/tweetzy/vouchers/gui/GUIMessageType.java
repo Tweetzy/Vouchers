@@ -19,7 +19,6 @@
 package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
-import ca.tweetzy.flight.gui.template.BaseGUI;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;

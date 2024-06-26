@@ -21,7 +21,6 @@ package ca.tweetzy.vouchers.gui;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
-import ca.tweetzy.flight.gui.template.PagedGUI;
 import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.api.voucher.Message;

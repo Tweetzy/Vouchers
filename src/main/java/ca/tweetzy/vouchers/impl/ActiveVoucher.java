@@ -32,7 +32,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,7 @@ public final class ActiveVoucher implements Voucher {
 	private RewardMode rewardMode;
 	private VoucherOptions options;
 	private List<Reward> rewards;
+	private EquipmentSlot voucherHand;
 
 	@Override
 	public String getId() {
@@ -104,6 +107,16 @@ public final class ActiveVoucher implements Voucher {
 	}
 
 	@Override
+	public void setVoucherHand(EquipmentSlot hand) {
+		this.voucherHand = hand;
+	}
+
+	@Override
+	public EquipmentSlot getVoucherHand() {
+		return this.voucherHand;
+	}
+
+	@Override
 	public void setDescription(List<String> description) {
 		this.description = description;
 	}
@@ -128,31 +141,45 @@ public final class ActiveVoucher implements Voucher {
 	@Override
 	public ItemStack buildItem(Player player) {
 //		this.description =this.description.stream().filter(line -> !line.contains("-Blank-")).collect(Collectors.toList());
-		return QuickItem
+		final ItemStack item = QuickItem
 				.of(this.item)
 				.name(PAPIHook.tryReplace(player, this.name))
 				.lore(PAPIHook.tryReplace(player, this.getFilteredDescription()))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
-				.unbreakable(true)
 				.tag("Tweetzy:Vouchers", this.id)
 				.make();
+
+		return this.unbreakable(item);
 	}
 
 	@Override
 	public ItemStack buildItem(Player player, List<String> args) {
 		String vArgs = String.join(" ", args);
 
-		return QuickItem
+		final ItemStack item = QuickItem
 				.of(this.item)
 				.name(java.text.MessageFormat.format(PAPIHook.tryReplace(player, this.name), args.toArray()))
 				.lore(PAPIHook.tryReplace(player, this.getFilteredDescription()).stream().map(line -> java.text.MessageFormat.format(line, args.toArray())).collect(Collectors.toList()))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
-				.unbreakable(true)
 				.tag("Tweetzy:Vouchers", this.id)
 				.tag("Tweetzy:VouchersArgs", vArgs)
 				.make();
+
+		return this.unbreakable(item);
+	}
+
+	private ItemStack unbreakable(ItemStack item) {
+		final ItemMeta meta = item.getItemMeta();
+
+		if (meta == null)
+			return item;
+
+		meta.setUnbreakable(true);
+		item.setItemMeta(meta);
+
+		return item;
 	}
 
 	@Override

@@ -24,7 +24,6 @@ import ca.tweetzy.flight.database.DataMigrationManager;
 import ca.tweetzy.flight.database.DatabaseConnector;
 import ca.tweetzy.flight.database.SQLiteConnector;
 import ca.tweetzy.flight.gui.GuiManager;
-import ca.tweetzy.flight.hooks.PlaceholderAPIHook;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.VouchersAPI;
 import ca.tweetzy.vouchers.commands.*;

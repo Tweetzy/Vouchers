@@ -26,15 +26,12 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.model.FlagExtractor;
-import ca.tweetzy.vouchers.model.Giver;
 import ca.tweetzy.vouchers.settings.Translations;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

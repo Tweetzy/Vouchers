@@ -21,7 +21,6 @@ package ca.tweetzy.vouchers.database;
 import ca.tweetzy.flight.database.Callback;
 import ca.tweetzy.flight.database.DataManagerAbstract;
 import ca.tweetzy.flight.database.DatabaseConnector;
-import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.voucher.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Reward;
 import ca.tweetzy.vouchers.api.voucher.RewardMode;
@@ -34,8 +33,8 @@ import ca.tweetzy.vouchers.model.RewardFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import lombok.NonNull;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -262,7 +261,8 @@ public final class DataManager extends DataManagerAbstract {
 				new ArrayList<>(desc),
 				RewardMode.valueOf(resultSet.getString("reward_mode").toUpperCase()),
 				VoucherSettings.decode(resultSet.getString("options")),
-				rewardList
+				rewardList,
+				EquipmentSlot.HAND
 		);
 	}
 

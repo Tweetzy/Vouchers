@@ -21,7 +21,6 @@ package ca.tweetzy.vouchers.gui;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
-import ca.tweetzy.flight.gui.template.PagedGUI;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
@@ -36,6 +35,7 @@ import ca.tweetzy.vouchers.settings.Translations;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 					return false;
 				}
 
-				final Voucher voucher = new ActiveVoucher(string, "&e" + string, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), RewardMode.AUTOMATIC, new VoucherSettings(), new ArrayList<>());
+				final Voucher voucher = new ActiveVoucher(string, "&e" + string, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), RewardMode.AUTOMATIC, new VoucherSettings(), new ArrayList<>(), EquipmentSlot.HAND);
 
 				Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {
 					if (error == null) {
@@ -107,6 +107,10 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 				}
 
 			});
+
+		// drop the built voucher item
+		if (clickEvent.clickType == ClickType.DROP)
+			clickEvent.player.getWorld().dropItem(clickEvent.player.getLocation(), voucher.buildItem(clickEvent.player)).setVelocity(clickEvent.player.getLocation().getDirection().multiply(0.5));
 
 		if (clickEvent.clickType == ClickType.LEFT)
 			clickEvent.player.getInventory().addItem(voucher.buildItem(clickEvent.player));

@@ -23,7 +23,6 @@ import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.ItemUtil;
-import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.flight.utils.messages.Titles;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
@@ -39,6 +38,7 @@ import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -327,10 +327,29 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 	private void takeHand(@NonNull final Player player, @NonNull final Voucher voucher) {
 		if (voucher.getOptions().isRemoveOnUse()) {
-			if (PlayerUtil.getHand(player).getAmount() >= 2) {
-				PlayerUtil.getHand(player).setAmount(PlayerUtil.getHand(player).getAmount() - 1);
-			} else {
-				player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+//			if (PlayerUtil.getHand(player).getAmount() >= 2) {
+//				PlayerUtil.getHand(player).setAmount(PlayerUtil.getHand(player).getAmount() - 1);
+//			} else {
+//				player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+//			}
+
+			switch (voucher.getVoucherHand()) {
+				case HAND -> {
+					ItemStack voucherItem = player.getInventory().getItemInMainHand();
+					if (voucherItem.getAmount() >= 2) {
+						voucherItem.setAmount(voucherItem.getAmount() - 1);
+					} else {
+						player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+					}
+				}
+				case OFF_HAND -> {
+					ItemStack voucherItem = player.getInventory().getItemInOffHand();
+					if (voucherItem.getAmount() >= 2) {
+						voucherItem.setAmount(voucherItem.getAmount() - 1);
+					} else {
+						player.getInventory().setItemInOffHand(CompMaterial.AIR.parseItem());
+						}
+				}
 			}
 
 			player.updateInventory();

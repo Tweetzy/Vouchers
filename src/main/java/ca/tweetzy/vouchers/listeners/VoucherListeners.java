@@ -51,13 +51,14 @@ public final class VoucherListeners implements Listener {
 	@EventHandler
 	public void onVoucherRedeem(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-		final ItemStack item = event.getItem();
+		ItemStack item = event.getItem();
+		EquipmentSlot hand = event.getHand();
 
 		// prevent if sneaking
 		if (Settings.PREVENT_REDEEM_WHILE_SNEAKING.getBoolean() && player.isSneaking())
 			return;
 
-		if (item == null) return;
+		if (item == null) item = event.getPlayer().getInventory().getItemInOffHand();
 
 		// not even a voucher
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
@@ -72,12 +73,8 @@ public final class VoucherListeners implements Listener {
 			// invalid / deleted voucher
 			if (voucher == null) return;
 
-			if (event.getHand() == EquipmentSlot.OFF_HAND)
-				return;
-
-
 			event.setUseItemInHand(Event.Result.DENY);
-
+			voucher.setVoucherHand(hand); // Set the hand the voucher was redeemed in
 
 			if (!this.blockedFromDrop.contains(player.getUniqueId()))
 				this.blockedFromDrop.add(player.getUniqueId());
