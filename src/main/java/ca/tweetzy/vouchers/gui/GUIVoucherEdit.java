@@ -19,19 +19,19 @@
 package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
-import ca.tweetzy.flight.gui.template.BaseGUI;
 import ca.tweetzy.flight.gui.template.MaterialPickerGUI;
 import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-public final class GUIVoucherEdit extends BaseGUI {
+public final class GUIVoucherEdit extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 

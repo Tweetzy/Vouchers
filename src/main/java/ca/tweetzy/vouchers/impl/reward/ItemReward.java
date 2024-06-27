@@ -27,12 +27,15 @@ import ca.tweetzy.vouchers.model.ItemEncoder;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
-public final class ItemReward extends AbstractReward {
+public final class ItemReward extends AbstractReward implements ConfigurationSerializable {
 
 	@Getter
 	private final ItemStack item;
@@ -75,4 +78,9 @@ public final class ItemReward extends AbstractReward {
 	}
 
 
+	@NotNull
+	@Override
+	public Map<String, Object> serialize() {
+		return Map.of();
+	}
 }

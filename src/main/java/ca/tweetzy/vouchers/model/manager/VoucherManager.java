@@ -52,7 +52,7 @@ public final class VoucherManager extends Manager<String, Voucher> {
 	public boolean isVoucher(final ItemStack item) {
 		if (item == null || item.getType() == CompMaterial.AIR.parseMaterial() || item.getAmount() == 0) return false;
 
-		return NBT.get(item, nbt -> nbt.hasTag("Tweetzy:Vouchers"));
+		return NBT.get(item, nbt -> (boolean) nbt.hasTag("Tweetzy:Vouchers"));
 	}
 
 	@Override

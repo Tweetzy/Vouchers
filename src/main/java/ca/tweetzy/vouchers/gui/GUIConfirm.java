@@ -19,16 +19,16 @@
 package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
-import ca.tweetzy.flight.gui.template.BaseGUI;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 
-public final class GUIConfirm extends BaseGUI {
+public final class GUIConfirm extends VouchersBaseGUI {
 
 	private final Consumer<Boolean> onClick;
 

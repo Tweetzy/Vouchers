@@ -19,12 +19,12 @@
 package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
-import ca.tweetzy.flight.gui.template.BaseGUI;
 import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
 
-public final class GUIVouchersAdmin extends BaseGUI {
+public final class GUIVouchersAdmin extends VouchersBaseGUI {
 
 	public GUIVouchersAdmin() {
 		super(null, "&bVouchers", 3);

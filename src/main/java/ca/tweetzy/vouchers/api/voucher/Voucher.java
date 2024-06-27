@@ -18,10 +18,14 @@
 
 package ca.tweetzy.vouchers.api.voucher;
 
+import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.Synchronize;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +59,14 @@ public interface Voucher extends Synchronize {
 
 	ItemStack buildItem(Player player, List<String> params);
 
+	void addReward(Reward reward);
+
+	void removeReward(Reward reward);
+
+	void setVoucherHand(EquipmentSlot hand);
+
+	EquipmentSlot getVoucherHand();
+
 	default List<String> getFilteredDescription() {
 		List<String> desc = new ArrayList<>(getDescription());
 
@@ -66,7 +78,47 @@ public interface Voucher extends Synchronize {
 		return desc;
 	}
 
-	void addReward(Reward reward);
+	default void exportVoucher() {
+		TweetzyYamlConfig config = new TweetzyYamlConfig(new File(Vouchers.getInstance().getDataFolder() + "/vouchers", getId().toLowerCase() + ".yml"), Vouchers.getInstance().getLogger());
 
-	void removeReward(Reward reward);
+		config.createEntry("item", getItem().getType().name());
+		config.createEntry("display name", getName());
+		config.createEntry("description", getDescription());
+		config.createEntry("max uses", getOptions().getMaxUses());
+		config.createEntry("cooldown", getOptions().getCooldown());
+		config.createEntry("ask for confirmation", getOptions().isAskConfirm());
+		config.createEntry("remove on use", getOptions().isRemoveOnUse());
+		config.createEntry("glowing", getOptions().isGlowing());
+
+		config.createEntry("permission.required", getOptions().isRequiresPermission());
+		config.createEntry("permission.permission", getOptions().getPermission());
+
+		config.createEntry("sound.play sound", getOptions().isPlayingSound());
+		config.createEntry("sound.sound", getOptions().getSound().name());
+
+		List<String> broadcasts = getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.BROADCAST).map(Message::getMessage).toList();
+		List<String> chats = getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.CHAT).map(Message::getMessage).toList();
+		List<String> actionbar = getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.ACTION_BAR).map(Message::getMessage).toList();
+
+		config.createEntry("messages.broadcast", broadcasts.isEmpty() ? new ArrayList<>() : broadcasts);
+		config.createEntry("messages.chat", chats.isEmpty() ? new ArrayList<>() : chats);
+		config.createEntry("messages.action bar", actionbar.isEmpty() ? new ArrayList<>() : actionbar);
+
+		getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.TITLE).toList().forEach(MSG -> {
+			config.createEntry("messages.title.message", MSG.getMessage());
+			config.createEntry("messages.title.fade in", MSG.getFadeInDuration());
+			config.createEntry("messages.title.stay", MSG.getStayDuration());
+			config.createEntry("messages.title.fade out", MSG.getFadeOutDuration());
+		});
+
+		getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.SUBTITLE).toList().forEach(MSG -> {
+			config.createEntry("messages.subtitle.message", MSG.getMessage());
+			config.createEntry("messages.subtitle.fade in", MSG.getFadeInDuration());
+			config.createEntry("messages.subtitle.stay", MSG.getStayDuration());
+			config.createEntry("messages.subtitle.fade out", MSG.getFadeOutDuration());
+		});
+
+		config.createEntry("rewards",getRewards());
+		config.init();
+	}
 }

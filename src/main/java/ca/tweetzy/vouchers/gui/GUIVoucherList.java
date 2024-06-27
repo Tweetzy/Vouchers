@@ -21,7 +21,6 @@ package ca.tweetzy.vouchers.gui;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
-import ca.tweetzy.flight.gui.template.PagedGUI;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
@@ -29,18 +28,20 @@ import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
 import ca.tweetzy.vouchers.settings.Translations;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GUIVoucherList extends PagedGUI<Voucher> {
+public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 
 	public GUIVoucherList() {
 		super(new GUIVouchersAdmin(), "&bVouchers &8> &7Listing Vouchers", 6, Vouchers.getVoucherManager().getAll());
@@ -82,7 +83,7 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 					return false;
 				}
 
-				final Voucher voucher = new ActiveVoucher(string, "&e" + string, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), RewardMode.AUTOMATIC, new VoucherSettings(), new ArrayList<>());
+				final Voucher voucher = new ActiveVoucher(string, "&e" + string, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), RewardMode.AUTOMATIC, new VoucherSettings(), new ArrayList<>(), EquipmentSlot.HAND);
 
 				Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {
 					if (error == null) {
@@ -106,6 +107,10 @@ public final class GUIVoucherList extends PagedGUI<Voucher> {
 				}
 
 			});
+
+		// drop the built voucher item
+		if (clickEvent.clickType == ClickType.DROP)
+			clickEvent.player.getWorld().dropItem(clickEvent.player.getLocation(), voucher.buildItem(clickEvent.player)).setVelocity(clickEvent.player.getLocation().getDirection().multiply(0.5));
 
 		if (clickEvent.clickType == ClickType.LEFT)
 			clickEvent.player.getInventory().addItem(voucher.buildItem(clickEvent.player));

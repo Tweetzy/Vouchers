@@ -20,7 +20,6 @@ package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
-import ca.tweetzy.flight.gui.template.BaseGUI;
 import ca.tweetzy.flight.gui.template.SoundPickerGUI;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.ChatUtil;
@@ -29,6 +28,7 @@ import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.apache.commons.lang.math.NumberUtils;
@@ -36,7 +36,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
-public final class GUIVoucherSettings extends BaseGUI {
+public final class GUIVoucherSettings extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 

@@ -25,6 +25,7 @@ import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.GUIConfirm;
+import ca.tweetzy.vouchers.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -50,30 +51,30 @@ public final class VoucherListeners implements Listener {
 	@EventHandler
 	public void onVoucherRedeem(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-		final ItemStack item = event.getItem();
+		ItemStack item = event.getItem();
+		EquipmentSlot hand = event.getHand();
 
-		if (item == null) return;
+		// prevent if sneaking
+		if (Settings.PREVENT_REDEEM_WHILE_SNEAKING.getBoolean() && player.isSneaking())
+			return;
+
+		if (item == null) item = event.getPlayer().getInventory().getItemInOffHand();
 
 		// not even a voucher
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
 		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-
-			final Voucher voucher = Vouchers.getVoucherManager().find(NBT.get(item, nbt -> nbt.getString("Tweetzy:Vouchers")));
-			final String voucherArgsRaw = NBT.get(item, nbt -> nbt.getString("Tweetzy:VouchersArgs"));
+			final Voucher voucher = Vouchers.getVoucherManager().find(NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:Vouchers")));
+			final String voucherArgsRaw = NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:VouchersArgs"));
 
 			final List<String> voucherArgs = voucherArgsRaw == null ? null : voucherArgsRaw.split(" ").length == 0 ? null : List.of(voucherArgsRaw.split(" "));
 
 			// invalid / deleted voucher
 			if (voucher == null) return;
 
-			if (event.getHand() == EquipmentSlot.OFF_HAND)
-				return;
-
-
 			event.setUseItemInHand(Event.Result.DENY);
-
+			voucher.setVoucherHand(hand); // Set the hand the voucher was redeemed in
 
 			if (!this.blockedFromDrop.contains(player.getUniqueId()))
 				this.blockedFromDrop.add(player.getUniqueId());

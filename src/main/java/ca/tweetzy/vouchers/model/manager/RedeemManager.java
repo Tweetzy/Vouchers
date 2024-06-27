@@ -19,12 +19,11 @@
 package ca.tweetzy.vouchers.model.manager;
 
 import ca.tweetzy.flight.collection.ProbabilityCollection;
-import ca.tweetzy.flight.comp.Titles;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.ItemUtil;
-import ca.tweetzy.flight.utils.PlayerUtil;
+import ca.tweetzy.flight.utils.messages.Titles;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
@@ -39,6 +38,7 @@ import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -155,9 +155,12 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 			}
 
 			// the other message types
-			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE).collect(Collectors.toList()).forEach(msg -> {
-				msg.send(player, voucher, args);
-			});
+			if (Settings.BROADCAST_INDIVIDUAL_REWARDS.getBoolean())
+				voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE && msg.getMessageType() != MessageType.BROADCAST).toList().forEach(msg -> {
+					msg.send(player, voucher, args);
+				});
+			else
+				voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE).toList().forEach(msg -> msg.send(player, voucher, args));
 		}
 
 		// rewards
@@ -169,12 +172,18 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 					showRewardHeader(player);
 					voucher.getRewards().forEach(reward -> {
 						boolean wasGiven = reward.execute(player, false, args);
-						if (wasGiven)
-							showActualRewardGiven(player, reward, args);
+						if (wasGiven) {
+							showActualRewardGiven(player, voucher, reward, args);
+							sendBroadcastMsg(player, voucher, args, reward);
+						}
 					});
 					showRewardFooter(player);
 				} else {
-					voucher.getRewards().forEach(reward -> reward.execute(player, false, args));
+					voucher.getRewards().forEach(reward -> {
+						boolean given = reward.execute(player, false, args);
+						if (given)
+							sendBroadcastMsg(player, voucher, args, reward);
+					});
 				}
 
 
@@ -188,8 +197,10 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
 					showRewardHeader(player);
-					if (given)
-						showActualRewardGiven(player, selected, args);
+					if (given) {
+						showActualRewardGiven(player, voucher, selected, args);
+						sendBroadcastMsg(player, voucher, args, selected);
+					}
 					showRewardFooter(player);
 				}
 
@@ -205,9 +216,16 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 				voucher.getRewards().forEach(reward -> rewardProbabilityCollection.add(reward, (int) reward.getChance()));
 
 				Reward selectedReward = rewardProbabilityCollection.get();
-				selectedReward.execute(player, true, args);
-				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean())
-					showRewardInfo(player, selectedReward, args);
+				boolean given = selectedReward.execute(player, true, args);
+
+				if (given)
+					if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
+						showRewardHeader(player);
+						showRewardInfo(player, voucher, selectedReward, args);
+						showRewardFooter(player);
+					} else {
+						sendBroadcastMsg(player, voucher, args, selectedReward);
+					}
 
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
@@ -219,9 +237,16 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		}
 	}
 
-	private void showRewardInfo(@NonNull final Player player, @NonNull final Reward reward, List<String> args) {
+	private void sendBroadcastMsg(Player player, Voucher voucher, List<String> args, Reward reward) {
+		if (voucher.getOptions().getMessages().isEmpty()) return;
+		if (Settings.BROADCAST_INDIVIDUAL_REWARDS.getBoolean())
+			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.BROADCAST).forEach(broadcastMsg -> broadcastMsg.send(player, voucher, args, reward));
+
+	}
+
+	private void showRewardInfo(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final Reward reward, List<String> args) {
 		showRewardHeader(player);
-		showActualRewardGiven(player, reward, args);
+		showActualRewardGiven(player, voucher, reward, args);
 		showRewardFooter(player);
 	}
 
@@ -229,7 +254,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 		Common.tellNoPrefix(player, TranslationManager.list(Translations.VOUCHER_REWARD_INFO_HEADER).toArray(new String[0]));
 	}
 
-	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Reward reward, List<String> args) {
+	private void showActualRewardGiven(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final Reward reward, List<String> args) {
 		if (reward instanceof final ItemReward itemReward)
 			TranslationManager.list(Translations.VOUCHER_REWARD_INFO_ITEM, "item_quantity", itemReward.getItem().getAmount(), "item_name", ItemUtil.getItemName(itemReward.getItem())).forEach(line -> Common.tellNoPrefix(player, line));
 
@@ -237,7 +262,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 			if (commandReward.getClaimMessage().isEmpty())
 				TranslationManager.list(Translations.VOUCHER_REWARD_INFO_COMMAND, "reward_command", MessageFormat.format(commandReward.getCommand().replace("%player%", player.getName()), args.toArray())).forEach(line -> Common.tellNoPrefix(player, line));
 			else
-				Common.tellNoPrefix(player, QuickReplace.getColouredAndReplaced(player, commandReward.getClaimMessage(), null));
+				Common.tellNoPrefix(player, QuickReplace.getColouredAndReplaced(player, commandReward.getClaimMessage(), voucher, reward));
 
 		}
 	}
@@ -302,10 +327,29 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 	private void takeHand(@NonNull final Player player, @NonNull final Voucher voucher) {
 		if (voucher.getOptions().isRemoveOnUse()) {
-			if (PlayerUtil.getHand(player).getAmount() >= 2) {
-				PlayerUtil.getHand(player).setAmount(PlayerUtil.getHand(player).getAmount() - 1);
-			} else {
-				player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+//			if (PlayerUtil.getHand(player).getAmount() >= 2) {
+//				PlayerUtil.getHand(player).setAmount(PlayerUtil.getHand(player).getAmount() - 1);
+//			} else {
+//				player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+//			}
+
+			switch (voucher.getVoucherHand()) {
+				case HAND -> {
+					ItemStack voucherItem = player.getInventory().getItemInMainHand();
+					if (voucherItem.getAmount() >= 2) {
+						voucherItem.setAmount(voucherItem.getAmount() - 1);
+					} else {
+						player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+					}
+				}
+				case OFF_HAND -> {
+					ItemStack voucherItem = player.getInventory().getItemInOffHand();
+					if (voucherItem.getAmount() >= 2) {
+						voucherItem.setAmount(voucherItem.getAmount() - 1);
+					} else {
+						player.getInventory().setItemInOffHand(CompMaterial.AIR.parseItem());
+						}
+				}
 			}
 
 			player.updateInventory();

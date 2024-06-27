@@ -33,12 +33,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public final class CommandGive extends Command {
+	public static final int CommandHash = 1754041911;
 
 	public CommandGive() {
 		super(AllowedExecutor.BOTH, "give");
@@ -84,6 +83,7 @@ public final class CommandGive extends Command {
 		}
 
 		return ReturnType.SUCCESS;
+
 	}
 
 	@Override

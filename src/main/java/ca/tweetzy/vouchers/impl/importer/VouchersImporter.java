@@ -29,6 +29,7 @@ import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,7 +148,8 @@ public final class VouchersImporter implements Importer {
 					section.getStringList(voucherNode + ".description"),
 					RewardMode.valueOf(section.getString(voucherNode + ".setting.reward mode").toUpperCase()),
 					options,
-					voucherRewards
+					voucherRewards,
+					EquipmentSlot.HAND
 			);
 
 			Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {

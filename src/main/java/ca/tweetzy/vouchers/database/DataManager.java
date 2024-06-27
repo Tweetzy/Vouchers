@@ -33,6 +33,7 @@ import ca.tweetzy.vouchers.model.RewardFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import lombok.NonNull;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -249,14 +250,19 @@ public final class DataManager extends DataManagerAbstract {
 		final List<Reward> rewardList = new ArrayList<>();
 		object.forEach(el -> rewardList.add(RewardFactory.decode(el.getAsJsonObject().toString())));
 
+		List<String> desc = Arrays.asList(resultSet.getString("description").split(";;;"));
+		if (desc.size() == 1 && desc.get(0).isBlank())
+			desc = new ArrayList<>();
+
 		return new ActiveVoucher(
 				resultSet.getString("id"),
 				resultSet.getString("name"),
 				ItemEncoder.decodeItem(resultSet.getString("item")),
-				new ArrayList<>(Arrays.asList(resultSet.getString("description").split(";;;"))),
+				new ArrayList<>(desc),
 				RewardMode.valueOf(resultSet.getString("reward_mode").toUpperCase()),
 				VoucherSettings.decode(resultSet.getString("options")),
-				rewardList
+				rewardList,
+				EquipmentSlot.HAND
 		);
 	}
 

@@ -19,13 +19,13 @@
 package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
-import ca.tweetzy.flight.gui.template.BaseGUI;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
 import lombok.NonNull;
 
-public final class GUIRewardType extends BaseGUI {
+public final class GUIRewardType extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 
