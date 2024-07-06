@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class CommandGive extends Command {
-	public static final int CommandHash = 1754041911;
 
 	public CommandGive() {
 		super(AllowedExecutor.BOTH, "give");

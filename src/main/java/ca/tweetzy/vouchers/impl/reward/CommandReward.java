@@ -29,18 +29,14 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class CommandReward extends AbstractReward implements ConfigurationSerializable {
+public final class CommandReward extends AbstractReward {
 
 	@Getter
 	private final String command;
@@ -119,18 +115,8 @@ public final class CommandReward extends AbstractReward implements Configuration
 		return sb.toString();
 	}
 
-
-	@NotNull
 	@Override
-	public Map<String, Object> serialize() {
-		Map<String, Object> map = new HashMap<>();
-
-		map.put("type", RewardType.COMMAND.name());
-		map.put("command", this.command);
-		map.put("claimMessage", this.claimMessage);
-		map.put("delay", this.getDelay());
-		map.put("chance", this.getChance());
-
-		return map;
+	public String getFriendlyFormat() {
+		return String.format("delay: %s chance: %f message: \"%s\" command: \"%s\"", getDelay(), getChance(), getClaimMessage(), getCommand());
 	}
 }

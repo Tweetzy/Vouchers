@@ -36,4 +36,8 @@ public interface Reward extends Jsonable {
 	void setChance(double chance);
 
 	boolean execute(Player player, boolean guarantee, List<String> args);
+
+	default String getFriendlyFormat() {
+		return null;
+	}
 }

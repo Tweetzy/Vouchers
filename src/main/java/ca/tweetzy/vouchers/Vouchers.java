@@ -88,7 +88,9 @@ public final class Vouchers extends FlightPlugin {
 				new CommandImport(),
 				new CommandGive(),
 				new CommandClearRedeems(),
-				new CommandReload()
+				new CommandReload(),
+				new CommandExport(),
+				new CommandSync()
 		);
 
 		// Placeholder API

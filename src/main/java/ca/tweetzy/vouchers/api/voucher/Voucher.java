@@ -18,14 +18,23 @@
 
 package ca.tweetzy.vouchers.api.voucher;
 
-import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
+import ca.tweetzy.flight.nbtapi.NBT;
+import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.Synchronize;
+import ca.tweetzy.vouchers.impl.reward.CommandReward;
+import ca.tweetzy.vouchers.impl.reward.ItemReward;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +57,8 @@ public interface Voucher extends Synchronize {
 	void setName(String name);
 
 	void setItem(ItemStack item);
+
+	void setRewards(List<Reward> rewards);
 
 	void setRewardMode(RewardMode rewardMode);
 
@@ -79,46 +90,88 @@ public interface Voucher extends Synchronize {
 	}
 
 	default void exportVoucher() {
-		TweetzyYamlConfig config = new TweetzyYamlConfig(new File(Vouchers.getInstance().getDataFolder() + "/vouchers", getId().toLowerCase() + ".yml"), Vouchers.getInstance().getLogger());
+		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
+			try (Writer writer = new FileWriter(String.format("%s/vouchers/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()))) {
+				Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-		config.createEntry("item", getItem().getType().name());
-		config.createEntry("display name", getName());
-		config.createEntry("description", getDescription());
-		config.createEntry("max uses", getOptions().getMaxUses());
-		config.createEntry("cooldown", getOptions().getCooldown());
-		config.createEntry("ask for confirmation", getOptions().isAskConfirm());
-		config.createEntry("remove on use", getOptions().isRemoveOnUse());
-		config.createEntry("glowing", getOptions().isGlowing());
 
-		config.createEntry("permission.required", getOptions().isRequiresPermission());
-		config.createEntry("permission.permission", getOptions().getPermission());
+				JsonObject object = new JsonObject();
+				object.addProperty("item", getItem().getType().name());
+				object.addProperty("displayName", Common.colorize(getName()));
 
-		config.createEntry("sound.play sound", getOptions().isPlayingSound());
-		config.createEntry("sound.sound", getOptions().getSound().name());
+				final JsonArray desc = new JsonArray();
+				getDescription().forEach(line -> desc.add(Common.colorize(line)));
+				object.add("description", desc);
 
-		List<String> broadcasts = getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.BROADCAST).map(Message::getMessage).toList();
-		List<String> chats = getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.CHAT).map(Message::getMessage).toList();
-		List<String> actionbar = getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.ACTION_BAR).map(Message::getMessage).toList();
+				object.addProperty("rewardMode", getRewardMode().name());
+				object.addProperty("maxUses", getOptions().getMaxUses());
+				object.addProperty("cooldown", getOptions().getCooldown());
+				object.addProperty("removeOnUse", getOptions().isRemoveOnUse());
+				object.addProperty("askForConfirm", getOptions().isAskConfirm());
+				object.addProperty("glowing", getOptions().isGlowing());
+				object.addProperty("requirePermission", getOptions().isRequiresPermission());
+				object.addProperty("permission", getOptions().getPermission());
+				object.addProperty("playSound", getOptions().isPlayingSound());
+				object.addProperty("sound", getOptions().getSound().name());
 
-		config.createEntry("messages.broadcast", broadcasts.isEmpty() ? new ArrayList<>() : broadcasts);
-		config.createEntry("messages.chat", chats.isEmpty() ? new ArrayList<>() : chats);
-		config.createEntry("messages.action bar", actionbar.isEmpty() ? new ArrayList<>() : actionbar);
 
-		getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.TITLE).toList().forEach(MSG -> {
-			config.createEntry("messages.title.message", MSG.getMessage());
-			config.createEntry("messages.title.fade in", MSG.getFadeInDuration());
-			config.createEntry("messages.title.stay", MSG.getStayDuration());
-			config.createEntry("messages.title.fade out", MSG.getFadeOutDuration());
+				final JsonArray broadcasts = new JsonArray();
+				getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.BROADCAST).map(Message::getMessage).map(Common::colorize).forEach(broadcasts::add);
+				object.add("broadcastMessages", broadcasts);
+
+				final JsonArray chat = new JsonArray();
+				getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.CHAT).map(Message::getMessage).map(Common::colorize).forEach(chat::add);
+				object.add("chatMessages", chat);
+
+				final JsonArray actionbar = new JsonArray();
+				getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.ACTION_BAR).map(Message::getMessage).map(Common::colorize).forEach(actionbar::add);
+				object.add("actionbarMessages", actionbar);
+
+				final JsonObject titleObject = new JsonObject();
+				getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.TITLE).toList().forEach(MSG -> {
+					titleObject.addProperty("message", Common.colorize(MSG.getMessage()));
+					titleObject.addProperty("fadeIn", MSG.getFadeInDuration());
+					titleObject.addProperty("stay", MSG.getStayDuration());
+					titleObject.addProperty("fadeOut", MSG.getFadeOutDuration());
+				});
+
+				final JsonObject subtitleObject = new JsonObject();
+				getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.SUBTITLE).toList().forEach(MSG -> {
+					subtitleObject.addProperty("message", Common.colorize(MSG.getMessage()));
+					subtitleObject.addProperty("fadeIn", MSG.getFadeInDuration());
+					subtitleObject.addProperty("stay", MSG.getStayDuration());
+					subtitleObject.addProperty("fadeOut", MSG.getFadeOutDuration());
+				});
+
+				object.add("titleMessage", titleObject);
+				object.add("subtitleMessage", subtitleObject);
+
+				final JsonArray rewards = new JsonArray();
+
+				getRewards().forEach(reward -> {
+					final JsonObject rewardObject = new JsonObject();
+					rewardObject.addProperty("type", reward.getType().name());
+					rewardObject.addProperty("chance", reward.getChance());
+					rewardObject.addProperty("delay", reward.getDelay());
+
+					if (reward instanceof final CommandReward commandReward) {
+						rewardObject.addProperty("command", commandReward.getCommand());
+						rewardObject.addProperty("claimMessage", Common.colorize(commandReward.getClaimMessage()));
+					}
+
+					if (reward instanceof final ItemReward itemReward) {
+						rewardObject.addProperty("item", NBT.itemStackToNBT(itemReward.getItem()).toString());
+					}
+
+					rewards.add(rewardObject);
+				});
+
+				object.add("rewards", rewards);
+
+				gson.toJson(object, writer);
+
+			} catch (IOException e) {
+			}
 		});
-
-		getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.SUBTITLE).toList().forEach(MSG -> {
-			config.createEntry("messages.subtitle.message", MSG.getMessage());
-			config.createEntry("messages.subtitle.fade in", MSG.getFadeInDuration());
-			config.createEntry("messages.subtitle.stay", MSG.getStayDuration());
-			config.createEntry("messages.subtitle.fade out", MSG.getFadeOutDuration());
-		});
-
-		config.createEntry("rewards",getRewards());
-		config.init();
 	}
 }

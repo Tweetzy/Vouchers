@@ -33,6 +33,7 @@ import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -84,6 +85,11 @@ public final class ActiveVoucher implements Voucher {
 		commandRewards.addAll(new ArrayList<>(this.rewards).stream().filter(reward -> reward instanceof ItemReward).map(reward -> (ItemReward) reward).filter(reward -> reward.getItem() != null).toList());
 
 		return commandRewards;
+	}
+
+	@Override
+	public void setRewards(List<Reward> rewards) {
+		this.rewards = rewards;
 	}
 
 	@Override
@@ -177,6 +183,7 @@ public final class ActiveVoucher implements Voucher {
 			return item;
 
 		meta.setUnbreakable(true);
+		meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
 		item.setItemMeta(meta);
 
 		return item;

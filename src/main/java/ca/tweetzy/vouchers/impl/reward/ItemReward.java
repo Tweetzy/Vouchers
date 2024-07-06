@@ -18,6 +18,7 @@
 
 package ca.tweetzy.vouchers.impl.reward;
 
+import ca.tweetzy.flight.nbtapi.NBT;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.AbstractReward;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
@@ -71,6 +72,7 @@ public final class ItemReward extends AbstractReward implements ConfigurationSer
 		final JsonObject object = new JsonObject();
 
 		object.addProperty("item", ItemEncoder.encodeItem(this.item));
+		object.addProperty("itemNew", NBT.itemStackToNBT(this.item).toString());
 		object.addProperty("chance", this.getChance());
 		object.addProperty("type", RewardType.ITEM.name());
 
