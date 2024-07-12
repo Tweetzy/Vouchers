@@ -86,7 +86,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 
 			if (click.clickType == ClickType.LEFT)
 				click.manager.showGUI(click.player, new MaterialPickerGUI(this, "&bVouchers &8> &7Select Material", null, (event, selected) -> {
-					this.voucher.setItem(selected.parseItem());
+					this.voucher.setItem(selected);
 					this.voucher.sync(true);
 					click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
 				}));

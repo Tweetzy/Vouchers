@@ -37,128 +37,150 @@ public final class CommandSync extends Command {
 
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
+		if (args.length == 0) {
+			return ReturnType.INVALID_SYNTAX;
+		}
 
-		Bukkit.getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
-			File vouchersDirectory = new File(Vouchers.getInstance().getDataFolder() + "/vouchers");
-			File[] files = vouchersDirectory.listFiles();
+		final boolean syncAll = args.length == 1 && args[0].equalsIgnoreCase("*");
 
-			if (files == null) return;
+		if (syncAll) {
+			Bukkit.getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
+				File vouchersDirectory = new File(Vouchers.getInstance().getDataFolder() + "/vouchers");
+				File[] files = vouchersDirectory.listFiles();
 
-			for (File file : files) {
-				final String voucherId = file.getName().replace(".json", "").toLowerCase();
-				final JsonObject object;
-				try {
-					object = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
-				} catch (FileNotFoundException e) {
-					throw new RuntimeException(e);
+				if (files == null) return;
+
+				for (File file : files) {
+					handleSync(sender, file);
 				}
+			});
+		} else {
+			final File file = new File(Vouchers.getInstance().getDataFolder() + "/vouchers/" + args[0].toLowerCase() + ".json");
+			if (!file.exists()) {
+				return ReturnType.FAIL;
+			}
 
-				Voucher voucher = Vouchers.getVoucherManager().find(voucherId);
-				boolean requiresCreationAfter = false;
-				if (voucher == null) {
-					// create voucher if it doesn't exist
-					voucher = new ActiveVoucher(voucherId, "&e" + voucherId, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), RewardMode.AUTOMATIC, new VoucherSettings(), new ArrayList<>(), EquipmentSlot.HAND);
-					requiresCreationAfter = true;
-				}
-
-				// update
-				voucher.setItem(QuickItem.of(object.get("item").getAsString()).make());
-				voucher.setName(object.get("displayName").getAsString());
-
-				final ArrayList<String> desc = new ArrayList<>();
-				final JsonArray descArr = object.get("description").getAsJsonArray();
-				descArr.forEach(element -> desc.add(element.getAsString()));
-
-				voucher.setDescription(desc);
-
-				voucher.setRewardMode(Enum.valueOf(RewardMode.class, object.get("rewardMode").getAsString().toUpperCase()));
-				voucher.getOptions().setMaxUses(object.get("maxUses").getAsInt());
-				voucher.getOptions().setCooldown(object.get("cooldown").getAsInt());
-				voucher.getOptions().setAskConfirm(object.get("askForConfirm").getAsBoolean());
-				voucher.getOptions().setRemoveOnUse(object.get("removeOnUse").getAsBoolean());
-				voucher.getOptions().setGlowing(object.get("glowing").getAsBoolean());
-				voucher.getOptions().setRequiresPermission(object.get("requirePermission").getAsBoolean());
-				voucher.getOptions().setPermission(object.get("permission").getAsString());
-				voucher.getOptions().setPlayingSound(object.get("playSound").getAsBoolean());
-				voucher.getOptions().setSound(CompSound.matchCompSound(object.get("sound").getAsString().toUpperCase()).orElse(CompSound.ENTITY_EXPERIENCE_ORB_PICKUP));
-
-				final ArrayList<Message> messages = new ArrayList<>();
-				JsonArray messageArrays = object.get("broadcastMessages").getAsJsonArray();
-				messageArrays.forEach(element -> messages.add(new VoucherMessage(MessageType.BROADCAST, element.getAsString(), 0, 0, 0)));
-
-				messageArrays = object.get("chatMessages").getAsJsonArray();
-				messageArrays.forEach(element -> messages.add(new VoucherMessage(MessageType.CHAT, element.getAsString(), 0, 0, 0)));
-
-				messageArrays = object.get("actionbarMessages").getAsJsonArray();
-				messageArrays.forEach(element -> messages.add(new VoucherMessage(MessageType.ACTION_BAR, element.getAsString(), 0, 0, 0)));
-
-				JsonObject titleTitleSubObj = object.get("titleMessage").getAsJsonObject();
-				if (titleTitleSubObj.has("message")) {
-					messages.add(new VoucherMessage(
-							MessageType.TITLE,
-							titleTitleSubObj.get("message").getAsString(),
-							titleTitleSubObj.get("fadeIn").getAsInt(),
-							titleTitleSubObj.get("stay").getAsInt(),
-							titleTitleSubObj.get("fadeOut").getAsInt()
-					));
-				}
+			Bukkit.getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> handleSync(sender, file));
+		}
 
 
-				titleTitleSubObj = object.get("subtitleMessage").getAsJsonObject();
-				if (titleTitleSubObj.has("message")) {
-					messages.add(new VoucherMessage(
-							MessageType.SUBTITLE,
-							titleTitleSubObj.get("message").getAsString(),
-							titleTitleSubObj.get("fadeIn").getAsInt(),
-							titleTitleSubObj.get("stay").getAsInt(),
-							titleTitleSubObj.get("fadeOut").getAsInt()
-					));
-				}
+		return ReturnType.SUCCESS;
+	}
 
-				voucher.getOptions().setMessages(messages);
+	private void handleSync(CommandSender sender, File file) {
+		final String voucherId = file.getName().replace(".json", "").toLowerCase();
+		final JsonObject object;
+		try {
+			object = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 
-				JsonArray rewardJson = object.get("rewards").getAsJsonArray();
-				final ArrayList<Reward> rewardArray = new ArrayList<>();
+		Voucher voucher = Vouchers.getVoucherManager().find(voucherId);
+		boolean requiresCreationAfter = false;
+		if (voucher == null) {
+			// create voucher if it doesn't exist
+			voucher = new ActiveVoucher(voucherId, "&e" + voucherId, CompMaterial.PAPER.parseItem(), List.of("&7Sample Lore"), RewardMode.AUTOMATIC, new VoucherSettings(), new ArrayList<>(), EquipmentSlot.HAND);
+			requiresCreationAfter = true;
+		}
 
-				rewardJson.forEach(rewardElement -> {
-					final JsonObject rewardObj = rewardElement.getAsJsonObject();
-					final RewardType rewardType = Enum.valueOf(RewardType.class, rewardObj.get("type").getAsString());
+		// update
+		voucher.setItem(QuickItem.of(object.get("item").getAsString()).make());
+		voucher.setName(object.get("displayName").getAsString());
 
-					final int delay = rewardObj.get("delay").getAsInt();
-					final double chance = rewardObj.get("chance").getAsDouble();
+		final ArrayList<String> desc = new ArrayList<>();
+		final JsonArray descArr = object.get("description").getAsJsonArray();
+		descArr.forEach(element -> desc.add(element.getAsString()));
 
-					if (rewardType == RewardType.ITEM) {
-						ItemStack item = NBT.itemStackFromNBT(NBT.parseNBT(rewardObj.get("item").getAsString()));
-						rewardArray.add(new ItemReward(item, chance));
-					}
+		voucher.setDescription(desc);
 
-					if (rewardType == RewardType.COMMAND) {
-						final CommandReward commandReward = new CommandReward(
-								rewardObj.get("command").getAsString(),
-								chance,
-								delay
-						);
+		voucher.setRewardMode(Enum.valueOf(RewardMode.class, object.get("rewardMode").getAsString().toUpperCase()));
+		voucher.getOptions().setMaxUses(object.get("maxUses").getAsInt());
+		voucher.getOptions().setCooldown(object.get("cooldown").getAsInt());
+		voucher.getOptions().setAskConfirm(object.get("askForConfirm").getAsBoolean());
+		voucher.getOptions().setRemoveOnUse(object.get("removeOnUse").getAsBoolean());
+		voucher.getOptions().setGlowing(object.get("glowing").getAsBoolean());
+		voucher.getOptions().setRequiresPermission(object.get("requirePermission").getAsBoolean());
+		voucher.getOptions().setPermission(object.get("permission").getAsString());
+		voucher.getOptions().setPlayingSound(object.get("playSound").getAsBoolean());
+		voucher.getOptions().setSound(CompSound.matchCompSound(object.get("sound").getAsString().toUpperCase()).orElse(CompSound.ENTITY_EXPERIENCE_ORB_PICKUP));
 
-						commandReward.setClaimMessage(rewardObj.get("claimMessage").getAsString());
-						rewardArray.add(commandReward);
-					}
-				});
+		final ArrayList<Message> messages = new ArrayList<>();
+		JsonArray messageArrays = object.get("broadcastMessages").getAsJsonArray();
+		messageArrays.forEach(element -> messages.add(new VoucherMessage(MessageType.BROADCAST, element.getAsString(), 0, 0, 0)));
+
+		messageArrays = object.get("chatMessages").getAsJsonArray();
+		messageArrays.forEach(element -> messages.add(new VoucherMessage(MessageType.CHAT, element.getAsString(), 0, 0, 0)));
+
+		messageArrays = object.get("actionbarMessages").getAsJsonArray();
+		messageArrays.forEach(element -> messages.add(new VoucherMessage(MessageType.ACTION_BAR, element.getAsString(), 0, 0, 0)));
+
+		JsonObject titleTitleSubObj = object.get("titleMessage").getAsJsonObject();
+		if (titleTitleSubObj.has("message")) {
+			messages.add(new VoucherMessage(
+					MessageType.TITLE,
+					titleTitleSubObj.get("message").getAsString(),
+					titleTitleSubObj.get("fadeIn").getAsInt(),
+					titleTitleSubObj.get("stay").getAsInt(),
+					titleTitleSubObj.get("fadeOut").getAsInt()
+			));
+		}
 
 
-				voucher.setRewards(rewardArray);
+		titleTitleSubObj = object.get("subtitleMessage").getAsJsonObject();
+		if (titleTitleSubObj.has("message")) {
+			messages.add(new VoucherMessage(
+					MessageType.SUBTITLE,
+					titleTitleSubObj.get("message").getAsString(),
+					titleTitleSubObj.get("fadeIn").getAsInt(),
+					titleTitleSubObj.get("stay").getAsInt(),
+					titleTitleSubObj.get("fadeOut").getAsInt()
+			));
+		}
 
-				if (!requiresCreationAfter)
-					voucher.sync(true);
-				else
-					Vouchers.getDataManager().createVoucher(voucher, (error, result) -> {
-						if (error == null) {
-							Vouchers.getVoucherManager().add(result);
-						}
-					});
+		voucher.getOptions().setMessages(messages);
+
+		JsonArray rewardJson = object.get("rewards").getAsJsonArray();
+		final ArrayList<Reward> rewardArray = new ArrayList<>();
+
+		rewardJson.forEach(rewardElement -> {
+			final JsonObject rewardObj = rewardElement.getAsJsonObject();
+			final RewardType rewardType = Enum.valueOf(RewardType.class, rewardObj.get("type").getAsString());
+
+			final int delay = rewardObj.get("delay").getAsInt();
+			final double chance = rewardObj.get("chance").getAsDouble();
+
+			if (rewardType == RewardType.ITEM) {
+				ItemStack item = NBT.itemStackFromNBT(NBT.parseNBT(rewardObj.get("item").getAsString()));
+				rewardArray.add(new ItemReward(item, chance));
+			}
+
+			if (rewardType == RewardType.COMMAND) {
+				final CommandReward commandReward = new CommandReward(
+						rewardObj.get("command").getAsString(),
+						chance,
+						delay
+				);
+
+				commandReward.setClaimMessage(rewardObj.get("claimMessage").getAsString());
+				rewardArray.add(commandReward);
 			}
 		});
 
-		return ReturnType.SUCCESS;
+
+		voucher.setRewards(rewardArray);
+
+		if (!requiresCreationAfter)
+			voucher.sync(true);
+		else
+			Vouchers.getDataManager().createVoucher(voucher, (error, result) -> {
+				if (error == null) {
+					Vouchers.getVoucherManager().add(result);
+				}
+			});
+
+
+		Common.tell(sender, "&aSynced &e" + voucherId + " &adata file to voucher db");
 	}
 
 	@Override
@@ -173,7 +195,7 @@ public final class CommandSync extends Command {
 
 	@Override
 	public String getSyntax() {
-		return "[voucherId]";
+		return "<voucherId/*>";
 	}
 
 	@Override
