@@ -19,11 +19,11 @@ public final class CommandExport extends Command {
 	protected ReturnType execute(CommandSender sender, String... args) {
 		if (args.length < 1) {
 			tellNoPrefix(sender, "<center>%pl_name%");
-			tellNoPrefix(sender, "<center>&cYou are about to use the file export!, Please use &e/vouchers confirm &cif you accept the terms below.");
+			tellNoPrefix(sender, "<center>&cYou are about to use the file export!");
 			tellNoPrefix(sender, "");
-			tellNoPrefix(sender, "&7By doing this you acknowledge that you are taking full responsibility when it comes to editing the voucher file, ");
-			tellNoPrefix(sender, "&7You can expect no support while directly editing the voucher file as the GUI editor the intended way!");
-			tellNoPrefix(sender, "&7If you are not confident editing a JSON file, then I suggest you don't use the export command.");
+			tellNoPrefix(sender, "<center>&7By doing this you acknowledge that you are taking full responsibility when it comes to editing the voucher file, You can expect no support while directly editing the voucher file as the GUI editor the intended way! If you are not confident editing a JSON file, then I suggest you don't use the export command.");
+			tellNoPrefix(sender, "");
+			tellNoPrefix(sender, "<center>&e/vouchers export confirm");
 			tellNoPrefix(sender, "");
 			return ReturnType.FAIL;
 		}
@@ -34,7 +34,7 @@ public final class CommandExport extends Command {
 		tellNoPrefix(sender, "<center>%pl_name%");
 		tellNoPrefix(sender, "<center>&eBeginning Voucher Export");
 		Vouchers.getVoucherManager().getAll().forEach(voucher -> {
-			tellNoPrefix(sender, "&f+ &eExported voucher&F: &a" + voucher.getId());
+			tellNoPrefix(sender, "<center>&f+ &eExported voucher&F: &a" + voucher.getId());
 			voucher.exportVoucher();
 		});
 
