@@ -348,7 +348,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 						voucherItem.setAmount(voucherItem.getAmount() - 1);
 					} else {
 						player.getInventory().setItemInOffHand(CompMaterial.AIR.parseItem());
-						}
+					}
 				}
 			}
 

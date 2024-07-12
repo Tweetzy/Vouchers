@@ -44,8 +44,10 @@ public interface Message extends Jsonable {
 	void setFadeOutDuration(int ticks);
 
 	void send(Player player, Voucher voucher, List<String> args);
+
 	void send(Player player, Voucher voucher, List<String> args, Reward reward);
 
 	String getColouredAndReplaced(Player player, Voucher voucher);
+
 	String getColouredAndReplaced(Player player, Voucher voucher, Reward reward);
 }
