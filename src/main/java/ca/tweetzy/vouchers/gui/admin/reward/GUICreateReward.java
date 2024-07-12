@@ -44,12 +44,12 @@ public final class GUICreateReward extends VouchersBaseGUI {
 	private CommandReward commandReward;
 	private ItemReward itemReward;
 
-	public GUICreateReward(@NonNull final Voucher voucher, @NonNull final RewardType rewardType) {
-		this(voucher, rewardType, null, null);
+	public GUICreateReward(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final RewardType rewardType) {
+		this(player, voucher, rewardType, null, null);
 	}
 
-	public GUICreateReward(@NonNull final Voucher voucher, @NonNull final RewardType rewardType, CommandReward commandReward, ItemReward itemReward) {
-		super(new GUIRewardType(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7New Reward", 6);
+	public GUICreateReward(@NonNull final Player player, @NonNull final Voucher voucher, @NonNull final RewardType rewardType, CommandReward commandReward, ItemReward itemReward) {
+		super(new GUIRewardType(player, voucher), player, "&bVouchers &8> &7" + voucher.getId() + " &8> &7New Reward", 6);
 		this.voucher = voucher;
 		this.rewardType = rewardType;
 
@@ -112,6 +112,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 						double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
 
 						click.manager.showGUI(click.player, new GUICreateReward(
+								player,
 								GUICreateReward.this.voucher,
 								RewardType.ITEM,
 								null,
@@ -150,6 +151,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 
 
 					click.manager.showGUI(click.player, new GUICreateReward(
+							player,
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
 							new CommandReward(string, GUICreateReward.this.commandReward.getChance(), GUICreateReward.this.commandReward.getDelay()),
@@ -193,6 +195,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 						finalRate = -1;
 
 					click.manager.showGUI(click.player, new GUICreateReward(
+							player,
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
 							new CommandReward(GUICreateReward.this.commandReward.getCommand(), GUICreateReward.this.commandReward.getChance(), finalRate),
@@ -233,6 +236,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 					double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
 
 					click.manager.showGUI(click.player, new GUICreateReward(
+							player,
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
 							new CommandReward(GUICreateReward.this.commandReward.getCommand(), finalRate, GUICreateReward.this.commandReward.getDelay()),
@@ -266,6 +270,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 					GUICreateReward.this.commandReward.setClaimMessage(string);
 
 					click.manager.showGUI(click.player, new GUICreateReward(
+							player,
 							GUICreateReward.this.voucher,
 							RewardType.COMMAND,
 							GUICreateReward.this.commandReward,
@@ -297,7 +302,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 			}
 
 //			this.voucher.sync(true);
-			click.manager.showGUI(click.player, new GUIRewardList(this.voucher));
+			click.manager.showGUI(click.player, new GUIRewardList(click.player, this.voucher));
 
 		});
 

@@ -26,7 +26,9 @@ import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.SimpleDateFormat;
@@ -35,8 +37,8 @@ import java.util.List;
 
 public final class GUIVoucherRedeemList extends VouchersPagedGUI<Redeem> {
 
-	public GUIVoucherRedeemList() {
-		super(new GUIVouchersAdmin(), "&bVouchers &8> &7Listing Redeems", 6, Vouchers.getRedeemManager().getAll());
+	public GUIVoucherRedeemList(@NonNull final Player player) {
+		super(new GUIVouchersAdmin(player), player, "&bVouchers &8> &7Listing Redeems", 6, Vouchers.getRedeemManager().getAll());
 		draw();
 	}
 

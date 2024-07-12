@@ -40,8 +40,8 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 
 	private int selectedIndex = -1;
 
-	public GUIListEditor(@NonNull final Voucher voucher) {
-		super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Lore", 6, voucher.getDescription());
+	public GUIListEditor(@NonNull final Player player, @NonNull final Voucher voucher) {
+		super(new GUIVoucherEdit(player, voucher), player, "&bVouchers &8> &7" + voucher.getId() + " &8> &7Lore", 6, voucher.getDescription());
 		this.voucher = voucher;
 		draw();
 	}
@@ -59,7 +59,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 	}
 
 	@Override
-	protected void drawAdditional() {
+	protected void drawFixed() {
 		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL).name("&a&lNew Line").lore(
 				"&b&lLeft Click &8» &7To add new line",
 				"&a&lRight Click &8» &7To add blank line"
@@ -76,7 +76,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 					public boolean onResult(String string) {
 						GUIListEditor.this.voucher.getDescription().add(string);
 						GUIListEditor.this.voucher.sync(true);
-						click.manager.showGUI(click.player, new GUIListEditor(GUIListEditor.this.voucher));
+						click.manager.showGUI(click.player, new GUIListEditor(click.player, GUIListEditor.this.voucher));
 						return true;
 					}
 				};
@@ -87,7 +87,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 
 				this.voucher.getDescription().add("-Blank-" + (totalBlanks + 1));
 				this.voucher.sync(true);
-				click.manager.showGUI(click.player, new GUIListEditor(this.voucher));
+				click.manager.showGUI(click.player, new GUIListEditor(click.player, this.voucher));
 			}
 		});
 	}
@@ -104,7 +104,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 				Collections.swap(this.voucher.getDescription(), this.selectedIndex, clickedIndex);
 				this.voucher.sync(true);
 
-				click.manager.showGUI(click.player, new GUIListEditor(GUIListEditor.this.voucher));
+				click.manager.showGUI(click.player, new GUIListEditor(click.player, GUIListEditor.this.voucher));
 
 			}
 		}
@@ -113,7 +113,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 			this.voucher.getDescription().remove(string);
 
 			this.voucher.sync(true);
-			click.manager.showGUI(click.player, new GUIListEditor(GUIListEditor.this.voucher));
+			click.manager.showGUI(click.player, new GUIListEditor(click.player, GUIListEditor.this.voucher));
 		}
 	}
 

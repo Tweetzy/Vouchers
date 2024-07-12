@@ -38,8 +38,8 @@ public final class GUIMessageType extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 
-	public GUIMessageType(@NonNull final Voucher voucher) {
-		super(new GUIMessagesList(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Msg Type", 4);
+	public GUIMessageType(@NonNull final Player player, @NonNull final Voucher voucher) {
+		super(new GUIMessagesList(player, voucher), player, "&bVouchers &8> &7" + voucher.getId() + " &8> &7Msg Type", 4);
 		this.voucher = voucher;
 		draw();
 	}
@@ -98,7 +98,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 									GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.TITLE, inputTitle, fadeInOutRate, stayRate, fadeInOutRate));
 									GUIMessageType.this.voucher.sync(true);
 
-									click.manager.showGUI(click.player, new GUIMessagesList(GUIMessageType.this.voucher));
+									click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 									return true;
 								}
 							};
@@ -162,7 +162,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 									GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.SUBTITLE, inputTitle, fadeInOutRate, stayRate, fadeInOutRate));
 									GUIMessageType.this.voucher.sync(true);
 
-									click.manager.showGUI(click.player, new GUIMessagesList(GUIMessageType.this.voucher));
+									click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 									return true;
 								}
 							};
@@ -189,7 +189,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 				public boolean onResult(String inputTitle) {
 					GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.ACTION_BAR, inputTitle, 0, 0, 0));
 					GUIMessageType.this.voucher.sync(true);
-					click.manager.showGUI(click.player, new GUIMessagesList(GUIMessageType.this.voucher));
+					click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 					return true;
 				}
 			});
@@ -206,7 +206,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 			public boolean onResult(String inputTitle) {
 				GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.BROADCAST, inputTitle, 0, 0, 0));
 				GUIMessageType.this.voucher.sync(true);
-				click.manager.showGUI(click.player, new GUIMessagesList(GUIMessageType.this.voucher));
+				click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 				return true;
 			}
 		});
@@ -222,7 +222,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 			public boolean onResult(String inputTitle) {
 				GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.CHAT, inputTitle, 0, 0, 0));
 				GUIMessageType.this.voucher.sync(true);
-				click.manager.showGUI(click.player, new GUIMessagesList(GUIMessageType.this.voucher));
+				click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 				return true;
 			}
 		});

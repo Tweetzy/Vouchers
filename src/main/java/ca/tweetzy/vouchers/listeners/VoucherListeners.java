@@ -80,7 +80,7 @@ public final class VoucherListeners implements Listener {
 				this.blockedFromDrop.add(player.getUniqueId());
 
 			if (voucher.getOptions().isAskConfirm()) {
-				Vouchers.getGuiManager().showGUI(player, new GUIConfirm(confirmed -> {
+				Vouchers.getGuiManager().showGUI(player, new GUIConfirm(player, confirmed -> {
 					if (confirmed) {
 						if (voucherArgs == null)
 							Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);

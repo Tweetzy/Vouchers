@@ -32,6 +32,7 @@ import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
 import ca.tweetzy.vouchers.settings.Translations;
+import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -43,8 +44,8 @@ import java.util.List;
 
 public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 
-	public GUIVoucherList() {
-		super(new GUIVouchersAdmin(), "&bVouchers &8> &7Listing Vouchers", 6, Vouchers.getVoucherManager().getAll());
+	public GUIVoucherList(@NonNull final Player player) {
+		super(new GUIVouchersAdmin(player), player, "&bVouchers &8> &7Listing Vouchers", 6, new ArrayList<>(Vouchers.getVoucherManager().getAll()));
 		draw();
 	}
 
@@ -64,14 +65,14 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 	}
 
 	@Override
-	protected void drawAdditional() {
+	protected void drawFixed() {
 		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL).name("&a&lNew Voucher").lore(
 				"&b&lClick &8» &7To create new voucher"
 		).make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&b&lVouchers", "&fEnter id for voucher into chat") {
 
 			@Override
 			public void onExit(Player player) {
-				click.manager.showGUI(click.player, new GUIVoucherList());
+				click.manager.showGUI(click.player, new GUIVoucherList(click.player));
 			}
 
 			@Override
@@ -88,7 +89,7 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 				Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {
 					if (error == null) {
 						Vouchers.getVoucherManager().add(created);
-						click.manager.showGUI(click.player, new GUIVoucherList());
+						click.manager.showGUI(click.player, new GUIVoucherList(click.player));
 					}
 				});
 
@@ -103,7 +104,7 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 			Vouchers.getDataManager().deleteVoucher(voucher.getId(), (error, deleted) -> {
 				if (error == null) {
 					Vouchers.getVoucherManager().remove(voucher.getId());
-					clickEvent.manager.showGUI(clickEvent.player, new GUIVoucherList());
+					clickEvent.manager.showGUI(clickEvent.player, new GUIVoucherList(clickEvent.player));
 				}
 
 			});
@@ -116,7 +117,7 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 			clickEvent.player.getInventory().addItem(voucher.buildItem(clickEvent.player));
 
 		if (clickEvent.clickType == ClickType.RIGHT)
-			clickEvent.manager.showGUI(clickEvent.player, new GUIVoucherEdit(voucher));
+			clickEvent.manager.showGUI(clickEvent.player, new GUIVoucherEdit(player, voucher));
 	}
 
 	@Override

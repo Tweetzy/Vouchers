@@ -31,6 +31,7 @@ import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -41,8 +42,8 @@ public final class GUIRewardSelection extends VouchersPagedGUI<Reward> {
 	private List<String> args;
 	private final Consumer<Reward> selected;
 
-	public GUIRewardSelection(@NonNull final Voucher voucher, List<String> args, @NonNull final Consumer<Reward> selected) {
-		super(null, TranslationManager.string(Translations.GUI_REWARD_SELECT_TITLE), 6, voucher.getRewards());
+	public GUIRewardSelection(@NonNull final Player player, @NonNull final Voucher voucher, List<String> args, @NonNull final Consumer<Reward> selected) {
+		super(null, player, TranslationManager.string(Translations.GUI_REWARD_SELECT_TITLE), 6, voucher.getRewards());
 		this.args = args;
 		this.selected = selected;
 		draw();

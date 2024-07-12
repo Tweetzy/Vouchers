@@ -50,8 +50,8 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 	private final Voucher voucher;
 	private int selectedIndex = -1;
 
-	public GUIRewardList(@NonNull final Voucher voucher) {
-		super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Rewards", 6, voucher.getRewards());
+	public GUIRewardList(@NonNull final Player player, @NonNull final Voucher voucher) {
+		super(new GUIVoucherEdit(player, voucher), player, "&bVouchers &8> &7" + voucher.getId() + " &8> &7Rewards", 6, voucher.getRewards());
 
 		this.voucher = voucher;
 		draw();
@@ -90,7 +90,7 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 	}
 
 	@Override
-	protected void drawAdditional() {
+	protected void drawFixed() {
 		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL)
 				.name("&a&lNew Reward")
 				.lore("&b&lLeft Click &8» &7To add a reward")
@@ -98,7 +98,7 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 				.make(), click -> {
 
 			if (click.clickType == ClickType.LEFT)
-				click.manager.showGUI(click.player, new GUIRewardType(this.voucher));
+				click.manager.showGUI(click.player, new GUIRewardType(click.player, this.voucher));
 
 			if (click.clickType == ClickType.RIGHT) {
 				final List<ItemStack> toAdd = Arrays.stream(click.player.getInventory().getStorageContents()).filter(item -> item != null && item.getType() != CompMaterial.AIR.parseMaterial() && item.getAmount() != 0 && !Vouchers.getVoucherManager().isVoucher(item)).toList();
@@ -122,13 +122,13 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 						final double rate = Double.parseDouble(string);
 						double finalRate = rate <= 0D ? 1D : Math.min(rate, 100D);
 
-						click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+						click.manager.showGUI(click.player, new GUIRewardList(click.player, GUIRewardList.this.voucher));
 						toAdd.forEach(item -> GUIRewardList.this.voucher.addReward(new ItemReward(
 								item,
 								finalRate
 						)));
 
-						click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+						click.manager.showGUI(click.player, new GUIRewardList(click.player, GUIRewardList.this.voucher));
 						return true;
 					}
 				};
@@ -148,7 +148,7 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 				Collections.swap(this.voucher.getRewards(), this.selectedIndex, clickedIndex);
 				this.voucher.sync(true);
 
-				click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+				click.manager.showGUI(click.player, new GUIRewardList(click.player, GUIRewardList.this.voucher));
 			}
 		}
 
@@ -166,7 +166,7 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 					commandReward.setClaimMessage(string);
 					GUIRewardList.this.voucher.sync(true);
 
-					click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+					click.manager.showGUI(click.player, new GUIRewardList(click.player, GUIRewardList.this.voucher));
 					return true;
 				}
 			};
@@ -174,7 +174,7 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 
 		if (click.clickType == ClickType.NUMBER_KEY) {
 			this.voucher.removeReward(reward);
-			click.manager.showGUI(click.player, new GUIRewardList(GUIRewardList.this.voucher));
+			click.manager.showGUI(click.player, new GUIRewardList(click.player, GUIRewardList.this.voucher));
 		}
 	}
 

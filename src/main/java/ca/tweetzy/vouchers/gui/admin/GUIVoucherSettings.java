@@ -41,8 +41,8 @@ public final class GUIVoucherSettings extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 
-	public GUIVoucherSettings(@NonNull final Voucher voucher) {
-		super(new GUIVoucherEdit(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Options", 6);
+	public GUIVoucherSettings(@NonNull final Player player, @NonNull final Voucher voucher) {
+		super(new GUIVoucherEdit(player, voucher), player, "&bVouchers &8> &7" + voucher.getId() + " &8> &7Options", 6);
 		this.voucher = voucher;
 		setAcceptsItems(true);
 		draw();
@@ -99,7 +99,7 @@ public final class GUIVoucherSettings extends VouchersBaseGUI {
 				click.manager.showGUI(click.player, new SoundPickerGUI(this, "&bVouchers &8> &7Select Sound", null, (event, selected) -> {
 					this.voucher.getOptions().setSound(selected);
 					this.voucher.sync(true);
-					click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher));
+					click.manager.showGUI(click.player, new GUIVoucherSettings(click.player, this.voucher));
 				}));
 		});
 
@@ -234,13 +234,13 @@ public final class GUIVoucherSettings extends VouchersBaseGUI {
 				"&7- Broadcast Messages",
 				"",
 				"&b&lClick &8» &7To edit messages"
-		).make(), click -> click.manager.showGUI(click.player, new GUIMessagesList(this.voucher)));
+		).make(), click -> click.manager.showGUI(click.player, new GUIMessagesList(click.player, this.voucher)));
 
 		applyBackExit();
 	}
 
 	private void syncReopen(@NonNull final GuiClickEvent event) {
 		this.voucher.sync(true);
-		event.manager.showGUI(event.player, new GUIVoucherSettings(this.voucher));
+		event.manager.showGUI(event.player, new GUIVoucherSettings(event.player, this.voucher));
 	}
 }

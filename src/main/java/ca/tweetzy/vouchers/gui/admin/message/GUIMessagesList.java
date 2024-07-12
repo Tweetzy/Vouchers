@@ -29,6 +29,7 @@ import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.gui.admin.GUIVoucherSettings;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,8 +42,8 @@ public final class GUIMessagesList extends VouchersPagedGUI<Message> {
 	private final Voucher voucher;
 	private int selectedIndex = -1;
 
-	public GUIMessagesList(@NonNull final Voucher voucher) {
-		super(new GUIVoucherSettings(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Messages", 6, voucher.getOptions().getMessages());
+	public GUIMessagesList(@NonNull final Player player, @NonNull final Voucher voucher) {
+		super(new GUIVoucherSettings(player, voucher), player, "&bVouchers &8> &7" + voucher.getId() + " &8> &7Messages", 6, voucher.getOptions().getMessages());
 		this.voucher = voucher;
 		draw();
 	}
@@ -73,12 +74,12 @@ public final class GUIMessagesList extends VouchersPagedGUI<Message> {
 	}
 
 	@Override
-	protected void drawAdditional() {
+	protected void drawFixed() {
 		setButton(5, 4, QuickItem
 				.of(CompMaterial.SLIME_BALL)
 				.name("&a&lAdd Message")
 				.lore("&b&lClick &8» &7To add new message")
-				.make(), click -> click.manager.showGUI(click.player, new GUIMessageType(this.voucher)));
+				.make(), click -> click.manager.showGUI(click.player, new GUIMessageType(click.player, this.voucher)));
 	}
 
 	@Override
@@ -93,14 +94,14 @@ public final class GUIMessagesList extends VouchersPagedGUI<Message> {
 				Collections.swap(this.voucher.getOptions().getMessages(), this.selectedIndex, clickedIndex);
 				this.voucher.sync(true);
 
-				click.manager.showGUI(click.player, new GUIMessagesList(GUIMessagesList.this.voucher));
+				click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessagesList.this.voucher));
 			}
 		}
 
 		if (click.clickType == ClickType.NUMBER_KEY) {
 			this.voucher.getOptions().getMessages().remove(message);
 			this.voucher.sync(true);
-			click.manager.showGUI(click.player, new GUIMessagesList(this.voucher));
+			click.manager.showGUI(click.player, new GUIMessagesList(click.player, this.voucher));
 		}
 	}
 

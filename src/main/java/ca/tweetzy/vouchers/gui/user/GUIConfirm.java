@@ -32,8 +32,8 @@ public final class GUIConfirm extends VouchersBaseGUI {
 
 	private final Consumer<Boolean> onClick;
 
-	public GUIConfirm(@NonNull final Consumer<Boolean> onClick, @NonNull final Consumer<Player> onExit) {
-		super(null, TranslationManager.string(Translations.GUI_CONFIRM_TITLE), 3);
+	public GUIConfirm(@NonNull final Player player, @NonNull final Consumer<Boolean> onClick, @NonNull final Consumer<Player> onExit) {
+		super(null, player, TranslationManager.string(Translations.GUI_CONFIRM_TITLE), 3);
 		this.onClick = onClick;
 		setOnClose(close -> onExit.accept(close.player));
 		draw();

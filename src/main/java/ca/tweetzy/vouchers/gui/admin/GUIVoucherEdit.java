@@ -36,8 +36,8 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 
-	public GUIVoucherEdit(@NonNull final Voucher voucher) {
-		super(new GUIVoucherList(), "&bVouchers &8> &7Edit &8> &7" + voucher.getId(), 6);
+	public GUIVoucherEdit(@NonNull final Player player, @NonNull final Voucher voucher) {
+		super(new GUIVoucherList(player), player, "&bVouchers &8> &7Edit &8> &7" + voucher.getId(), 6);
 		this.voucher = voucher;
 		setAcceptsItems(true);
 		draw();
@@ -68,7 +68,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 				GUIVoucherEdit.this.voucher.setName(string);
 				GUIVoucherEdit.this.voucher.sync(true);
 
-				click.manager.showGUI(click.player, new GUIVoucherEdit(GUIVoucherEdit.this.voucher));
+				click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, GUIVoucherEdit.this.voucher));
 				return true;
 			}
 		});
@@ -89,7 +89,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 				click.manager.showGUI(click.player, new MaterialPickerGUI(this, "&bVouchers &8> &7Select Material", null, (event, selected) -> {
 					this.voucher.setItem(selected);
 					this.voucher.sync(true);
-					click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
+					click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, this.voucher));
 				}));
 
 			if (click.clickType == ClickType.RIGHT) {
@@ -98,7 +98,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 
 				this.voucher.setItem(cursor.clone());
 				this.voucher.sync(true);
-				click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
+				click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, this.voucher));
 			}
 		});
 
@@ -114,7 +114,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 						"",
 						"&b&lClick &8» &7To edit description"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIListEditor(this.voucher)));
+				.make(), click -> click.manager.showGUI(click.player, new GUIListEditor(click.player, this.voucher)));
 
 		setButton(3, 1, QuickItem
 				.of(CompMaterial.REPEATER)
@@ -123,7 +123,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 						"",
 						"&b&lClick &8» &7To adjust settings"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIVoucherSettings(this.voucher)));
+				.make(), click -> click.manager.showGUI(click.player, new GUIVoucherSettings(click.player, this.voucher)));
 
 		setButton(3, 4, QuickItem
 				.of(CompMaterial.HEART_OF_THE_SEA)
@@ -138,7 +138,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 
 			this.voucher.setRewardMode(this.voucher.getRewardMode().next());
 			this.voucher.sync(true);
-			click.manager.showGUI(click.player, new GUIVoucherEdit(this.voucher));
+			click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, this.voucher));
 		});
 
 		setButton(3, 7, QuickItem
@@ -148,7 +148,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 						"",
 						"&b&lClick &8» &7To edit rewards"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIRewardList(this.voucher)));
+				.make(), click -> click.manager.showGUI(click.player, new GUIRewardList(click.player, this.voucher)));
 
 		applyBackExit();
 	}

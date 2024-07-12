@@ -192,7 +192,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
 				registerRedeemIfApplicable(player, voucher);
 			}
-			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(voucher, args, selected -> {
+			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(player, voucher, args, selected -> {
 				boolean given = selected.execute(player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean(), args);
 
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {

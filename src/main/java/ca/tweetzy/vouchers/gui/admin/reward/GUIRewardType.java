@@ -24,13 +24,14 @@ import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
 
 public final class GUIRewardType extends VouchersBaseGUI {
 
 	private final Voucher voucher;
 
-	public GUIRewardType(@NonNull final Voucher voucher) {
-		super(new GUIRewardList(voucher), "&bVouchers &8> &7" + voucher.getId() + " &8> &7Reward Type", 4);
+	public GUIRewardType(@NonNull final Player player, @NonNull final Voucher voucher) {
+		super(new GUIRewardList(player, voucher), player, "&bVouchers &8> &7" + voucher.getId() + " &8> &7Reward Type", 4);
 		this.voucher = voucher;
 		draw();
 
@@ -44,14 +45,14 @@ public final class GUIRewardType extends VouchersBaseGUI {
 				.name("&b&lCommand Reward")
 				.lore("")
 				.lore("&b&lClick &8» &7To create command reward")
-				.make(), click -> click.manager.showGUI(click.player, new GUICreateReward(this.voucher, RewardType.COMMAND)));
+				.make(), click -> click.manager.showGUI(click.player, new GUICreateReward(click.player, this.voucher, RewardType.COMMAND)));
 
 		setButton(1, 6, QuickItem
 				.of(CompMaterial.DIAMOND_SWORD)
 				.name("&b&lItem Reward")
 				.lore("")
 				.lore("&b&lClick &8» &7To create item reward")
-				.make(), click -> click.manager.showGUI(click.player, new GUICreateReward(this.voucher, RewardType.ITEM)));
+				.make(), click -> click.manager.showGUI(click.player, new GUICreateReward(click.player, this.voucher, RewardType.ITEM)));
 
 		applyBackExit();
 	}
