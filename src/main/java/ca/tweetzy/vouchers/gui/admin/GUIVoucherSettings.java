@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.gui;
+package ca.tweetzy.vouchers.gui.admin;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
@@ -28,7 +28,8 @@ import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
+import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
+import ca.tweetzy.vouchers.gui.admin.message.GUIMessagesList;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.apache.commons.lang.math.NumberUtils;

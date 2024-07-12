@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.gui;
+package ca.tweetzy.vouchers.gui.admin.reward;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.api.voucher.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.gui.abstraction.VouchersBaseGUI;
+import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import lombok.NonNull;
 
 public final class GUIRewardType extends VouchersBaseGUI {

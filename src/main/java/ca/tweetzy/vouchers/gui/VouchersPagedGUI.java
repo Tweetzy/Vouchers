@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package ca.tweetzy.vouchers.gui.abstraction;
+package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.gui.Gui;
 import ca.tweetzy.flight.gui.template.PagedGUI;

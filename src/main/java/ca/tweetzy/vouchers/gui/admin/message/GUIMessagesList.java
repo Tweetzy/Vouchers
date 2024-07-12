@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.gui;
+package ca.tweetzy.vouchers.gui.admin.message;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
@@ -26,7 +26,8 @@ import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.api.voucher.Message;
 import ca.tweetzy.vouchers.api.voucher.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.gui.abstraction.VouchersPagedGUI;
+import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
+import ca.tweetzy.vouchers.gui.admin.GUIVoucherSettings;
 import lombok.NonNull;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;

@@ -28,7 +28,7 @@ import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.*;
-import ca.tweetzy.vouchers.gui.GUIRewardSelection;
+import ca.tweetzy.vouchers.gui.user.GUIRewardSelection;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;

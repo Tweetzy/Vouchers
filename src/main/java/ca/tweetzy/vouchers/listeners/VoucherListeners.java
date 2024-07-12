@@ -24,7 +24,7 @@ import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.gui.GUIConfirm;
+import ca.tweetzy.vouchers.gui.user.GUIConfirm;
 import ca.tweetzy.vouchers.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
