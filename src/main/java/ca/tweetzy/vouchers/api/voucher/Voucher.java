@@ -21,7 +21,14 @@ package ca.tweetzy.vouchers.api.voucher;
 import ca.tweetzy.flight.nbtapi.NBT;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.Synchronize;
+import ca.tweetzy.vouchers.api.sync.Identifiable;
+import ca.tweetzy.vouchers.api.sync.Jsonable;
+import ca.tweetzy.vouchers.api.sync.Storeable;
+import ca.tweetzy.vouchers.api.sync.Synchronize;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import com.google.gson.Gson;
@@ -38,9 +45,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface Voucher extends Synchronize {
-
-	String getId();
+public interface Voucher extends Identifiable<String>, Storeable<Voucher>, Jsonable, Synchronize {
 
 	String getName();
 
@@ -63,8 +68,6 @@ public interface Voucher extends Synchronize {
 	void setRewardMode(RewardMode rewardMode);
 
 	void setDescription(List<String> description);
-
-	String getRewardJson();
 
 	ItemStack buildItem(Player player);
 

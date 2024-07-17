@@ -20,7 +20,7 @@ package ca.tweetzy.vouchers.gui.admin.reward;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.utils.QuickItem;
-import ca.tweetzy.vouchers.api.voucher.RewardType;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import lombok.NonNull;

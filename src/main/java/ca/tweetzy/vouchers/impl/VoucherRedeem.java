@@ -18,8 +18,9 @@
 
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.vouchers.api.voucher.Redeem;
+import ca.tweetzy.vouchers.api.voucher.redeem.Redeem;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ public final class VoucherRedeem implements Redeem {
 	private final long time;
 
 	@Override
-	public UUID getId() {
+	public @NotNull UUID getId() {
 		return this.id;
 	}
 

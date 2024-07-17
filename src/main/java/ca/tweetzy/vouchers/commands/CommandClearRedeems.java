@@ -83,7 +83,7 @@ public final class CommandClearRedeems extends Command {
 		}
 
 		if (args.length == 2)
-			return Vouchers.getVoucherManager().getAll().stream().map(Voucher::getId).collect(Collectors.toList());
+			return Vouchers.getVoucherManager().getManagerContent().values().stream().map(Voucher::getId).collect(Collectors.toList());
 
 		return null;
 	}

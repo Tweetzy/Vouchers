@@ -19,8 +19,8 @@
 package ca.tweetzy.vouchers.impl;
 
 import ca.tweetzy.flight.comp.enums.CompSound;
-import ca.tweetzy.vouchers.api.voucher.Message;
-import ca.tweetzy.vouchers.api.voucher.MessageType;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.api.voucher.VoucherOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -50,7 +50,7 @@ public final class VoucherSettings implements VoucherOptions {
 	}
 
 	@Override
-	public String toJsonString() {
+	public String getJSONString() {
 		final JsonObject object = new JsonObject();
 
 		object.addProperty("maxUses", this.maxUses);

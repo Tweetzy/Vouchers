@@ -16,28 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher;
+package ca.tweetzy.vouchers.api.voucher.redeem;
 
-import ca.tweetzy.vouchers.api.Jsonable;
-import org.bukkit.entity.Player;
+import ca.tweetzy.vouchers.api.sync.Identifiable;
 
-import java.util.List;
+import java.util.UUID;
 
-public interface Reward extends Jsonable {
+public interface Redeem extends Identifiable<UUID> {
 
-	RewardType getType();
+	UUID getUser();
 
-	int getDelay();
+	String getVoucherId();
 
-	double getChance();
-
-	void setDelay(int delay);
-
-	void setChance(double chance);
-
-	boolean execute(Player player, boolean guarantee, List<String> args);
-
-	default String getFriendlyFormat() {
-		return null;
-	}
+	long getTime();
 }

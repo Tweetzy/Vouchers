@@ -75,7 +75,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 					@Override
 					public boolean onResult(String string) {
 						GUIListEditor.this.voucher.getDescription().add(string);
-						GUIListEditor.this.voucher.sync(true);
+						GUIListEditor.this.voucher.sync(null);
 						click.manager.showGUI(click.player, new GUIListEditor(click.player, GUIListEditor.this.voucher));
 						return true;
 					}
@@ -86,7 +86,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 				long totalBlanks = this.voucher.getDescription().stream().filter(line -> line.isEmpty() || line.isBlank() || line.contains("-Blank-")).count();
 
 				this.voucher.getDescription().add("-Blank-" + (totalBlanks + 1));
-				this.voucher.sync(true);
+				this.voucher.sync(null);
 				click.manager.showGUI(click.player, new GUIListEditor(click.player, this.voucher));
 			}
 		});
@@ -102,7 +102,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 			else {
 				if (this.selectedIndex == clickedIndex) return;
 				Collections.swap(this.voucher.getDescription(), this.selectedIndex, clickedIndex);
-				this.voucher.sync(true);
+				this.voucher.sync(null);
 
 				click.manager.showGUI(click.player, new GUIListEditor(click.player, GUIListEditor.this.voucher));
 
@@ -112,7 +112,7 @@ public final class GUIListEditor extends VouchersPagedGUI<String> {
 		if (click.clickType == ClickType.NUMBER_KEY) {
 			this.voucher.getDescription().remove(string);
 
-			this.voucher.sync(true);
+			this.voucher.sync(null);
 			click.manager.showGUI(click.player, new GUIListEditor(click.player, GUIListEditor.this.voucher));
 		}
 	}

@@ -23,8 +23,8 @@ import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.QuickItem;
-import ca.tweetzy.vouchers.api.voucher.Message;
-import ca.tweetzy.vouchers.api.voucher.MessageType;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.gui.admin.GUIVoucherSettings;
@@ -92,7 +92,7 @@ public final class GUIMessagesList extends VouchersPagedGUI<Message> {
 			else {
 				if (this.selectedIndex == clickedIndex) return;
 				Collections.swap(this.voucher.getOptions().getMessages(), this.selectedIndex, clickedIndex);
-				this.voucher.sync(true);
+				this.voucher.sync(null);
 
 				click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessagesList.this.voucher));
 			}
@@ -100,7 +100,7 @@ public final class GUIMessagesList extends VouchersPagedGUI<Message> {
 
 		if (click.clickType == ClickType.NUMBER_KEY) {
 			this.voucher.getOptions().getMessages().remove(message);
-			this.voucher.sync(true);
+			this.voucher.sync(null);
 			click.manager.showGUI(click.player, new GUIMessagesList(click.player, this.voucher));
 		}
 	}

@@ -19,16 +19,15 @@
 package ca.tweetzy.vouchers.impl.reward;
 
 import ca.tweetzy.flight.nbtapi.NBT;
+import ca.tweetzy.flight.utils.SerializeUtil;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.AbstractReward;
-import ca.tweetzy.vouchers.api.voucher.RewardType;
+import ca.tweetzy.vouchers.api.voucher.reward.AbstractReward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
 import ca.tweetzy.vouchers.model.Chance;
 import ca.tweetzy.vouchers.model.Giver;
-import ca.tweetzy.vouchers.model.ItemEncoder;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public final class ItemReward extends AbstractReward implements ConfigurationSerializable {
+public final class ItemReward extends AbstractReward {
 
 	@Getter
 	private final ItemStack item;
@@ -68,10 +67,10 @@ public final class ItemReward extends AbstractReward implements ConfigurationSer
 	}
 
 	@Override
-	public String toJsonString() {
+	public String getJSONString() {
 		final JsonObject object = new JsonObject();
 
-		object.addProperty("item", ItemEncoder.encodeItem(this.item));
+		object.addProperty("item", SerializeUtil.encodeItem(this.item));
 		object.addProperty("itemNew", NBT.itemStackToNBT(this.item).toString());
 		object.addProperty("chance", this.getChance());
 		object.addProperty("type", RewardType.ITEM.name());
@@ -79,10 +78,4 @@ public final class ItemReward extends AbstractReward implements ConfigurationSer
 		return object.toString();
 	}
 
-
-	@NotNull
-	@Override
-	public Map<String, Object> serialize() {
-		return Map.of();
-	}
 }

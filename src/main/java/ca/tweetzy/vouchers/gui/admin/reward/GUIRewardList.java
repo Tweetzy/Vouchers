@@ -26,7 +26,7 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.gui.admin.GUIVoucherEdit;
@@ -146,7 +146,7 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 			else {
 				if (this.selectedIndex == clickedIndex) return;
 				Collections.swap(this.voucher.getRewards(), this.selectedIndex, clickedIndex);
-				this.voucher.sync(true);
+				this.voucher.sync(null);
 
 				click.manager.showGUI(click.player, new GUIRewardList(click.player, GUIRewardList.this.voucher));
 			}
@@ -164,7 +164,7 @@ public final class GUIRewardList extends VouchersPagedGUI<Reward> {
 				@Override
 				public boolean onResult(String string) {
 					commandReward.setClaimMessage(string);
-					GUIRewardList.this.voucher.sync(true);
+					GUIRewardList.this.voucher.sync(null);
 
 					click.manager.showGUI(click.player, new GUIRewardList(click.player, GUIRewardList.this.voucher));
 					return true;

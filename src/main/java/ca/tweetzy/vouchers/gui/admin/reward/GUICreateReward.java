@@ -24,7 +24,7 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.RewardType;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
@@ -301,7 +301,7 @@ public final class GUICreateReward extends VouchersBaseGUI {
 				this.voucher.addReward(this.commandReward);
 			}
 
-//			this.voucher.sync(true);
+//			this.voucher.sync(null);
 			click.manager.showGUI(click.player, new GUIRewardList(click.player, this.voucher));
 
 		});

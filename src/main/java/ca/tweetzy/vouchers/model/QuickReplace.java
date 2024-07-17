@@ -3,7 +3,7 @@ package ca.tweetzy.vouchers.model;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.ItemUtil;
 import ca.tweetzy.flight.utils.Replacer;
-import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.hook.PAPIHook;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;

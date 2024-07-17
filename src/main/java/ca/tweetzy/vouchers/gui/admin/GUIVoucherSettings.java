@@ -98,7 +98,7 @@ public final class GUIVoucherSettings extends VouchersBaseGUI {
 			if (click.clickType == ClickType.LEFT)
 				click.manager.showGUI(click.player, new SoundPickerGUI(this, "&bVouchers &8> &7Select Sound", null, (event, selected) -> {
 					this.voucher.getOptions().setSound(selected);
-					this.voucher.sync(true);
+					this.voucher.sync(null);
 					click.manager.showGUI(click.player, new GUIVoucherSettings(click.player, this.voucher));
 				}));
 		});
@@ -240,7 +240,7 @@ public final class GUIVoucherSettings extends VouchersBaseGUI {
 	}
 
 	private void syncReopen(@NonNull final GuiClickEvent event) {
-		this.voucher.sync(true);
+		this.voucher.sync(null);
 		event.manager.showGUI(event.player, new GUIVoucherSettings(event.player, this.voucher));
 	}
 }

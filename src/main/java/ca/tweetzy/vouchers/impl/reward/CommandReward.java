@@ -20,8 +20,8 @@ package ca.tweetzy.vouchers.impl.reward;
 
 import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.AbstractReward;
-import ca.tweetzy.vouchers.api.voucher.RewardType;
+import ca.tweetzy.vouchers.api.voucher.reward.AbstractReward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
 import ca.tweetzy.vouchers.hook.PAPIHook;
 import ca.tweetzy.vouchers.model.Chance;
 import com.google.gson.JsonObject;
@@ -73,7 +73,7 @@ public final class CommandReward extends AbstractReward {
 	}
 
 	@Override
-	public String toJsonString() {
+	public String getJSONString() {
 		final JsonObject object = new JsonObject();
 
 		object.addProperty("command", this.command);

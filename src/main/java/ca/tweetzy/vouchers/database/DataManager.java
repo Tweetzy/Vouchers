@@ -21,14 +21,14 @@ package ca.tweetzy.vouchers.database;
 import ca.tweetzy.flight.database.Callback;
 import ca.tweetzy.flight.database.DataManagerAbstract;
 import ca.tweetzy.flight.database.DatabaseConnector;
-import ca.tweetzy.vouchers.api.voucher.Redeem;
-import ca.tweetzy.vouchers.api.voucher.Reward;
-import ca.tweetzy.vouchers.api.voucher.RewardMode;
+import ca.tweetzy.flight.utils.SerializeUtil;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.redeem.Redeem;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
-import ca.tweetzy.vouchers.model.ItemEncoder;
 import ca.tweetzy.vouchers.model.RewardFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
@@ -65,9 +65,9 @@ public final class DataManager extends DataManagerAbstract {
 				preparedStatement.setString(1, voucher.getId().toLowerCase());
 				preparedStatement.setString(2, voucher.getName());
 				preparedStatement.setString(3, String.join(";;;", voucher.getDescription()));
-				preparedStatement.setString(4, ItemEncoder.encodeItem(voucher.getItem()));
-				preparedStatement.setString(5, voucher.getOptions().toJsonString());
-				preparedStatement.setString(6, voucher.getRewardJson());
+				preparedStatement.setString(4, SerializeUtil.encodeItem(voucher.getItem()));
+				preparedStatement.setString(5, voucher.getOptions().getJSONString());
+				preparedStatement.setString(6, voucher.getJSONString());
 				preparedStatement.setString(7, voucher.getRewardMode().name());
 
 				preparedStatement.executeUpdate();
@@ -107,9 +107,9 @@ public final class DataManager extends DataManagerAbstract {
 
 				preparedStatement.setString(1, voucher.getName());
 				preparedStatement.setString(2, String.join(";;;", voucher.getDescription()));
-				preparedStatement.setString(3, ItemEncoder.encodeItem(voucher.getItem()));
-				preparedStatement.setString(4, voucher.getOptions().toJsonString());
-				preparedStatement.setString(5, voucher.getRewardJson());
+				preparedStatement.setString(3, SerializeUtil.encodeItem(voucher.getItem()));
+				preparedStatement.setString(4, voucher.getOptions().getJSONString());
+				preparedStatement.setString(5, voucher.getJSONString());
 				preparedStatement.setString(6, voucher.getRewardMode().name());
 				preparedStatement.setString(7, voucher.getId().toLowerCase());
 
@@ -257,7 +257,7 @@ public final class DataManager extends DataManagerAbstract {
 		return new ActiveVoucher(
 				resultSet.getString("id"),
 				resultSet.getString("name"),
-				ItemEncoder.decodeItem(resultSet.getString("item")),
+				SerializeUtil.decodeItem(resultSet.getString("item")),
 				new ArrayList<>(desc),
 				RewardMode.valueOf(resultSet.getString("reward_mode").toUpperCase()),
 				VoucherSettings.decode(resultSet.getString("options")),

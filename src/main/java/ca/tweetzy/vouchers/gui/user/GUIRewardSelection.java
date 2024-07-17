@@ -23,7 +23,7 @@ import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
-import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;

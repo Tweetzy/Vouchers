@@ -20,8 +20,8 @@ package ca.tweetzy.vouchers.impl;
 
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.VouchersAPI;
-import ca.tweetzy.vouchers.api.voucher.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.redeem.Redeem;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +33,7 @@ public final class VouchersAPIImplementation implements VouchersAPI {
 
 	@Override
 	public List<Voucher> getAllVouchers() {
-		return Vouchers.getVoucherManager().getAll();
+		return List.copyOf(Vouchers.getVoucherManager().getManagerContent().values());
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public final class VouchersAPIImplementation implements VouchersAPI {
 
 	@Override
 	public List<Redeem> getAllRedeems() {
-		return Vouchers.getRedeemManager().getAll();
+		return List.copyOf(Vouchers.getRedeemManager().getManagerContent().values());
 	}
 
 	@Override

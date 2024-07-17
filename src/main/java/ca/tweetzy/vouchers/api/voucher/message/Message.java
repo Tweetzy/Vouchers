@@ -16,9 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher;
+package ca.tweetzy.vouchers.api.voucher.message;
 
-import ca.tweetzy.vouchers.api.Jsonable;
+import ca.tweetzy.vouchers.api.sync.Jsonable;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import org.bukkit.entity.Player;
 
 import java.util.List;

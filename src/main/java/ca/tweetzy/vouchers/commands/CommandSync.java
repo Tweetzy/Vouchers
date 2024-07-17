@@ -10,6 +10,11 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.*;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherMessage;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
@@ -171,7 +176,7 @@ public final class CommandSync extends Command {
 		voucher.setRewards(rewardArray);
 
 		if (!requiresCreationAfter)
-			voucher.sync(true);
+			voucher.sync(null);
 		else
 			Vouchers.getDataManager().createVoucher(voucher, (error, result) -> {
 				if (error == null) {

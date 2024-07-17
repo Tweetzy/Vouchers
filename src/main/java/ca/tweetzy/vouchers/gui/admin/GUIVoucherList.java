@@ -26,7 +26,7 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.RewardMode;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
@@ -40,28 +40,19 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 
 	public GUIVoucherList(@NonNull final Player player) {
-		super(new GUIVouchersAdmin(player), player, "&bVouchers &8> &7Listing Vouchers", 6, new ArrayList<>(Vouchers.getVoucherManager().getAll()));
+		super(new GUIVouchersAdmin(player), player, "&bVouchers &8> &7Listing Vouchers", 6, new ArrayList<>(Vouchers.getVoucherManager().getManagerContent().values()));
 		draw();
 	}
 
 	@Override
-	protected ItemStack makeDisplayItem(Voucher voucher) {
-		return QuickItem
-				.of(voucher.getItem())
-				.name(voucher.getName())
-				.lore(voucher.getFilteredDescription())
-				.lore(
-						"",
-						"&b&lLeft Click &8» &7To take voucher",
-						"&a&lRight Click &8» &7To edit voucher",
-						"&c&lPress 1 &8» &7To delete voucher"
-				)
-				.make();
+	protected void prePopulate() {
+		this.items.sort(Comparator.comparing(Voucher::getId));
 	}
 
 	@Override
@@ -96,6 +87,21 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 				return true;
 			}
 		});
+	}
+
+	@Override
+	protected ItemStack makeDisplayItem(Voucher voucher) {
+		return QuickItem
+				.of(voucher.getItem())
+				.name(voucher.getName())
+				.lore(voucher.getFilteredDescription())
+				.lore(
+						"",
+						"&b&lLeft Click &8» &7To take voucher",
+						"&a&lRight Click &8» &7To edit voucher",
+						"&c&lPress 1 &8» &7To delete voucher"
+				)
+				.make();
 	}
 
 	@Override

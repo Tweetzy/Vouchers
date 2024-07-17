@@ -66,7 +66,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 			public boolean onResult(String string) {
 				if (string.length() < 1) return false;
 				GUIVoucherEdit.this.voucher.setName(string);
-				GUIVoucherEdit.this.voucher.sync(true);
+				GUIVoucherEdit.this.voucher.sync(null);
 
 				click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, GUIVoucherEdit.this.voucher));
 				return true;
@@ -88,7 +88,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 			if (click.clickType == ClickType.LEFT)
 				click.manager.showGUI(click.player, new MaterialPickerGUI(this, "&bVouchers &8> &7Select Material", null, (event, selected) -> {
 					this.voucher.setItem(selected);
-					this.voucher.sync(true);
+					this.voucher.sync(null);
 					click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, this.voucher));
 				}));
 
@@ -97,7 +97,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 				if (cursor == null || cursor.getType() == CompMaterial.AIR.parseMaterial()) return;
 
 				this.voucher.setItem(cursor.clone());
-				this.voucher.sync(true);
+				this.voucher.sync(null);
 				click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, this.voucher));
 			}
 		});
@@ -137,7 +137,7 @@ public final class GUIVoucherEdit extends VouchersBaseGUI {
 				.make(), click -> {
 
 			this.voucher.setRewardMode(this.voucher.getRewardMode().next());
-			this.voucher.sync(true);
+			this.voucher.sync(null);
 			click.manager.showGUI(click.player, new GUIVoucherEdit(click.player, this.voucher));
 		});
 

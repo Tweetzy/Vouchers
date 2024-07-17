@@ -16,17 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher;
+package ca.tweetzy.vouchers.api.voucher.reward;
 
-import java.util.UUID;
+import ca.tweetzy.vouchers.api.sync.Navigable;
 
-public interface Redeem {
+public enum RewardMode implements Navigable<RewardMode> {
 
-	UUID getId();
+	AUTOMATIC,
+	REWARD_SELECT,
+	RANDOM;
 
-	UUID getUser();
-
-	String getVoucherId();
-
-	long getTime();
+	@Override
+	public Class<RewardMode> enumClass() {
+		return RewardMode.class;
+	}
 }

@@ -16,10 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher;
+package ca.tweetzy.vouchers.api.sync;
 
-public enum RewardType {
+public interface Jsonable {
 
-	COMMAND,
-	ITEM
+	String getJSONString();
 }

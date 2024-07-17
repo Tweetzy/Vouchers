@@ -32,7 +32,7 @@ public final class CommandExport extends Command {
 
 		tellNoPrefix(sender, "<center>%pl_name%");
 		tellNoPrefix(sender, "<center>&eBeginning Voucher Export");
-		Vouchers.getVoucherManager().getAll().forEach(voucher -> {
+		Vouchers.getVoucherManager().getManagerContent().values().forEach(voucher -> {
 			tellNoPrefix(sender, "<center>&f+ &eExported voucher&F: &a" + voucher.getId());
 			voucher.exportVoucher();
 		});

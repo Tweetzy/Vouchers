@@ -16,9 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.api.voucher.reward;
 
-public interface Jsonable {
+import ca.tweetzy.vouchers.api.sync.Jsonable;
+import org.bukkit.entity.Player;
 
-	String toJsonString();
+import java.util.List;
+
+public interface Reward extends Jsonable {
+
+	RewardType getType();
+
+	int getDelay();
+
+	double getChance();
+
+	void setDelay(int delay);
+
+	void setChance(double chance);
+
+	boolean execute(Player player, boolean guarantee, List<String> args);
+
+	default String getFriendlyFormat() {
+		return null;
+	}
 }

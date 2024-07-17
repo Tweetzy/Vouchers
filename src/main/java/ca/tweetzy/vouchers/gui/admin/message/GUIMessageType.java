@@ -24,7 +24,7 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.MessageType;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import ca.tweetzy.vouchers.impl.VoucherMessage;
@@ -96,7 +96,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 									final int stayRate = Integer.parseInt(stay);
 
 									GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.TITLE, inputTitle, fadeInOutRate, stayRate, fadeInOutRate));
-									GUIMessageType.this.voucher.sync(true);
+									GUIMessageType.this.voucher.sync(null);
 
 									click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 									return true;
@@ -160,7 +160,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 									final int stayRate = Integer.parseInt(stay);
 
 									GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.SUBTITLE, inputTitle, fadeInOutRate, stayRate, fadeInOutRate));
-									GUIMessageType.this.voucher.sync(true);
+									GUIMessageType.this.voucher.sync(null);
 
 									click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 									return true;
@@ -188,7 +188,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 				@Override
 				public boolean onResult(String inputTitle) {
 					GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.ACTION_BAR, inputTitle, 0, 0, 0));
-					GUIMessageType.this.voucher.sync(true);
+					GUIMessageType.this.voucher.sync(null);
 					click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 					return true;
 				}
@@ -205,7 +205,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 			@Override
 			public boolean onResult(String inputTitle) {
 				GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.BROADCAST, inputTitle, 0, 0, 0));
-				GUIMessageType.this.voucher.sync(true);
+				GUIMessageType.this.voucher.sync(null);
 				click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 				return true;
 			}
@@ -221,7 +221,7 @@ public final class GUIMessageType extends VouchersBaseGUI {
 			@Override
 			public boolean onResult(String inputTitle) {
 				GUIMessageType.this.voucher.getOptions().getMessages().add(new VoucherMessage(MessageType.CHAT, inputTitle, 0, 0, 0));
-				GUIMessageType.this.voucher.sync(true);
+				GUIMessageType.this.voucher.sync(null);
 				click.manager.showGUI(click.player, new GUIMessagesList(click.player, GUIMessageType.this.voucher));
 				return true;
 			}

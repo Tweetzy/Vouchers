@@ -16,25 +16,39 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.model.manager;
+package ca.tweetzy.vouchers.api.voucher.reward;
 
-import lombok.NonNull;
+import lombok.AllArgsConstructor;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+@AllArgsConstructor
+public abstract class AbstractReward implements Reward {
 
-public abstract class Manager<K, V> {
+	private RewardType rewardType;
+	private double chance;
+	private int delay;
 
-	protected final Map<K, V> contents = new ConcurrentHashMap<>();
+	@Override
+	public int getDelay() {
+		return this.delay;
+	}
 
-	public abstract List<V> getAll();
+	@Override
+	public RewardType getType() {
+		return this.rewardType;
+	}
 
-	public abstract V find(@NonNull final K k);
+	@Override
+	public double getChance() {
+		return this.chance;
+	}
 
-	public abstract void add(@NonNull final V v);
+	@Override
+	public void setDelay(int delay) {
+		this.delay = delay;
+	}
 
-	public abstract void remove(@NonNull final K k);
-
-	public abstract void load();
+	@Override
+	public void setChance(double chance) {
+		this.chance = chance;
+	}
 }

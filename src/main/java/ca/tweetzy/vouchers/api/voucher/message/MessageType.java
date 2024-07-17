@@ -16,17 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher;
+package ca.tweetzy.vouchers.api.voucher.message;
 
-public enum RewardMode {
+public enum MessageType {
 
-	AUTOMATIC,
-	REWARD_SELECT,
-	RANDOM;
-
-	private static final RewardMode[] states = values();
-
-	public RewardMode next() {
-		return states[(this.ordinal() + 1) % states.length];
-	}
+	BROADCAST,
+	CHAT,
+	ACTION_BAR,
+	TITLE,
+	SUBTITLE
 }
