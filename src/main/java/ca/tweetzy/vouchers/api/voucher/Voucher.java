@@ -39,6 +39,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -94,6 +95,11 @@ public interface Voucher extends Identifiable<String>, Storeable<Voucher>, Jsona
 
 	default void exportVoucher() {
 		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
+			File directory = new File(Vouchers.getInstance().getDataFolder() + "/vouchers/");
+			if (!directory.exists()) {
+				directory.mkdir();
+			}
+
 			try (Writer writer = new FileWriter(String.format("%s/vouchers/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()))) {
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
