@@ -26,8 +26,9 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
+import ca.tweetzy.vouchers.api.voucher.Category;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
@@ -45,18 +46,60 @@ import java.util.List;
 
 public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 
-	public GUIVoucherList(@NonNull final Player player) {
-		super(new GUIVouchersAdmin(player), player, "&bVouchers &8> &7Listing Vouchers", 6, new ArrayList<>(Vouchers.getVoucherManager().getManagerContent().values()));
+	private Category category = null;
+
+	public GUIVoucherList(@NonNull final Player player, Category category) {
+		super(new GUIVouchersAdmin(player), player, "&bVouchers &8> &7Listing Vouchers", 6, new ArrayList<>(Vouchers.getVoucherManager().getValues()));
+		this.category = category;
 		draw();
+	}
+
+	public GUIVoucherList(@NonNull final Player player) {
+		this(player, null);
 	}
 
 	@Override
 	protected void prePopulate() {
+		if (this.category != null) {
+			this.items = new ArrayList<>(this.items.stream().filter(voucher -> this.category.getVoucherIds().contains(voucher.getId())).toList());
+		}
+
 		this.items.sort(Comparator.comparing(Voucher::getId));
 	}
 
 	@Override
 	protected void drawFixed() {
+
+		setButton(5, 7, QuickItem
+				.of(this.category == null ? CompMaterial.NETHER_STAR.parseItem() : this.category.getItem())
+				.name("&b&lVoucher Filter")
+				.lore(this.category == null ? "&aViewing all vouchers" : this.category.getDescription())
+				.lore(
+						"",
+						"&b&lLeft Click &8» &7To cycle categories"
+				)
+				.lore(this.category == null ? null : "&a&lRight Click &8» &7To view all")
+				.hideTags(true)
+				.make(), click -> {
+
+			if (this.category != null && click.clickType == ClickType.RIGHT) {
+				this.category = null;
+				click.manager.showGUI(click.player, new GUIVoucherList(click.player));
+				return;
+			}
+
+			if (click.clickType == ClickType.LEFT) {
+				if (this.category == null && !Vouchers.getCategoryManager().getValues().isEmpty())
+					this.category = Vouchers.getCategoryManager().getValues().get(0);
+				else
+					this.category = Vouchers.getCategoryManager().getNextElement(Vouchers.getCategoryManager().getValues(), this.category);
+
+				click.manager.showGUI(click.player, new GUIVoucherList(click.player, this.category));
+
+			}
+
+		});
+
 		setButton(5, 4, QuickItem.of(CompMaterial.SLIME_BALL).name("&a&lNew Voucher").lore(
 				"&b&lClick &8» &7To create new voucher"
 		).make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "&b&lVouchers", "&fEnter id for voucher into chat") {

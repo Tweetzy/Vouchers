@@ -23,4 +23,5 @@ public interface Category extends Identifiable<String>, Storeable<Category>, Syn
 	void setDescription(String description);
 
 	Set<String> getVoucherIds();
+
 }

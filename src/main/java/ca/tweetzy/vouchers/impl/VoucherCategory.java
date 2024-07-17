@@ -1,7 +1,9 @@
 package ca.tweetzy.vouchers.impl;
 
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Category;
+import com.google.gson.JsonArray;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
@@ -62,15 +64,42 @@ public final class VoucherCategory implements Category {
 
 	@Override
 	public String getJSONString() {
-		return "";
+		final JsonArray array = new JsonArray();
+
+		getVoucherIds().forEach(array::add);
+
+		return array.toString();
 	}
+
 
 	@Override
 	public void store(@NonNull Consumer<Category> stored) {
+		Vouchers.getDataManager().createCategory(this, (error, created) -> {
+			if (error == null && created != null) {
+				Vouchers.getCategoryManager().add(created);
+				stored.accept(created);
+			} else {
+				stored.accept(null);
+			}
+		});
+	}
 
+	@Override
+	public void unStore(@Nullable Consumer<SynchronizeResult> syncResult) {
+		Vouchers.getDataManager().deleteCategory(getId().toLowerCase(), (error, res) -> {
+			if (error == null && res)
+				Vouchers.getCategoryManager().remove(getId());
+
+			if (syncResult != null)
+				syncResult.accept(error == null && res ? SynchronizeResult.SUCCESS : SynchronizeResult.FAILURE);
+		});
 	}
 
 	@Override
 	public void sync(@Nullable Consumer<SynchronizeResult> syncResult) {
+		Vouchers.getDataManager().updateCategory(this, (error, res) -> {
+			if (syncResult != null)
+				syncResult.accept(error == null && res ? SynchronizeResult.SUCCESS : SynchronizeResult.FAILURE);
+		});
 	}
 }
