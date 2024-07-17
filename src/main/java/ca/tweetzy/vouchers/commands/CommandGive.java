@@ -33,8 +33,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,6 +82,7 @@ public final class CommandGive extends Command {
 		}
 
 		return ReturnType.SUCCESS;
+
 	}
 
 	@Override
@@ -99,7 +98,7 @@ public final class CommandGive extends Command {
 			return List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
 
 		if (args.length == 3)
-			return Vouchers.getVoucherManager().getAll().stream().map(Voucher::getId).collect(Collectors.toList());
+			return Vouchers.getVoucherManager().getManagerContent().values().stream().map(Voucher::getId).collect(Collectors.toList());
 
 		return null;
 	}

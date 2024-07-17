@@ -18,8 +18,9 @@
 
 package ca.tweetzy.vouchers.model;
 
-import ca.tweetzy.vouchers.api.voucher.Reward;
-import ca.tweetzy.vouchers.api.voucher.RewardType;
+import ca.tweetzy.flight.utils.SerializeUtil;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import com.google.gson.JsonObject;
@@ -44,7 +45,7 @@ public final class RewardFactory {
 
 				yield reward;
 			}
-			case ITEM -> new ItemReward(ItemEncoder.decodeItem(object.get("item").getAsString()), object.get("chance").getAsDouble());
+			case ITEM -> new ItemReward(SerializeUtil.decodeItem(object.get("item").getAsString()), object.get("chance").getAsDouble());
 		};
 	}
 }

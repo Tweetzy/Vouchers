@@ -18,7 +18,7 @@
 
 package ca.tweetzy.vouchers.api;
 
-import ca.tweetzy.vouchers.api.voucher.Redeem;
+import ca.tweetzy.vouchers.api.voucher.redeem.Redeem;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import lombok.NonNull;
 import org.bukkit.entity.Player;

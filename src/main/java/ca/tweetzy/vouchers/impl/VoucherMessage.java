@@ -21,9 +21,9 @@ package ca.tweetzy.vouchers.impl;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.messages.ActionBar;
 import ca.tweetzy.flight.utils.messages.Titles;
-import ca.tweetzy.vouchers.api.voucher.Message;
-import ca.tweetzy.vouchers.api.voucher.MessageType;
-import ca.tweetzy.vouchers.api.voucher.Reward;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.model.QuickReplace;
 import com.google.gson.JsonObject;
@@ -122,7 +122,7 @@ public final class VoucherMessage implements Message {
 	}
 
 	@Override
-	public String toJsonString() {
+	public String getJSONString() {
 		final JsonObject object = new JsonObject();
 
 		object.addProperty("type", this.type.name());

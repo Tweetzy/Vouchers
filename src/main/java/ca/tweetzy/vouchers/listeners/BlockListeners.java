@@ -32,10 +32,12 @@ import java.util.Arrays;
 
 public final class BlockListeners implements Listener {
 
+
 	@EventHandler
 	public void onVoucherCraftAttempt(final PrepareItemCraftEvent event) {
 		if (Arrays.stream(event.getInventory().getContents()).anyMatch(item -> Vouchers.getVoucherManager().isVoucher(item))) {
 			event.getInventory().setResult(CompMaterial.AIR.parseItem());
+
 		}
 	}
 
@@ -46,6 +48,7 @@ public final class BlockListeners implements Listener {
 
 		if (Vouchers.getVoucherManager().isVoucher(toBePlaced))
 			event.setCancelled(true);
+
 	}
 
 	@EventHandler

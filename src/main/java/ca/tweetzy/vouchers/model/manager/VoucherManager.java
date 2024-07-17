@@ -21,32 +21,25 @@ package ca.tweetzy.vouchers.model.manager;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.nbtapi.NBT;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.manager.KeyValueManager;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.units.qual.N;
 
-import java.util.List;
+public final class VoucherManager extends KeyValueManager<String, Voucher> {
 
-public final class VoucherManager extends Manager<String, Voucher> {
-
-	@Override
-	public List<Voucher> getAll() {
-		return List.copyOf(this.contents.values());
+	public VoucherManager() {
+		super("Voucher");
 	}
 
-	@Override
-	public Voucher find(@NonNull String key) {
-		return this.contents.getOrDefault(key, null);
+	public void add(Voucher voucher) {
+		if (this.managerContent.containsKey(voucher.getId().toLowerCase())) return;
+		this.managerContent.put(voucher.getId().toLowerCase(), voucher);
 	}
 
-	@Override
-	public void add(@NonNull Voucher voucher) {
-		this.contents.put(voucher.getId().toLowerCase(), voucher);
-	}
-
-	@Override
-	public void remove(@NonNull String s) {
-		this.contents.remove(s.toLowerCase());
+	public Voucher find(@NonNull final String id){
+		return this.managerContent.getOrDefault(id.toLowerCase(), null);
 	}
 
 	public boolean isVoucher(final ItemStack item) {
@@ -57,11 +50,13 @@ public final class VoucherManager extends Manager<String, Voucher> {
 
 	@Override
 	public void load() {
-		this.contents.clear();
+		clear();
 
 		Vouchers.getDataManager().getVouchers((error, all) -> {
 			if (error == null)
-				all.forEach(this::add);
+				all.forEach(voucher -> {
+					add(voucher.getId(), voucher);
+				});
 		});
 	}
 }

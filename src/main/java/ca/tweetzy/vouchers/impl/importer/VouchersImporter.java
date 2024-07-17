@@ -22,6 +22,10 @@ import ca.tweetzy.flight.comp.enums.CompSound;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.Importer;
 import ca.tweetzy.vouchers.api.voucher.*;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.impl.ActiveVoucher;
 import ca.tweetzy.vouchers.impl.VoucherMessage;
 import ca.tweetzy.vouchers.impl.VoucherSettings;
@@ -29,6 +33,7 @@ import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,7 +152,8 @@ public final class VouchersImporter implements Importer {
 					section.getStringList(voucherNode + ".description"),
 					RewardMode.valueOf(section.getString(voucherNode + ".setting.reward mode").toUpperCase()),
 					options,
-					voucherRewards
+					voucherRewards,
+					EquipmentSlot.HAND
 			);
 
 			Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {

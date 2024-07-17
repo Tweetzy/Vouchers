@@ -41,6 +41,7 @@ public final class VoucherRedeemEvent extends Event implements Cancellable {
 		this.player = player;
 		this.voucher = voucher;
 		this.redeemResult = redeemResult;
+
 	}
 
 	@Override

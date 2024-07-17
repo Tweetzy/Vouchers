@@ -22,7 +22,7 @@ import ca.tweetzy.flight.command.AllowedExecutor;
 import ca.tweetzy.flight.command.Command;
 import ca.tweetzy.flight.command.ReturnType;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.gui.GUIVouchersAdmin;
+import ca.tweetzy.vouchers.gui.admin.GUIVouchersAdmin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,7 +37,7 @@ public final class VouchersCommand extends Command {
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
 		if (sender instanceof final Player player)
-			Vouchers.getGuiManager().showGUI(player, new GUIVouchersAdmin());
+			Vouchers.getGuiManager().showGUI(player, new GUIVouchersAdmin(player));
 
 		return ReturnType.SUCCESS;
 	}

@@ -23,13 +23,17 @@ import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.ItemUtil;
-import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.flight.utils.messages.Titles;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemEvent;
 import ca.tweetzy.vouchers.api.events.VoucherRedeemResult;
-import ca.tweetzy.vouchers.api.voucher.*;
-import ca.tweetzy.vouchers.gui.GUIRewardSelection;
+import ca.tweetzy.vouchers.api.manager.KeyValueManager;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.message.MessageType;
+import ca.tweetzy.vouchers.api.voucher.redeem.Redeem;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.gui.user.GUIRewardSelection;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
@@ -39,6 +43,7 @@ import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -46,30 +51,22 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public final class RedeemManager extends Manager<UUID, Redeem> {
+public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 
-	@Override
-	public List<Redeem> getAll() {
-		return List.copyOf(this.contents.values());
+	public RedeemManager() {
+		super("Redeem");
 	}
 
-	@Override
-	public Redeem find(@NonNull UUID uuid) {
-		return this.contents.getOrDefault(uuid, null);
-	}
-
-	@Override
 	public void add(@NonNull Redeem redeem) {
-		this.contents.put(redeem.getId(), redeem);
+		add(redeem.getId(), redeem);
 	}
 
-	@Override
-	public void remove(@NonNull UUID uuid) {
-		this.contents.remove(uuid);
+	public Redeem find(@NonNull final UUID uuid) {
+		return this.managerContent.getOrDefault(uuid, null);
 	}
 
 	public int getTotalRedeems(@NonNull final UUID playerUUID, @NonNull final String voucherId) {
-		return (int) this.contents.values().stream().filter(redeem -> redeem.getUser().equals(playerUUID) && redeem.getVoucherId().equalsIgnoreCase(voucherId)).count();
+		return (int) this.managerContent.values().stream().filter(redeem -> redeem.getUser().equals(playerUUID) && redeem.getVoucherId().equalsIgnoreCase(voucherId)).count();
 	}
 
 	public int getTotalRedeems(@NonNull final Player player, @NonNull final Voucher voucher) {
@@ -192,7 +189,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
 				registerRedeemIfApplicable(player, voucher);
 			}
-			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(voucher, args, selected -> {
+			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(player, voucher, args, selected -> {
 				boolean given = selected.execute(player, Settings.REWARD_PICK_IS_GUARANTEED.getBoolean(), args);
 
 				if (Settings.SHOW_VOUCHER_REWARD_INFO.getBoolean()) {
@@ -307,30 +304,42 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 	public void deleteAllRedeems() {
 		Vouchers.getDataManager().deleteAllRedeems((error, deleted) -> {
 			if (error == null && deleted) {
-				this.contents.clear();
+				clear();
 			}
 		});
 	}
 
-
 	private List<UUID> getRedeemIds(@NonNull final Player player, @NonNull final String voucherId) {
-		return this.contents.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId()) && redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
+		return this.managerContent.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId()) && redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
 	}
 
 	private List<UUID> getRedeemIds(@NonNull final Player player) {
-		return this.contents.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId())).toList().stream().map(Redeem::getId).collect(Collectors.toList());
+		return this.managerContent.values().stream().filter(redeem -> redeem.getUser().equals(player.getUniqueId())).toList().stream().map(Redeem::getId).collect(Collectors.toList());
 	}
 
 	private List<UUID> getRedeemIds(@NonNull final String voucherId) {
-		return this.contents.values().stream().filter(redeem -> redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
+		return this.managerContent.values().stream().filter(redeem -> redeem.getVoucherId().equalsIgnoreCase(voucherId)).toList().stream().map(Redeem::getId).collect(Collectors.toList());
 	}
 
 	private void takeHand(@NonNull final Player player, @NonNull final Voucher voucher) {
 		if (voucher.getOptions().isRemoveOnUse()) {
-			if (PlayerUtil.getHand(player).getAmount() >= 2) {
-				PlayerUtil.getHand(player).setAmount(PlayerUtil.getHand(player).getAmount() - 1);
-			} else {
-				player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+			switch (voucher.getVoucherHand()) {
+				case HAND -> {
+					ItemStack voucherItem = player.getInventory().getItemInMainHand();
+					if (voucherItem.getAmount() >= 2) {
+						voucherItem.setAmount(voucherItem.getAmount() - 1);
+					} else {
+						player.getInventory().setItemInMainHand(CompMaterial.AIR.parseItem());
+					}
+				}
+				case OFF_HAND -> {
+					ItemStack voucherItem = player.getInventory().getItemInOffHand();
+					if (voucherItem.getAmount() >= 2) {
+						voucherItem.setAmount(voucherItem.getAmount() - 1);
+					} else {
+						player.getInventory().setItemInOffHand(CompMaterial.AIR.parseItem());
+					}
+				}
 			}
 
 			player.updateInventory();
@@ -339,7 +348,7 @@ public final class RedeemManager extends Manager<UUID, Redeem> {
 
 	@Override
 	public void load() {
-		this.contents.clear();
+		clear();
 
 		Vouchers.getDataManager().getVoucherRedeems((error, all) -> {
 			if (error == null)

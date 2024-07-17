@@ -19,7 +19,8 @@
 package ca.tweetzy.vouchers.api.voucher;
 
 import ca.tweetzy.flight.comp.enums.CompSound;
-import ca.tweetzy.vouchers.api.Jsonable;
+import ca.tweetzy.vouchers.api.sync.Jsonable;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
 
 import java.util.List;
 

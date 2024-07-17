@@ -20,10 +20,11 @@ package ca.tweetzy.vouchers.impl;
 
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.Reward;
-import ca.tweetzy.vouchers.api.voucher.RewardMode;
+import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.VoucherOptions;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.hook.PAPIHook;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
@@ -31,11 +32,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -48,9 +55,10 @@ public final class ActiveVoucher implements Voucher {
 	private RewardMode rewardMode;
 	private VoucherOptions options;
 	private List<Reward> rewards;
+	private EquipmentSlot voucherHand;
 
 	@Override
-	public String getId() {
+	public @NonNull String getId() {
 		return this.id;
 	}
 
@@ -84,6 +92,11 @@ public final class ActiveVoucher implements Voucher {
 	}
 
 	@Override
+	public void setRewards(List<Reward> rewards) {
+		this.rewards = rewards;
+	}
+
+	@Override
 	public RewardMode getRewardMode() {
 		return this.rewardMode;
 	}
@@ -104,16 +117,26 @@ public final class ActiveVoucher implements Voucher {
 	}
 
 	@Override
+	public void setVoucherHand(EquipmentSlot hand) {
+		this.voucherHand = hand;
+	}
+
+	@Override
+	public EquipmentSlot getVoucherHand() {
+		return this.voucherHand;
+	}
+
+	@Override
 	public void setDescription(List<String> description) {
 		this.description = description;
 	}
 
 	@Override
-	public String getRewardJson() {
+	public String getJSONString() {
 		final JsonArray jsonArray = new JsonArray();
 
 		this.rewards.forEach(reward -> {
-			final JsonObject object = JsonParser.parseString(reward.toJsonString()).getAsJsonObject();
+			final JsonObject object = JsonParser.parseString(reward.getJSONString()).getAsJsonObject();
 			jsonArray.add(object);
 		});
 
@@ -121,49 +144,80 @@ public final class ActiveVoucher implements Voucher {
 	}
 
 	@Override
-	public void sync(boolean silent) {
-		Vouchers.getDataManager().updateVoucher(this, null);
+	public void sync(@Nullable Consumer<SynchronizeResult> syncResult) {
+		Vouchers.getDataManager().updateVoucher(this, (error, res) -> {
+			if (syncResult != null)
+				syncResult.accept(error == null && res ? SynchronizeResult.SUCCESS : SynchronizeResult.FAILURE);
+		});
+	}
+
+	@Override
+	public void store(@NonNull Consumer<Voucher> stored) {
+		Vouchers.getDataManager().createVoucher(this, (error, created) -> {
+			if (error == null && created != null) {
+				stored.accept(created);
+				Vouchers.getVoucherManager().add(created);
+			} else {
+				stored.accept(null);
+			}
+		});
 	}
 
 	@Override
 	public ItemStack buildItem(Player player) {
 //		this.description =this.description.stream().filter(line -> !line.contains("-Blank-")).collect(Collectors.toList());
-		return QuickItem
+		final ItemStack item = QuickItem
 				.of(this.item)
 				.name(PAPIHook.tryReplace(player, this.name))
 				.lore(PAPIHook.tryReplace(player, this.getFilteredDescription()))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
-				.unbreakable(true)
 				.tag("Tweetzy:Vouchers", this.id)
 				.make();
+
+		return this.unbreakable(item);
 	}
 
 	@Override
 	public ItemStack buildItem(Player player, List<String> args) {
 		String vArgs = String.join(" ", args);
 
-		return QuickItem
+		final ItemStack item = QuickItem
 				.of(this.item)
 				.name(java.text.MessageFormat.format(PAPIHook.tryReplace(player, this.name), args.toArray()))
 				.lore(PAPIHook.tryReplace(player, this.getFilteredDescription()).stream().map(line -> java.text.MessageFormat.format(line, args.toArray())).collect(Collectors.toList()))
 				.glow(this.options.isGlowing())
 				.hideTags(true)
-				.unbreakable(true)
 				.tag("Tweetzy:Vouchers", this.id)
 				.tag("Tweetzy:VouchersArgs", vArgs)
 				.make();
+
+		return this.unbreakable(item);
+	}
+
+	private ItemStack unbreakable(ItemStack item) {
+		final ItemMeta meta = item.getItemMeta();
+
+		if (meta == null)
+			return item;
+
+		meta.setUnbreakable(true);
+		meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+		item.setItemMeta(meta);
+
+		return item;
 	}
 
 	@Override
 	public void addReward(Reward reward) {
 		this.rewards.add(reward);
-		sync(true);
+		sync(null);
 	}
 
 	@Override
 	public void removeReward(Reward reward) {
 		this.rewards.remove(reward);
-		sync(true);
+		sync(null);
 	}
+
 }
