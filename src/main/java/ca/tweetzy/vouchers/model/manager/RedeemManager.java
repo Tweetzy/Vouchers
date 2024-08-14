@@ -152,12 +152,7 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 			}
 
 			// the other message types
-			if (Settings.BROADCAST_INDIVIDUAL_REWARDS.getBoolean())
-				voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE && msg.getMessageType() != MessageType.BROADCAST).toList().forEach(msg -> {
-					msg.send(player, voucher, args);
-				});
-			else
-				voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE).toList().forEach(msg -> msg.send(player, voucher, args));
+			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() != MessageType.TITLE && msg.getMessageType() != MessageType.SUBTITLE).toList().forEach(msg -> msg.send(player, voucher, args));
 		}
 
 		// rewards
@@ -235,9 +230,9 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 	}
 
 	private void sendBroadcastMsg(Player player, Voucher voucher, List<String> args, Reward reward) {
-		if (voucher.getOptions().getMessages().isEmpty()) return;
-		if (Settings.BROADCAST_INDIVIDUAL_REWARDS.getBoolean())
-			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.BROADCAST).forEach(broadcastMsg -> broadcastMsg.send(player, voucher, args, reward));
+//		if (voucher.getOptions().getMessages().isEmpty()) return;
+//		if (Settings.BROADCAST_INDIVIDUAL_REWARDS.getBoolean())
+//			voucher.getOptions().getMessages().stream().filter(msg -> msg.getMessageType() == MessageType.BROADCAST).forEach(broadcastMsg -> broadcastMsg.send(player, voucher, args, reward));
 
 	}
 
