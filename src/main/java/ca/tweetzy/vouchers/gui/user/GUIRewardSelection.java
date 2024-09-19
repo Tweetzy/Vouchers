@@ -62,7 +62,7 @@ public final class GUIRewardSelection extends VouchersPagedGUI<Reward> {
 		quickItem.lore("");
 
 		if (reward instanceof final CommandReward commandReward) {
-			quickItem.lore(TranslationManager.list(Translations.GUI_REWARD_SELECT_CMD_LORE, "reward_command", commandReward.getCommand(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : commandReward.getChance()));
+			quickItem.lore(TranslationManager.list(Translations.GUI_REWARD_SELECT_CMD_LORE, "reward_cmd_msg", commandReward.getClaimMessage(), "reward_command", commandReward.getCommand(), "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : commandReward.getChance()));
 		} else {
 			quickItem.lore(TranslationManager.list(Translations.GUI_REWARD_SELECT_ITEM_LORE, "reward_chance", Settings.REWARD_PICK_IS_GUARANTEED.getBoolean() ? 100D : reward.getChance()));
 		}
