@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +42,11 @@ public final class GUIVoucherRedeemList extends VouchersPagedGUI<Redeem> {
 	public GUIVoucherRedeemList(@NonNull final Player player) {
 		super(new GUIVouchersAdmin(player), player, "&bVouchers &8> &7Listing Redeems", 6, new ArrayList<>(Vouchers.getRedeemManager().getValues()));
 		draw();
+	}
+
+	@Override
+	protected void prePopulate() {
+		this.items.sort(Comparator.comparing(Redeem::getTime).reversed());
 	}
 
 	@Override
