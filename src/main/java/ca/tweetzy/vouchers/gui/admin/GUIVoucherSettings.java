@@ -89,7 +89,7 @@ public final class GUIVoucherSettings extends VouchersBaseGUI {
 				.name("&b&lVoucher Sound")
 				.lore(
 						"",
-						"&7Current&f: " + ChatUtil.capitalizeFully(this.voucher.getOptions().getSound()),
+						"&7Current&f: " + ChatUtil.capitalizeFully(this.voucher.getOptions().getSound().name()),
 						"",
 						"&b&lClick &8» &7To change with picker"
 				)
