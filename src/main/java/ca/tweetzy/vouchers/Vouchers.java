@@ -54,7 +54,7 @@ public final class Vouchers extends FlightPlugin {
 	private final VoucherManager voucherManager = new VoucherManager();
 	private final RedeemManager redeemManager = new RedeemManager();
 	private final VoucherCategoryManager categoryManager = new VoucherCategoryManager();
-	private final CooldownManager cooldownManager = new CooldownManager();
+	private CooldownManager cooldownManager;
 
 	private VouchersAPI API;
 
@@ -85,6 +85,7 @@ public final class Vouchers extends FlightPlugin {
 		getServer().getPluginManager().registerEvents(new BlockListeners(), this);
 
 		List.of(this.voucherManager, this.redeemManager, this.categoryManager).forEach(Manager::load);
+		this.cooldownManager = new CooldownManager(this);
 
 		// ideally initialize after the load
 		this.API = new VouchersAPIImplementation();

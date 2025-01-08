@@ -163,7 +163,7 @@ public interface VouchersAPI {
 	 * @param player  The player's UUID
 	 * @param voucher The voucher that the player is using.
 	 */
-	void addPlayerToCooldown(@NonNull final UUID player, @NonNull final Voucher voucher);
+	void addPlayerToCooldown(@NonNull final Player player, @NonNull final Voucher voucher);
 
 	/**
 	 * Returns true if the player is in cooldown, false otherwise.
@@ -171,7 +171,7 @@ public interface VouchersAPI {
 	 * @param player The player's UUID
 	 * @return A boolean value.
 	 */
-	boolean isPlayerInCooldown(@NonNull final UUID player);
+	boolean isPlayerInCooldown(@NonNull final Player player);
 
 	/**
 	 * Returns true if the player is in cooldown for the given voucher
@@ -180,7 +180,7 @@ public interface VouchersAPI {
 	 * @param voucher The voucher you want to check if the player is in cooldown for.
 	 * @return A boolean value.
 	 */
-	boolean isPlayerInCooldownForVoucher(@NonNull final UUID player, @NonNull final Voucher voucher);
+	boolean isPlayerInCooldownForVoucher(@NonNull final Player player, @NonNull final Voucher voucher);
 
 	/**
 	 * Returns the time in milliseconds until the player can use the voucher again
@@ -189,5 +189,5 @@ public interface VouchersAPI {
 	 * @param voucher The voucher to check the cooldown time for.
 	 * @return The cooldown time in milliseconds.
 	 */
-	long getCooldownTime(@NonNull final UUID player, @NonNull final Voucher voucher);
+	long getCooldownTime(@NonNull final Player player, @NonNull final Voucher voucher);
 }

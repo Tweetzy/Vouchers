@@ -124,6 +124,8 @@ public final class GUIVoucherList extends VouchersPagedGUI<Voucher> {
 					if (error == null) {
 						Vouchers.getVoucherManager().add(created);
 						click.manager.showGUI(click.player, new GUIVoucherList(click.player));
+					} else {
+						error.printStackTrace();
 					}
 				});
 

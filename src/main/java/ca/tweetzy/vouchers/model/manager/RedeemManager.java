@@ -99,16 +99,19 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 		}
 
 		// check cooldown
-		if (!ignoreCooldown)
-			if (Vouchers.getCooldownManager().isPlayerInCooldown(player.getUniqueId()) && Vouchers.getCooldownManager().isPlayerInCooldownForVoucher(player.getUniqueId(), voucher)) {
-				long cooldownTime = Vouchers.getCooldownManager().getCooldownTime(player.getUniqueId(), voucher);
+		if (voucher.getOptions().getCooldown() != -1) {
+			if (!ignoreCooldown)
+				if (Vouchers.getCooldownManager().isPlayerInCooldown(player) && Vouchers.getCooldownManager().isPlayerInCooldownForVoucher(player, voucher)) {
+					long cooldownTime = Vouchers.getCooldownManager().getCooldownTime(player, voucher);
 
-				if (System.currentTimeMillis() < cooldownTime) {
-					Common.tell(player, TranslationManager.string(Translations.WAIT_FOR_COOLDOWN, "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000F)));
-					Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_HAS_COOLDOWN));
-					return;
+					if (System.currentTimeMillis() < cooldownTime) {
+						Common.tell(player, TranslationManager.string(Translations.WAIT_FOR_COOLDOWN, "cooldown_time", formatTime(cooldownTime - System.currentTimeMillis())));
+						Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_HAS_COOLDOWN));
+						return;
+					}
 				}
-			}
+		}
+
 
 		final VoucherRedeemEvent voucherRedeemEvent = new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.SUCCESS);
 		Bukkit.getPluginManager().callEvent(voucherRedeemEvent);
@@ -181,7 +184,7 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
-					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+					Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
 				registerRedeemIfApplicable(player, voucher);
 			}
 			case REWARD_SELECT -> Vouchers.getGuiManager().showGUI(player, new GUIRewardSelection(player, voucher, args, selected -> {
@@ -200,7 +203,7 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 				player.closeInventory();
 
 				if (!ignoreCooldown)
-					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+					Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
 				registerRedeemIfApplicable(player, voucher);
 			}));
 			case RANDOM -> {
@@ -221,7 +224,7 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 
 				takeHand(player, voucher);
 				if (!ignoreCooldown)
-					Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+					Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
 
 
 				registerRedeemIfApplicable(player, voucher);
@@ -340,6 +343,33 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 			player.updateInventory();
 		}
 	}
+
+	private String formatTime(long milliseconds) {
+		long seconds = milliseconds / 1000;
+		long days = seconds / 86400;
+		seconds %= 86400;
+		long hours = seconds / 3600;
+		seconds %= 3600;
+		long minutes = seconds / 60;
+		seconds %= 60;
+
+		StringBuilder result = new StringBuilder();
+		if (days > 0) {
+			result.append(days).append("d ");
+		}
+		if (hours > 0) {
+			result.append(hours).append("h ");
+		}
+		if (minutes > 0) {
+			result.append(minutes).append("m ");
+		}
+		if (seconds > 0 || result.length() == 0) {
+			result.append(seconds).append("s");
+		}
+
+		return result.toString().trim();
+	}
+
 
 	@Override
 	public void load() {

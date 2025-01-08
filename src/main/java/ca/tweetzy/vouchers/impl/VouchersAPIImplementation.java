@@ -107,22 +107,22 @@ public final class VouchersAPIImplementation implements VouchersAPI {
 	}
 
 	@Override
-	public void addPlayerToCooldown(@NonNull UUID player, @NonNull Voucher voucher) {
+	public void addPlayerToCooldown(@NonNull Player player, @NonNull Voucher voucher) {
 		Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
 	}
 
 	@Override
-	public boolean isPlayerInCooldown(@NonNull UUID player) {
+	public boolean isPlayerInCooldown(@NonNull Player player) {
 		return Vouchers.getCooldownManager().isPlayerInCooldown(player);
 	}
 
 	@Override
-	public boolean isPlayerInCooldownForVoucher(@NonNull UUID player, @NonNull Voucher voucher) {
+	public boolean isPlayerInCooldownForVoucher(@NonNull Player player, @NonNull Voucher voucher) {
 		return Vouchers.getCooldownManager().isPlayerInCooldownForVoucher(player, voucher);
 	}
 
 	@Override
-	public long getCooldownTime(@NonNull UUID player, @NonNull Voucher voucher) {
+	public long getCooldownTime(@NonNull Player player, @NonNull Voucher voucher) {
 		return Vouchers.getCooldownManager().getCooldownTime(player, voucher);
 	}
 }

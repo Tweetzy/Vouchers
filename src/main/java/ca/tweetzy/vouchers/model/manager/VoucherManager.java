@@ -54,9 +54,9 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 
 		Vouchers.getDataManager().getVouchers((error, all) -> {
 			if (error == null)
-				all.forEach(voucher -> {
-					add(voucher.getId(), voucher);
-				});
+				all.forEach(voucher -> add(voucher.getId(), voucher));
+			else
+				error.printStackTrace();
 		});
 	}
 }
