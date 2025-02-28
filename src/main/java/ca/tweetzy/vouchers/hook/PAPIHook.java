@@ -73,9 +73,8 @@ public final class PAPIHook extends PlaceholderExpansion {
 			if (paramSplit.length < 2) return null;
 
 			final String voucherId = FlagExtractor.grabWordsUntilFlag(paramSplit, 1, "-a");
-			final int totalRedeems = Vouchers.getRedeemManager().getTotalRedeems(player.getUniqueId(), voucherId);
 
-			return String.valueOf(totalRedeems);
+			return String.valueOf(0);
 		}
 
 		return null;

@@ -1,6 +1,8 @@
-package ca.tweetzy.vouchers.api.sync;
+package ca.tweetzy.vouchers.api;
 
 import lombok.NonNull;
+
+import java.util.UUID;
 
 public interface Identifiable<T> {
 

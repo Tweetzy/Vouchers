@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.database.migrations;
+package ca.tweetzy.vouchers.database.migrations.v3;
 
 import ca.tweetzy.flight.database.DataMigration;
 

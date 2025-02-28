@@ -16,18 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher.reward;
+package ca.tweetzy.vouchers.database.migrations.v3;
 
-import ca.tweetzy.vouchers.api.sync.Navigable;
+import ca.tweetzy.flight.database.DataMigration;
 
-public enum RewardMode implements Navigable<RewardMode> {
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-	AUTOMATIC,
-	REWARD_SELECT,
-	RANDOM;
+public final class _2_CategoryMigration extends DataMigration {
+
+	public _2_CategoryMigration() {
+		super(2);
+	}
 
 	@Override
-	public Class<RewardMode> enumClass() {
-		return RewardMode.class;
+	public void migrate(Connection connection, String tablePrefix) throws SQLException {
+		try (Statement statement = connection.createStatement()) {
+			statement.execute("CREATE TABLE " + tablePrefix + "category (" +
+					"id VARCHAR(64) PRIMARY KEY, " +
+					"name TEXT NOT NULL, " +
+					"description TEXT NOT NULL, " +
+					"item TEXT NOT NULL, " +
+					"vouchers TEXT NOT NULL " +
+					")");
+
+		}
 	}
 }

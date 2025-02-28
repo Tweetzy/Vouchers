@@ -8,7 +8,7 @@
 
     <name>Vouchers</name>
     <description>An easy to use voucher plugin</description>
-    <version>3.28.0</version>
+    <version>4.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -51,6 +51,10 @@
             <id>nms-repo</id>
             <url>https://repo.codemc.io/repository/nms/</url>
         </repository>
+        <repository>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -66,6 +70,11 @@
             <artifactId>spigot-api</artifactId>
             <version>1.21.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>taskchain-bukkit</artifactId>
+            <version>3.7.2</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -164,6 +173,8 @@
                         <includes>
                             <include>${flight.path}:flight*</include>
                             <include>com.google.code.gson:gson</include>
+                            <include>co.aikar:taskchain-bukkit</include>
+                            <include>co.aikar:taskchain-core</include>
                         </includes>
                     </artifactSet>
                     <filters>
@@ -185,6 +196,10 @@
                         <relocation>
                             <pattern>com.google.gson</pattern>
                             <shadedPattern>${project.groupId}.${project.artifactId}.gson</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.taskchain</pattern>
+                            <shadedPattern>${project.groupId}.${project.artifactId}.lib.taskchain</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

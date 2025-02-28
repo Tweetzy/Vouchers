@@ -1,4 +1,4 @@
-package ca.tweetzy.vouchers.api.sync;
+package ca.tweetzy.vouchers.api;
 
 public interface Trackable {
 

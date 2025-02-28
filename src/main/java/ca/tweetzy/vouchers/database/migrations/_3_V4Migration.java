@@ -16,10 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ca.tweetzy.vouchers.api.voucher.reward;
+package ca.tweetzy.vouchers.database.migrations;
 
-public enum RewardType {
+import ca.tweetzy.flight.database.DataMigration;
 
-	COMMAND,
-	ITEM
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public final class _3_V4Migration extends DataMigration {
+
+	public _3_V4Migration() {
+		super(3);
+	}
+
+	@Override
+	public void migrate(Connection connection, String tablePrefix) throws SQLException {
+		try (Statement statement = connection.createStatement()) {
+
+
+		}
+	}
 }

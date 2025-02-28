@@ -23,7 +23,6 @@ import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
-import ca.tweetzy.vouchers.gui.admin.category.GUICategoryList;
 import org.bukkit.entity.Player;
 
 public final class GUIVouchersAdmin extends VouchersBaseGUI {
@@ -46,7 +45,9 @@ public final class GUIVouchersAdmin extends VouchersBaseGUI {
 						"",
 						"&b&lClick &8» &7To view vouchers"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIVoucherList(click.player)));
+				.make(), click -> {
+
+		});
 
 		setButton(1, 4, QuickItem
 				.of(CompMaterial.KNOWLEDGE_BOOK)
@@ -58,7 +59,8 @@ public final class GUIVouchersAdmin extends VouchersBaseGUI {
 						"",
 						"&b&lClick &8» &7To view redeems"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new GUIVoucherRedeemList(click.player)));
+				.make(), click -> {
+		});
 
 		setButton(1, 7, QuickItem
 				.of(CompMaterial.REPEATER)
@@ -70,7 +72,8 @@ public final class GUIVouchersAdmin extends VouchersBaseGUI {
 						"",
 						"&b&lClick &8» &7To view categories"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new GUICategoryList(this, click.player)));
+				.make(), click -> {
+		});
 
 
 		setButton(getRows() - 1, 8, QuickItem

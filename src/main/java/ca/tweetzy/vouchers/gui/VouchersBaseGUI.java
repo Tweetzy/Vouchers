@@ -2,6 +2,7 @@ package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.gui.Gui;
 import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.hooks.PlaceholderAPIHook;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.settings.Settings;
@@ -18,16 +19,19 @@ public abstract class VouchersBaseGUI extends BaseGUI {
 
 	public VouchersBaseGUI(Gui parent, @NonNull final Player player, @NonNull String title, int rows) {
 		super(parent, title, rows);
+		setTitle(PlaceholderAPIHook.tryReplace(player, title));
 		this.player = player;
 	}
 
 	public VouchersBaseGUI(Gui parent, @NonNull final Player player, @NonNull String title) {
 		super(parent, title);
+		setTitle(PlaceholderAPIHook.tryReplace(player, title));
 		this.player = player;
 	}
 
 	public VouchersBaseGUI(@NonNull final Player player, @NonNull String title) {
 		super(title);
+		setTitle(PlaceholderAPIHook.tryReplace(player, title));
 		this.player = player;
 	}
 
