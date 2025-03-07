@@ -1,4 +1,4 @@
-package ca.tweetzy.vouchers.api;
+package ca.tweetzy.vouchers.api.sync;
 
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
