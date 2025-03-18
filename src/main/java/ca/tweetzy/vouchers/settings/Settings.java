@@ -23,6 +23,8 @@ import ca.tweetzy.flight.config.ConfigEntry;
 import ca.tweetzy.flight.settings.FlightSettings;
 import ca.tweetzy.vouchers.Vouchers;
 
+import java.util.Arrays;
+
 public final class Settings extends FlightSettings {
 
 
@@ -35,6 +37,16 @@ public final class Settings extends FlightSettings {
 	public static final ConfigEntry SHOW_VOUCHER_REWARD_INFO = create("show voucher reward info", true, "If true, vouchers will tell the player what they got");
 	public static final ConfigEntry PREVENT_REDEEM_WHILE_SNEAKING = create("prevent redeem while sneaking", false, "If true, players cannot redeem a voucher while shifting/sneaking");
 	public static final ConfigEntry BROADCAST_INDIVIDUAL_REWARDS = create("broadcast individual rewards", true, "If true, each reward will be broadcasted assuming you have a broadcast msg ");
+
+
+	public static final ConfigEntry TIME_ALIAS_YEAR = create("time aliases.year", Arrays.asList("y", "year", "years"), "Time aliases for year, Must be in lowercase.");
+	public static final ConfigEntry TIME_ALIAS_MONTH = create("time aliases.month", Arrays.asList("mo", "month", "months"), "Time aliases for month, Must be in lowercase.");
+	public static final ConfigEntry TIME_ALIAS_WEEK = create("time aliases.week", Arrays.asList("w", "week", "weeks"), "Time aliases for week, Must be in lowercase.");
+	public static final ConfigEntry TIME_ALIAS_DAY = create("time aliases.day", Arrays.asList("d", "day", "days"), "Time aliases for day, Must be in lowercase.");
+	public static final ConfigEntry TIME_ALIAS_HOUR = create("time aliases.hour", Arrays.asList("h", "hour", "hours"), "Time aliases for hour, Must be in lowercase.");
+	public static final ConfigEntry TIME_ALIAS_MINUTE = create("time aliases.minute", Arrays.asList("min", "minute", "minutes"), "Time aliases for minute, Must be in lowercase.");
+	public static final ConfigEntry TIME_ALIAS_SECOND = create("time aliases.second", Arrays.asList("s", "second", "seconds"), "Time aliases for second, Must be in lowercase.");
+
 
 	public static final ConfigEntry GUI_SHARED_ITEMS_BACK_BUTTON = create("gui.shared buttons.back button.item", CompMaterial.DARK_OAK_DOOR.name());
 	public static final ConfigEntry GUI_SHARED_ITEMS_EXIT_BUTTON = create("gui.shared buttons.exit button.item", CompMaterial.BARRIER.name());

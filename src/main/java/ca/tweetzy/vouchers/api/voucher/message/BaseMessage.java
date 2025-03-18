@@ -1,5 +1,6 @@
 package ca.tweetzy.vouchers.api.voucher.message;
 
+import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -19,5 +20,6 @@ public abstract class BaseMessage implements Message {
 		this.primaryContent = primaryContent;
 	}
 
-	protected abstract void send(final Player player);
+	public abstract void send(final Player player, Object... variables);
+
 }

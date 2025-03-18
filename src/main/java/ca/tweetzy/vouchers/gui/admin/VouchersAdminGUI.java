@@ -19,23 +19,30 @@
 package ca.tweetzy.vouchers.gui.admin;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import org.bukkit.entity.Player;
 
-public final class GUIVouchersAdmin extends VouchersBaseGUI {
+public final class VouchersAdminGUI extends VouchersBaseGUI {
 
-	public GUIVouchersAdmin(Player player) {
-		super(null, player, "&bVouchers", 3);
+	public VouchersAdminGUI(Player player) {
+		super(null, player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7v%s".formatted(Vouchers.getInstance().getVersion()), 6);
 		draw();
 	}
 
 	@Override
 	protected void draw() {
 
-		setButton(1, 1, QuickItem
+		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
+				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+		)));
+
+
+		setButton(2, 2, QuickItem
 				.of(CompMaterial.PAPER)
 				.name("&b&lVoucher List")
 				.lore(
@@ -45,38 +52,9 @@ public final class GUIVouchersAdmin extends VouchersBaseGUI {
 						"",
 						"&b&lClick &8» &7To view vouchers"
 				)
-				.make(), click -> {
+				.make(), click -> click.manager.showGUI(click.player, new VoucherListGUI(click.player)));
 
-		});
-
-		setButton(1, 4, QuickItem
-				.of(CompMaterial.KNOWLEDGE_BOOK)
-				.name("&b&lRedeem History")
-				.lore(
-						"&8View voucher redeems",
-						"&7You can view all the vouchers that were",
-						"&7were redeemed by players here",
-						"",
-						"&b&lClick &8» &7To view redeems"
-				)
-				.make(), click -> {
-		});
-
-		setButton(1, 7, QuickItem
-				.of(CompMaterial.REPEATER)
-				.name("&b&lCategories")
-				.lore(
-						"&8View voucher categories",
-						"&7You can view all the categories you",
-						"&7made to help filter vouchers.",
-						"",
-						"&b&lClick &8» &7To view categories"
-				)
-				.make(), click -> {
-		});
-
-
-		setButton(getRows() - 1, 8, QuickItem
+		setButton(getRows() - 2, 4, QuickItem
 				.of(CompMaterial.DIAMOND)
 				.name("&e&lPatreon")
 				.lore(

@@ -63,44 +63,7 @@ public final class Translations extends TranslationManager {
 			"&e&l%left_click% &7to go to next page"
 	);
 
-	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.confirm.title", "&bVouchers &8> &7Confirm Action");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_NAME = create("gui.confirm.items.yes.name", "&a&lconfirm");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_LORE = create("gui.confirm.items.yes.lore", "&b&lClick &8» &7To confirm action");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_NAME = create("gui.confirm.items.no.name", "&c&lCancel");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_LORE = create("gui.confirm.items.no.lore", "&b&lClick &8» &7To cancel action");
-
-	public static final TranslationEntry GUI_REWARD_SELECT_TITLE = create("gui.select reward.title", "&bVouchers &8> &7Select Reward");
-	public static final TranslationEntry GUI_REWARD_SELECT_CMD_NAME = create("gui.select reward.items.command.name", "&B&lCommand Reward");
-	public static final TranslationEntry GUI_REWARD_SELECT_CMD_LORE = create("gui.select reward.items.command.lore",
-			"&7Command&f: &b%reward_command%",
-			"&7Chance&F: &b%reward_chance%",
-			"",
-			"&b&lClick &8» &7To select this reward"
-	);
-
-	public static final TranslationEntry GUI_REWARD_SELECT_ITEM_LORE = create("gui.select reward.items.item.lore",
-			"&7Chance&F: &b%reward_chance%",
-			"",
-			"&b&lClick &8» &7To select this reward"
-	);
-
-	public static final TranslationEntry VOUCHER_REWARD_INFO_HEADER = create("info.reward.structure.header",
-			"<center><GRADIENT:fc67fa>&lVoucher Rewards</GRADIENT:f4c4f3>",
-			""
-	);
-
-	public static final TranslationEntry VOUCHER_REWARD_INFO_FOOTER = create("info.reward.structure.footer",
-			""
-
-	);
-
-	public static final TranslationEntry VOUCHER_REWARD_INFO_COMMAND = create("info.reward.command",
-			"<center>&a&l+ &e%reward_command%"
-	);
-
-	public static final TranslationEntry VOUCHER_REWARD_INFO_ITEM = create("info.reward.item",
-			"<center>&a&l+ &fx&7%item_quantity% &e%item_name%"
-	);
+	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.admin menus.voucher list.title", "%pl_name% &8> &7Listing Vouchers");
 
 
 	public static void init() {

@@ -60,7 +60,7 @@
         "type": "COMMAND",
         "command": "eco give %player% 1000",
         "chance": 100.0,
-        "delay": -1,
+        "delay": "-1",
         "messages": {
           "broadcast": [
             "&a%player% &ehas won $1000 from the voucher"

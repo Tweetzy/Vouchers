@@ -1,6 +1,7 @@
 package ca.tweetzy.vouchers.api.voucher;
 
 import ca.tweetzy.flight.comp.enums.CompSound;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 
 public interface VoucherSettings {
 
@@ -40,7 +41,11 @@ public interface VoucherSettings {
 
 	void setUseCooldown(final boolean useCooldown);
 
-	int getCooldown();
+	long getCooldown();
 
-	void setCooldown(final int seconds);
+	void setCooldown(final long seconds);
+
+	RewardMode getRewardMode();
+
+	void setRewardMode(final RewardMode rewardMode);
 }
