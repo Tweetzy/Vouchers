@@ -43,7 +43,18 @@ public final class VoucherListGUI extends VoucherUpdatingPagedGUI<Voucher> {
 				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
-		setButton(getRows() - 1, 4, QuickItem.of(CompMaterial.LIME_DYE).make(), click -> {
+		setButton(getRows() - 1, 4, QuickItem
+				.of(CompMaterial.LIME_DYE)
+				.name("<GRADIENT:77DD77>&lCreate Voucher</GRADIENT:C1E1C1>")
+				.lore(
+						"&8Used to create a voucher",
+						"&7You can also create a file in",
+						"&7the voucher-files folder",
+						"",
+						"&e&lClick",
+						"&7To create a new voucher"
+				)
+				.make(), click -> {
 			cancelTask();
 
 			UserInput.get(click.player, "<GRADIENT:B3EBF2>&lVoucher Creation</GRADIENT:AEC6CF>", "&eEnter id for voucher in chat", result -> {

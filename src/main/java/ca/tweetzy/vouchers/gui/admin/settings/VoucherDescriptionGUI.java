@@ -46,7 +46,7 @@ public class VoucherDescriptionGUI extends VoucherUpdatingPagedGUI<String> {
 		)));
 
 		setButton(getRows() - 1, 4, QuickItem.of(CompMaterial.LIME_DYE)
-				.name("<GRADIENT:B3EBF2>&LNew Line</GRADIENT:AEC6CF>")
+				.name("<GRADIENT:77DD77>&lNew Line</GRADIENT:C1E1C1>")
 				.lore(
 						"&8Used to add a new line",
 						"",

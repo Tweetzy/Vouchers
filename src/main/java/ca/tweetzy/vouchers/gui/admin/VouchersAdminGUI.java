@@ -44,7 +44,7 @@ public final class VouchersAdminGUI extends VouchersBaseGUI {
 
 		setButton(2, 2, QuickItem
 				.of(CompMaterial.PAPER)
-				.name("&b&lVoucher List")
+				.name("<GRADIENT:B3EBF2>&lVoucher List</GRADIENT:AEC6CF>")
 				.lore(
 						"&8View any created vouchers",
 						"&7You can view any vouchers that were",
