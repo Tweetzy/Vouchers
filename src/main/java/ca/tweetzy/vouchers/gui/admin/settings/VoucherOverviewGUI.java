@@ -7,6 +7,7 @@ import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import ca.tweetzy.vouchers.gui.admin.VoucherListGUI;
 import ca.tweetzy.vouchers.gui.admin.messages.VoucherMessageTypeGUI;
+import ca.tweetzy.vouchers.gui.admin.rewards.VoucherRewardListGUI;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -71,7 +72,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 						"&e&lLeft Click",
 						"&7To &aadd&7/&eedit&7/&cremove &7voucher messages"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageTypeGUI(click.player, this.voucher, this.voucher.getMessages())));
+				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageTypeGUI(click.player, this.voucher, this.voucher.getMessages(), false)));
 
 		setButton(3, 3, QuickItem
 				.of(CompMaterial.EXPERIENCE_BOTTLE)
@@ -84,9 +85,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 						"&e&lLeft Click",
 						"&7To &aadd&7/&eedit&7/&cremove &7voucher rewards"
 				)
-				.make(), click -> {
-
-		});
+				.make(), click -> click.manager.showGUI(click.player, new VoucherRewardListGUI(click.player, this.voucher)));
 
 
 		applyBackExit();

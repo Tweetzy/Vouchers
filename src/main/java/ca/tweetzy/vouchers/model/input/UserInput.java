@@ -13,25 +13,21 @@ public final class UserInput {
 			Player player,
 			String title,
 			String subTitle,
-			TitleInputSuccessCallback onSuccess,
+			TitleInputSuccessCallback<T> onSuccess,
 			TitleInputFailureCallback onFailure,
 			TitleInputExitCallback onExit,
 			Predicate<String> validation,
 			Function<String, T> transformer
 	) {
-		TitleInput input = new TitleInput(
-				Vouchers.getInstance(),
-				player,
-				title,
-				subTitle
-		) {
+		new TitleInput(Vouchers.getInstance(), player, title, subTitle) {
 			@Override
 			public boolean onResult(String string) {
 				if (validation.test(string)) {
-					onSuccess.onSuccess(string);
+					T transformed = transformer.apply(string);
+					onSuccess.onSuccess(transformed);
 					return true;
 				}
-				onFailure.onFailure();
+				onFailure.onFailure(string);
 				return false;
 			}
 
@@ -46,20 +42,11 @@ public final class UserInput {
 			Player player,
 			String title,
 			String subTitle,
-			TitleInputSuccessCallback onSuccess,
+			TitleInputSuccessCallback<String> onSuccess,
 			TitleInputFailureCallback onFailure,
 			TitleInputExitCallback onExit,
 			Predicate<String> validation
 	) {
-		get(
-				player,
-				title,
-				subTitle,
-				onSuccess,
-				onFailure,
-				onExit,
-				validation,
-				Function.identity()
-		);
+		get(player, title, subTitle, onSuccess, onFailure, onExit, validation, Function.identity());
 	}
 }

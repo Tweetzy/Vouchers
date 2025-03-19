@@ -31,12 +31,14 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 	private MessageType messageType;
 
 	private Message lastClickedMessage;
+	private final boolean fromRewards;
 
-	public VoucherMessageListGUI(@NonNull Player player, Voucher voucher, List<Message> messageList, MessageType messageType) {
-		super(new VoucherMessageTypeGUI(player, voucher, messageList), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Edit Messages", 6, new ArrayList<>(messageList));
+	public VoucherMessageListGUI(@NonNull Player player, Voucher voucher, List<Message> messageList, MessageType messageType, boolean fromRewards) {
+		super(new VoucherMessageTypeGUI(player, voucher, messageList, fromRewards), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Edit Messages", 6, new ArrayList<>(messageList));
 		this.voucher = voucher;
 		this.messages = messageList;
 		this.messageType = messageType;
+		this.fromRewards =fromRewards;
 		draw();
 	}
 
@@ -71,7 +73,7 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 								case BROADCAST -> this.messages.add(new VoucherBroadcastMessage(result));
 							}
 
-							this.voucher.sync((synchronizeResult) -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType)));
+							this.voucher.sync((synchronizeResult) -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards)));
 						} else {
 							UserInput.get(
 									click.player,
@@ -83,7 +85,7 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 												subtitle,
 												20, 20, 20
 										));
-										this.voucher.sync((synchronizeResult) -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType)));
+										this.voucher.sync((synchronizeResult) -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards)));
 									},
 									null,
 									() -> click.manager.showGUI(click.player, VoucherMessageListGUI.this),
@@ -142,7 +144,7 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 		if (clickEvent.clickType == ClickType.LEFT) {
 			handleSwap(message);
 			saveVoucher();
-		} else if(clickEvent.clickType == ClickType.RIGHT) {
+		} else if (clickEvent.clickType == ClickType.RIGHT) {
 			final BaseMessage msg = (BaseMessage) message;
 			msg.send(clickEvent.player, "player", player.getName());
 		} else if (clickEvent.clickType == ClickType.DROP) {

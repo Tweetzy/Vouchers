@@ -1,5 +1,5 @@
 package ca.tweetzy.vouchers.model.input;
 
-public interface TitleInputSuccessCallback {
-    void onSuccess(String result);
+public interface TitleInputSuccessCallback<T> {
+    void onSuccess(T result);
 }

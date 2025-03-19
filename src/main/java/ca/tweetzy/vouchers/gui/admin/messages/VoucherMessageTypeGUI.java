@@ -7,6 +7,7 @@ import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.message.Message;
 import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
+import ca.tweetzy.vouchers.gui.admin.rewards.VoucherRewardListGUI;
 import ca.tweetzy.vouchers.gui.admin.settings.VoucherOverviewGUI;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -18,10 +19,13 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 	private final Voucher voucher;
 	private final List<Message> messageList;
 
-	public VoucherMessageTypeGUI(@NonNull Player player, @NonNull final Voucher voucher, List<Message> messageList) {
-		super(new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Voucher Messages", 5);
+	private final boolean fromRewards;
+
+	public VoucherMessageTypeGUI(@NonNull Player player, @NonNull final Voucher voucher, List<Message> messageList, boolean fromRewards) {
+		super(fromRewards ? new VoucherRewardListGUI(player, voucher) : new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Voucher Messages", 5);
 		this.voucher = voucher;
 		this.messageList = messageList;
+		this.fromRewards = fromRewards;
 		draw();
 	}
 
@@ -32,7 +36,7 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 		)));
 
 		// broadcast
-		setButton(2,2, QuickItem
+		setButton(2, 2, QuickItem
 				.of(CompMaterial.NAUTILUS_SHELL)
 				.name("<GRADIENT:fc67fa>&lBroadcast Messages</GRADIENT:f4c4f3>")
 				.lore(
@@ -43,10 +47,10 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 						"&e&lClick",
 						"&7To &aadd&7/&cremove &7broadcast messages"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.voucher.getMessages(), MessageType.BROADCAST)));
+				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messageList, MessageType.BROADCAST, this.fromRewards)));
 
 		// chat
-		setButton(2,3, QuickItem
+		setButton(2, 3, QuickItem
 				.of(CompMaterial.NAME_TAG)
 				.name("<GRADIENT:fc67fa>&LChat Messages</GRADIENT:f4c4f3>")
 				.lore(
@@ -57,10 +61,10 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 						"&e&lClick",
 						"&7To &aadd&7/&cremove &7chat messages"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.voucher.getMessages(), MessageType.CHAT)));
+				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messageList, MessageType.CHAT, this.fromRewards)));
 
 		// action bar
-		setButton(2,5, QuickItem
+		setButton(2, 5, QuickItem
 				.of(CompMaterial.REPEATER)
 				.name("<GRADIENT:fc67fa>&LAction Bar Messages</GRADIENT:f4c4f3>")
 				.lore(
@@ -71,10 +75,10 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 						"&e&lClick",
 						"&7To &aadd&7/&cremove &7action bar messages"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.voucher.getMessages(), MessageType.ACTION_BAR)));
+				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messageList, MessageType.ACTION_BAR, this.fromRewards)));
 
 		// titles
-		setButton(2,6, QuickItem
+		setButton(2, 6, QuickItem
 				.of(CompMaterial.ENCHANTED_BOOK)
 				.name("<GRADIENT:fc67fa>&lTitle Messages</GRADIENT:f4c4f3>")
 				.lore(
@@ -85,7 +89,7 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 						"&e&lClick",
 						"&7To &aadd&7/&cremove &7title messages"
 				)
-				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.voucher.getMessages(), MessageType.TITLE)));
+				.make(), click -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messageList, MessageType.TITLE, this.fromRewards)));
 
 		applyBackExit();
 	}
