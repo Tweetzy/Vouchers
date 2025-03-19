@@ -22,6 +22,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -156,7 +157,7 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 						));
 					} else {
 						rewardList.add(new ItemReward(
-								QuickItem.of(rewardObject.get("item").getAsString()).make(),
+								QuickItem.getItem(rewardObject.get("item").getAsString()),
 								chance,
 								delay,
 								rewardMessages
@@ -168,7 +169,7 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 
 		return new StandardVoucher(
 				voucherId,
-				object.has("item") ? object.get("item").getAsString(): "PAPER",
+				object.has("item") ? object.get("item").getAsString() : "PAPER",
 				displayName,
 				description,
 				options,

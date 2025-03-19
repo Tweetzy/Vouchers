@@ -22,7 +22,7 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 	private final boolean fromRewards;
 
 	public VoucherMessageTypeGUI(@NonNull Player player, @NonNull final Voucher voucher, List<Message> messageList, boolean fromRewards) {
-		super(fromRewards ? new VoucherRewardListGUI(player, voucher) : new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Voucher Messages", 5);
+		super(fromRewards ? new VoucherRewardListGUI(player, voucher) : new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Voucher Messages", 5);
 		this.voucher = voucher;
 		this.messageList = messageList;
 		this.fromRewards = fromRewards;
@@ -32,13 +32,13 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 	@Override
 	protected void draw() {
 		InventoryBorder.getBorders(5).forEach(slot -> setItem(slot, QuickItem.bg(
-				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
 		// broadcast
 		setButton(2, 2, QuickItem
 				.of(CompMaterial.NAUTILUS_SHELL)
-				.name("<GRADIENT:fc67fa>&lBroadcast Messages</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lBroadcast Messages</GRADIENT:AEC6CF>")
 				.lore(
 						"&8These messages are sent to everyone",
 						"",
@@ -52,7 +52,7 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 		// chat
 		setButton(2, 3, QuickItem
 				.of(CompMaterial.NAME_TAG)
-				.name("<GRADIENT:fc67fa>&LChat Messages</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LChat Messages</GRADIENT:AEC6CF>")
 				.lore(
 						"&8These messages are sent to the player's chat.",
 						"",
@@ -66,7 +66,7 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 		// action bar
 		setButton(2, 5, QuickItem
 				.of(CompMaterial.REPEATER)
-				.name("<GRADIENT:fc67fa>&LAction Bar Messages</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LAction Bar Messages</GRADIENT:AEC6CF>")
 				.lore(
 						"&8These messages are sent to the action bar",
 						"",
@@ -80,7 +80,7 @@ public final class VoucherMessageTypeGUI extends VouchersBaseGUI {
 		// titles
 		setButton(2, 6, QuickItem
 				.of(CompMaterial.ENCHANTED_BOOK)
-				.name("<GRADIENT:fc67fa>&lTitle Messages</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lTitle Messages</GRADIENT:AEC6CF>")
 				.lore(
 						"&8These are titles sent to the player",
 						"",

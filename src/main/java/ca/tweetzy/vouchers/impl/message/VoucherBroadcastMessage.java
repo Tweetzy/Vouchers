@@ -1,13 +1,11 @@
 package ca.tweetzy.vouchers.impl.message;
 
 import ca.tweetzy.flight.utils.Common;
-import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.message.BaseMessage;
 import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.hook.PAPIHook;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public final class VoucherBroadcastMessage extends BaseMessage {

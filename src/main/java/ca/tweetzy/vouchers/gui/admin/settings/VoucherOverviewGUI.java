@@ -16,7 +16,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 	private final Voucher voucher;
 
 	public VoucherOverviewGUI(@NonNull Player player, @NonNull final Voucher voucher) {
-		super(new VoucherListGUI(player), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Editing", 6);
+		super(new VoucherListGUI(player), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Editing", 6);
 		this.voucher = voucher;
 		draw();
 	}
@@ -25,17 +25,17 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 	protected void draw() {
 		// border
 		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
-				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
 		// item/icon
 		setButton(2, 2, QuickItem
 				.of(this.voucher.getItem())
-				.name("<GRADIENT:fc67fa>&LVoucher Item</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LVoucher Item</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to change the voucher icon/item",
 						"",
-						"&e&lDrag on drop",
+						"&e&lDrag N' Drop",
 						"&7An item on this button to change icon",
 						"",
 						"&b&LOR",
@@ -50,7 +50,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 		// OPTIONS
 		setButton(2, 4, QuickItem
 				.of(CompMaterial.REPEATER)
-				.name("<GRADIENT:fc67fa>&LSettings</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LSettings</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to adjust voucher settings",
 						"&7You can also adjust the options in",
@@ -63,7 +63,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 
 		setButton(2, 6, QuickItem
 				.of(CompMaterial.PAPER)
-				.name("<GRADIENT:fc67fa>&LMessages</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LMessages</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to adjust voucher messages",
 						"&7These messages are completely independent",
@@ -76,7 +76,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 
 		setButton(3, 3, QuickItem
 				.of(CompMaterial.EXPERIENCE_BOTTLE)
-				.name("<GRADIENT:fc67fa>&LRewards</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LRewards</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to adjust voucher rewards",
 						"&7There are two types of rewards you",

@@ -5,11 +5,11 @@ import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
-import ca.tweetzy.flight.utils.input.TitleInput;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VoucherUpdatingPagedGUI;
+import ca.tweetzy.vouchers.model.input.UserInput;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -24,7 +24,7 @@ public class VoucherDescriptionGUI extends VoucherUpdatingPagedGUI<String> {
 	private String lastClickedDescription;
 
 	public VoucherDescriptionGUI(@NonNull final Player player, @NonNull final Voucher voucher) {
-		super(new VoucherSettingsGUI(player, voucher), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Edit Description", 6, 20, new ArrayList<>());
+		super(new VoucherSettingsGUI(player, voucher), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Edit Description", 6, 20, new ArrayList<>());
 		this.voucher = voucher;
 
 		setOnOpen(open -> startTask());
@@ -42,11 +42,11 @@ public class VoucherDescriptionGUI extends VoucherUpdatingPagedGUI<String> {
 	protected void drawFixed() {
 		// border
 		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
-				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
 		setButton(getRows() - 1, 4, QuickItem.of(CompMaterial.LIME_DYE)
-				.name("<GRADIENT:fc67fa>&LNew Line</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LNew Line</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to add a new line",
 						"",
@@ -56,21 +56,12 @@ public class VoucherDescriptionGUI extends VoucherUpdatingPagedGUI<String> {
 				.make(), click -> {
 
 			click.gui.close();
-			new TitleInput(Vouchers.getInstance(), click.player, "voucher settings", "enter desc") {
 
-				@Override
-				public void onExit(Player player) {
-					click.manager.showGUI(click.player, VoucherDescriptionGUI.this);
-				}
-
-				@Override
-				public boolean onResult(String string) {
-					voucher.getDescription().add(string);
-					saveVoucher();
-					click.manager.showGUI(click.player, new VoucherDescriptionGUI(click.player, voucher));
-					return true;
-				}
-			};
+			UserInput.get(click.player, "<GRADIENT:B3EBF2>&lVoucher Edit</GRADIENT:AEC6CF>", "&eEnter description in chat", result -> {
+				voucher.getDescription().add(result);
+				saveVoucher();
+				click.manager.showGUI(click.player, new VoucherDescriptionGUI(click.player, voucher));
+			}, null, () -> click.manager.showGUI(click.player, new VoucherDescriptionGUI(click.player, voucher)), validate -> !validate.isEmpty());
 		});
 
 		applyBackExit();

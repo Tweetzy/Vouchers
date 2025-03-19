@@ -28,7 +28,7 @@ import java.util.Arrays;
 public final class Settings extends FlightSettings {
 
 
-	public static final ConfigEntry PREFIX = create("prefix", "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»", "The global prefix for the plugin");
+	public static final ConfigEntry PREFIX = create("prefix", "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8»", "The global prefix for the plugin");
 	public static final ConfigEntry LANGUAGE = create("language", "en_us", "The default language for the plugin");
 	public static final ConfigEntry REWARD_PICK_IS_GUARANTEED = create("reward select always gives", true, "If true, the reward picker menu will ignore reward chances");
 	public static final ConfigEntry HAVING_VOUCHER_PERM_BLOCKS_USAGE = create("voucher permission blocks usage", false, "If true, anyone can redeem a voucher, but if they have the permission, it prevents redeems");

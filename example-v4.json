@@ -1,6 +1,5 @@
 {
   "item": "PAPER:5",
-
   "appearance": {
     "display_name": "&7Epic Voucher",
     "description": [
@@ -10,28 +9,23 @@
     ],
     "glow": true
   },
-
   "permissions": {
     "requires_permission": false,
     "use_permission": "vouchers.use.example"
   },
-
   "sounds": {
     "play_sound": true,
     "use_sound": "EXPERIENCE_ORB_PICKUP"
   },
-
   "usage": {
     "remove_on_use": true,
     "ask_for_confirm": true,
     "maximum_uses": -1,
-
     "cooldown:": {
       "use_cooldown": false,
       "cooldown_time": "10 seconds"
     }
   },
-
   "messages": {
     "broadcast": [
       "&a%player% &ehas redeemed the voucher&f: %voucher_display_name%"
@@ -52,7 +46,6 @@
       }
     ]
   },
-
   "reward_options": {
     "reward_mode": "AUTOMATIC",
     "rewards": [

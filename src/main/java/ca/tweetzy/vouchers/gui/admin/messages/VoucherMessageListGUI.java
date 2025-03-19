@@ -34,11 +34,11 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 	private final boolean fromRewards;
 
 	public VoucherMessageListGUI(@NonNull Player player, Voucher voucher, List<Message> messageList, MessageType messageType, boolean fromRewards) {
-		super(new VoucherMessageTypeGUI(player, voucher, messageList, fromRewards), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Edit Messages", 6, new ArrayList<>(messageList));
+		super(new VoucherMessageTypeGUI(player, voucher, messageList, fromRewards), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Edit Messages", 6, new ArrayList<>(messageList));
 		this.voucher = voucher;
 		this.messages = messageList;
 		this.messageType = messageType;
-		this.fromRewards =fromRewards;
+		this.fromRewards = fromRewards;
 		draw();
 	}
 
@@ -51,13 +51,13 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 	protected void drawFixed() {
 		// border
 		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
-				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
 		// add button
 		setButton(getRows() - 1, 4, QuickItem
 				.of(CompMaterial.LIME_DYE)
-				.name("<GRADIENT:fc67fa>&LAdd Message</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&LAdd Message</GRADIENT:AEC6CF>")
 				.make(), click -> {
 
 			//
@@ -121,7 +121,7 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 		));
 
 		if (baseMessage instanceof VoucherTitleMessage titleMessage) {
-			name = "<GRADIENT:fc67fa>&LTitle Message</GRADIENT:f4c4f3>";
+			name = "<GRADIENT:B3EBF2>&LTitle Message</GRADIENT:AEC6CF>";
 			lore.addAll(0, List.of(
 					"&7Title&f: ",
 					"%s".formatted(titleMessage.getPrimaryContent().isEmpty() ? "&cNot Set" : titleMessage.getPrimaryContent()),

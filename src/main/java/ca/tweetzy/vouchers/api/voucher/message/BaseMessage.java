@@ -1,6 +1,5 @@
 package ca.tweetzy.vouchers.api.voucher.message;
 
-import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;

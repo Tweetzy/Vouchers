@@ -9,12 +9,11 @@ import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.MathUtil;
 import ca.tweetzy.flight.utils.QuickItem;
-import ca.tweetzy.flight.utils.input.TitleInput;
-import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import ca.tweetzy.vouchers.model.TimeConverter;
+import ca.tweetzy.vouchers.model.input.UserInput;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.ChatColor;
@@ -26,7 +25,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 	private final Voucher voucher;
 
 	public VoucherSettingsGUI(@NonNull Player player, @NonNull final Voucher voucher) {
-		super(new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Voucher Settings", 6);
+		super(new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Voucher Settings", 6);
 		this.voucher = voucher;
 		draw();
 	}
@@ -34,7 +33,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 	@Override
 	protected void draw() {
 		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
-				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
 		// glow
@@ -62,7 +61,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 	private void drawGlowButton() {
 		setButton(2, 2, QuickItem
 				.of(this.voucher.getSettings().useGlow() ? CompMaterial.GLOW_ITEM_FRAME : CompMaterial.ITEM_FRAME)
-				.name("<GRADIENT:fc67fa>&lVoucher Glow</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lVoucher Glow</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to toggle voucher glow",
 						"&7(!) Some items cannot have a glow.",
@@ -88,7 +87,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 	private void drawNameButton() {
 		setButton(2, 3, QuickItem
 				.of(CompMaterial.NAME_TAG)
-				.name("<GRADIENT:fc67fa>&lVoucher Display Name</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lVoucher Display Name</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to change voucher display name",
 						"&7This is just the actual name",
@@ -99,35 +98,29 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 						"&e&lClick",
 						"&7To change voucher display name"
 				)
-				.make(), click -> new TitleInput(Vouchers.getInstance(), click.player, "voucher settings", "enter name") {
-			@Override
-			public void onExit(Player player) {
-				click.manager.showGUI(click.player, VoucherSettingsGUI.this);
-			}
+				.make(), click -> {
 
-			@Override
-			public boolean onResult(String string) {
+			UserInput.get(click.player, "<GRADIENT:B3EBF2>&lVoucher Edit</GRADIENT:AEC6CF>", "&eEnter name in chat", result -> {
 				final String lastValue = voucher.getDisplayName();
-				voucher.setDisplayName(string);
+				voucher.setDisplayName(result);
 
-				voucher.sync(result -> {
-					if (result == SynchronizeResult.SUCCESS)
+				voucher.sync(saveStatus -> {
+					if (saveStatus == SynchronizeResult.SUCCESS)
 						click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
 					else {
 						voucher.setDisplayName(lastValue);
 						click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
 					}
 				});
+			}, null, () -> click.manager.showGUI(click.player, VoucherSettingsGUI.this), validate -> !validate.isEmpty());
 
-				return true;
-			}
 		});
 	}
 
 	private void drawDescButton() {
 		setButton(2, 4, QuickItem
 				.of(CompMaterial.WRITABLE_BOOK)
-				.name("<GRADIENT:fc67fa>&lVoucher Description</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lVoucher Description</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to change voucher description",
 						"&7This is just the lore that is applied",
@@ -148,7 +141,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 	private void drawPermissionButton() {
 		setButton(2, 5, QuickItem
 				.of(CompMaterial.PAPER)
-				.name("<GRADIENT:fc67fa>&lVoucher Permissions</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lVoucher Permissions</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to change/enable permissions",
 						"",
@@ -179,39 +172,28 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 			}
 
 			click.gui.close();
-			new TitleInput(Vouchers.getInstance(), click.player, "Voucher Settings", "Enter permission") {
 
-				@Override
-				public void onExit(Player player) {
-					click.manager.showGUI(click.player, VoucherSettingsGUI.this);
-				}
+			UserInput.get(click.player, "<GRADIENT:B3EBF2>&lVoucher Edit</GRADIENT:AEC6CF>", "&eEnter permission into chat", result -> {
+				final String lastValuePerm = voucher.getSettings().getPermission();
+				voucher.getSettings().setPermission(result);
 
-				@Override
-				public boolean onResult(String string) {
-					string = ChatColor.stripColor(string).toLowerCase();
+				voucher.sync(saveStatus -> {
+					if (saveStatus == SynchronizeResult.SUCCESS)
+						click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
+					else {
+						voucher.getSettings().setPermission(lastValuePerm);
+						click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
+					}
+				});
 
-					final String lastValuePerm = voucher.getSettings().getPermission();
-					voucher.getSettings().setPermission(string);
-
-					voucher.sync(result -> {
-						if (result == SynchronizeResult.SUCCESS)
-							click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
-						else {
-							voucher.getSettings().setPermission(lastValuePerm);
-							click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
-						}
-					});
-
-					return true;
-				}
-			};
+			}, null, () -> click.manager.showGUI(click.player, VoucherSettingsGUI.this), validate -> !validate.isEmpty(), transform -> ChatColor.stripColor(transform.toLowerCase()).replaceAll("\\s", ""));
 		});
 	}
 
 	private void drawSoundsButton() {
 		setButton(2, 6, QuickItem
 				.of(CompMaterial.JUKEBOX)
-				.name("<GRADIENT:fc67fa>&lVoucher Sounds</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lVoucher Sounds</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to change/enable sounds",
 						"",
@@ -242,7 +224,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 			}
 
 			CompSound lastSound = this.voucher.getSettings().getSound();
-			click.manager.showGUI(click.player, new SoundPickerGUI(this, "<GRADIENT:fc67fa>&LVouchers/GRADIENT:f4c4f3> &8» &7Sound Picker", null, (unused, soundClicked) -> {
+			click.manager.showGUI(click.player, new SoundPickerGUI(this, Common.colorize("<GRADIENT:B3EBF2>&LVouchers/GRADIENT:B3EBF2> &8» &7Sound Picker"), null, (unused, soundClicked) -> {
 				this.voucher.getSettings().setSound(soundClicked);
 
 				this.voucher.sync(result -> {
@@ -259,7 +241,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 	private void drawRemoveOnUseButton() {
 		setButton(3, 2, QuickItem
 				.of(this.voucher.getSettings().isRemoveOnUse() ? CompMaterial.HOPPER : CompMaterial.HOPPER_MINECART)
-				.name("<GRADIENT:fc67fa>&lRemove On Use</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lRemove On Use</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to toggle remove on use",
 						"&7This just means the voucher is taken from",
@@ -286,7 +268,7 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 	private void drawAskForConfirm() {
 		setButton(3, 3, QuickItem
 				.of(this.voucher.getSettings().isAskForConfirm() ? CompMaterial.ENDER_PEARL : CompMaterial.ENDER_EYE)
-				.name("<GRADIENT:fc67fa>&lAsk for Confirm</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lAsk for Confirm</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to toggle ask for confirm",
 						"&7If enabled, players will need to confirm",
@@ -312,8 +294,8 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 
 	private void drawMaxUses() {
 		setButton(3, 5, QuickItem
-				.of( CompMaterial.ANVIL)
-				.name("<GRADIENT:fc67fa>&lMax Uses</GRADIENT:f4c4f3>")
+				.of(CompMaterial.ANVIL)
+				.name("<GRADIENT:B3EBF2>&lMax Uses</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to limit max uses",
 						"&7This is the hard limit on how many times",
@@ -329,44 +311,28 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 				.make(), click -> {
 
 			click.gui.close();
-			new TitleInput(Vouchers.getInstance(), click.player, "&7voucher settings", "&emax uses") {
 
-				@Override
-				public void onExit(Player player) {
+			UserInput.get(click.player, "<GRADIENT:B3EBF2>&lVoucher Edit</GRADIENT:AEC6CF>", "&eEnter max uses in chat", newMaxUses -> {
+				final int lastValue = voucher.getSettings().getMaximumUses();
+
+				voucher.getSettings().setMaximumUses(newMaxUses);
+				voucher.sync(result -> {
+					if (result == SynchronizeResult.SUCCESS)
+						drawMaxUses();
+					else
+						voucher.getSettings().setMaximumUses(lastValue);
+
 					click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
-				}
+				});
 
-				@Override
-				public boolean onResult(String string) {
-					string = ChatColor.stripColor(string);
-					if (!MathUtil.isInt(string)) {
-						Common.tell(player, TranslationManager.string(Translations.NOT_A_NUMBER, "value", string));
-						return false;
-					}
-
-					final int newMaxUses = Integer.parseInt(string);
-					final int lastValue = voucher.getSettings().getMaximumUses();
-
-					voucher.getSettings().setMaximumUses(newMaxUses);
-					voucher.sync(result -> {
-						if (result == SynchronizeResult.SUCCESS)
-							drawMaxUses();
-						else
-							voucher.getSettings().setMaximumUses(lastValue);
-
-						click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
-					});
-
-					return true;
-				}
-			};
+			}, fail -> Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, "value", fail)), () -> click.manager.showGUI(click.player, VoucherSettingsGUI.this), MathUtil::isInt, Integer::parseInt);
 		});
 	}
 
 	private void drawCooldown() {
 		setButton(3, 6, QuickItem
 				.of(CompMaterial.SNOWBALL)
-				.name("<GRADIENT:fc67fa>&lVoucher Cooldown</GRADIENT:f4c4f3>")
+				.name("<GRADIENT:B3EBF2>&lVoucher Cooldown</GRADIENT:AEC6CF>")
 				.lore(
 						"&8Used to change/enable cooldowns",
 						"",
@@ -396,32 +362,22 @@ public final class VoucherSettingsGUI extends VouchersBaseGUI {
 			}
 
 			click.gui.close();
-			new TitleInput(Vouchers.getInstance(), click.player, "&7voucher settings", "&cooldown", "Ex. 1 second, 3 days, 2 days 12 hours, etc") {
 
-				@Override
-				public void onExit(Player player) {
-					click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
-				}
 
-				@Override
-				public boolean onResult(String string) {
-					string = ChatColor.stripColor(string).toLowerCase();
+			UserInput.get(click.player, "<GRADIENT:B3EBF2>&lVoucher Edit</GRADIENT:AEC6CF>", "&eEnter cooldown in chat (ex. 1 second)", input -> {
+				final long lastValue = voucher.getSettings().getCooldown();
+				voucher.getSettings().setCooldown(TimeConverter.convertHumanReadableTime(input) / 1000);
 
-					final long lastValue = voucher.getSettings().getCooldown();
-					voucher.getSettings().setCooldown(TimeConverter.convertHumanReadableTime(string)/1000);
+				voucher.sync(result -> {
+					if (result == SynchronizeResult.SUCCESS)
+						click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
+					else {
+						voucher.getSettings().setCooldown(lastValue);
+						click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
+					}
+				});
 
-					voucher.sync(result -> {
-						if (result == SynchronizeResult.SUCCESS)
-							click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
-						else {
-							voucher.getSettings().setCooldown(lastValue);
-							click.manager.showGUI(click.player, new VoucherSettingsGUI(click.player, voucher));
-						}
-					});
-
-					return true;
-				}
-			};
+			}, null, () -> click.manager.showGUI(click.player, VoucherSettingsGUI.this), validate -> !validate.isEmpty(), transform -> ChatColor.stripColor(transform.toLowerCase()).replaceAll("\\s", ""));
 		});
 	}
 }

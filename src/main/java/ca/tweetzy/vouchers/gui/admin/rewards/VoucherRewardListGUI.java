@@ -20,6 +20,7 @@ import ca.tweetzy.vouchers.model.TimeConverter;
 import ca.tweetzy.vouchers.model.input.UserInput;
 import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,10 +32,11 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 	private final Voucher voucher;
 
 	public VoucherRewardListGUI(@NonNull Player player, @NonNull final Voucher voucher) {
-		super(new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7Edit Rewards", 6, 20, new ArrayList<>());
+		super(new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Edit Rewards", 6, 20, new ArrayList<>());
 		this.voucher = voucher;
 		setOnOpen(open -> startTask());
 		applyClose();
+		setAcceptsItems(true);
 		draw();
 	}
 
@@ -46,11 +48,41 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 	@Override
 	protected void drawFixed() {
 		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
-				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
-		// new reward
+		setButton(getRows() - 1, 4, QuickItem
+				.of(CompMaterial.LIME_DYE)
+				.name("<GRADIENT:77DD77>&lAdd Reward</GRADIENT:C1E1C1>")
+				.lore(
+						"&8Used to add a new reward",
+						"&7You can add two different types of rewards",
+						"&7either a &eItem &7or &eCommand &7reward.",
+						"",
+						"&e&lClick",
+						"&7To create a new command reward",
+						"",
+						"&e&lDrag N' Drop",
+						"&7An item onto this button to create an item reward"
+				)
+				.make(), click -> {
 
+			final ItemStack cursor = click.cursor;
+			if (cursor != null && cursor.getType() != CompMaterial.AIR.parseMaterial()) {
+				this.voucher.getRewards().add(new ItemReward(cursor, 100, 0, new ArrayList<>()));
+				saveAndReOpen(click.player, false);
+				draw();
+			} else {
+				cancelTask();
+				UserInput.get(click.player, "voucher", "command", result -> {
+					this.voucher.getRewards().add(new CommandReward(ChatColor.stripColor(result), 100, 0, new ArrayList<>()));
+					saveAndReOpen(click.player);
+				}, null, () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), validate -> !validate.isEmpty());
+
+			}
+		});
+
+		// new reward
 		applyBackExit();
 	}
 
@@ -65,7 +97,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 		}
 
 		if (reward instanceof final CommandReward commandReward) {
-			item.name("<GRADIENT:fc67fa>&LCommand Reward</GRADIENT:f4c4f3>");
+			item.name("<GRADIENT:B3EBF2>&LCommand Reward</GRADIENT:AEC6CF>");
 			lore.addAll(List.of(
 					"&8This is a command reward.",
 					"",
@@ -99,7 +131,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 
 	@Override
 	protected void onClick(Reward reward, GuiClickEvent click) {
-		switch(click.clickType) {
+		switch (click.clickType) {
 			case LEFT -> {
 				cancelTask();
 				UserInput.get(click.player, "reward edit", "enter chance in chat", result -> {
@@ -124,11 +156,16 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 	}
 
 	private void saveAndReOpen(@NonNull final Player player) {
+		saveAndReOpen(player, true);
+	}
+
+	private void saveAndReOpen(@NonNull final Player player, boolean open) {
 		this.voucher.sync(result -> {
 			if (result == SynchronizeResult.FAILURE)
 				Common.tell(this.player, "&cSomething went wrong while saving the voucher.");
 
-			Vouchers.getGuiManager().showGUI(player, new VoucherRewardListGUI(player, this.voucher));
+			if (open)
+				Vouchers.getGuiManager().showGUI(player, new VoucherRewardListGUI(player, this.voucher));
 		});
 	}
 

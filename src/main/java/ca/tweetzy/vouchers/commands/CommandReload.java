@@ -38,7 +38,7 @@ public final class CommandReload extends Command {
 	protected ReturnType execute(CommandSender sender, String... args) {
 		Settings.init();
 		Translations.init();
-		Common.setPrefix(Settings.PREFIX.getStringOr("<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8»"));
+		Common.setPrefix(Settings.PREFIX.getStringOr("<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8»"));
 		tell(sender, "&aSuccessfully reloaded all configuration files.");
 
 		return ReturnType.SUCCESS;

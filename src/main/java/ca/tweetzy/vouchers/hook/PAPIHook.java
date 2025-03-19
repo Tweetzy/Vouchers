@@ -18,7 +18,6 @@
 
 package ca.tweetzy.vouchers.hook;
 
-import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.model.FlagExtractor;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;

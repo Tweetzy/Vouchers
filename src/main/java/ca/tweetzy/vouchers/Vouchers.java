@@ -41,6 +41,8 @@ import ca.tweetzy.vouchers.settings.Translations;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
+import com.google.gson.JsonParseException;
+import com.google.gson.stream.MalformedJsonException;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
@@ -82,7 +84,7 @@ public final class Vouchers extends FlightPlugin {
 		Translations.init();
 
 		Common.setPrefix(Settings.PREFIX.getString());
-		Common.setPluginName("<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3>");
+		Common.setPluginName("<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF>");
 
 		// Set up the database if enabled
 		this.databaseConnector = new SQLiteConnector(this);
@@ -131,7 +133,7 @@ public final class Vouchers extends FlightPlugin {
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 					return;
-				}catch (ClosedWatchServiceException e) {
+				} catch (ClosedWatchServiceException e) {
 					// Handle the exception during shutdown
 					if (shuttingDown) {
 						return;
@@ -160,32 +162,37 @@ public final class Vouchers extends FlightPlugin {
 					if (fileName.endsWith(".json")) {
 						final String normalFileName = fileName.replace(".json", "");
 
-						if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
-							try {
-								final Voucher voucher = this.voucherManager.loadVoucherFromFile(filePath.toFile());
+						try {
+							if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+								try {
+									final Voucher voucher = this.voucherManager.loadVoucherFromFile(filePath.toFile());
 
-								if (voucher != null && !this.voucherManager.getManagerContent().containsKey(normalFileName)) {
-									this.voucherManager.add(normalFileName, voucher);
+									if (voucher != null && !this.voucherManager.getManagerContent().containsKey(normalFileName)) {
+										this.voucherManager.add(normalFileName, voucher);
+									}
+								} catch (IllegalStateException ignored) {
 								}
-							} catch (IllegalStateException ignored) {
+
+							} else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
+								lastModifiedTimes.remove(normalFileName);
+							} else if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+								try {
+									// Check if the file was modified recently
+									long currentTime = System.currentTimeMillis();
+									if (lastModifiedTimes.containsKey(fileName) && currentTime - lastModifiedTimes.get(fileName) < 500) {
+										continue;
+									}
+
+									final Voucher voucher = this.voucherManager.loadVoucherFromFile(filePath.toFile());
+									if (voucher != null) {
+										this.voucherManager.remove(normalFileName);
+										this.voucherManager.add(normalFileName, voucher);
+									}
+								} catch (IllegalStateException ignored) {
+								}
 							}
+						}catch (Exception ignored) {
 
-						} else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-							lastModifiedTimes.remove(normalFileName);
-						} else if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
-							try {
-								// Check if the file was modified recently
-								long currentTime = System.currentTimeMillis();
-								if (lastModifiedTimes.containsKey(fileName) && currentTime - lastModifiedTimes.get(fileName) < 500) {
-									continue;
-								}
-
-								final Voucher voucher = this.voucherManager.loadVoucherFromFile(filePath.toFile());
-								if (voucher != null) {
-									this.voucherManager.remove(normalFileName);
-									this.voucherManager.add(normalFileName, voucher);
-								}
-							} catch (IllegalStateException ignored) {}
 						}
 						// Update the file timestamp in the map
 						lastModifiedTimes.put(fileName, currentTimestamp);

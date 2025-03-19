@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface Displayable {
 
-	@NonNull String getDisplayName();
+	@NonNull
+	String getDisplayName();
 
-	@NonNull List<String> getDescription();
+	@NonNull
+	List<String> getDescription();
 
 	void setDisplayName(@NonNull final String displayName);
 

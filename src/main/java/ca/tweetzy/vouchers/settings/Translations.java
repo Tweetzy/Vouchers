@@ -43,27 +43,27 @@ public final class Translations extends TranslationManager {
 	public static final TranslationEntry DROP_NEAR_PLAYER = create("info.give.dropped near player", "Voucher was dropped near player: %player_name% (full inventory)");
 	public static final TranslationEntry GIVEN_TO_PLAYER = create("info.give.placed into inventory", "Voucher was placed in player: %player_name%'s inventory");
 
-	public static TranslationEntry GUI_SHARED_ITEMS_BACK_BUTTON_NAME = create("gui.shared buttons.back button.name", "<GRADIENT:65B1B4>&LGo Back</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_BACK_BUTTON_NAME = create("gui.shared buttons.back button.name", "<GRADIENT:B3EBF2>&LGo Back</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_BACK_BUTTON_LORE = create("gui.shared buttons.back button.lore",
 			"&e&l%left_click% &7to go back"
 	);
 
-	public static TranslationEntry GUI_SHARED_ITEMS_EXIT_BUTTON_NAME = create("gui.shared buttons.exit button.name", "<GRADIENT:65B1B4>&LExit</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_EXIT_BUTTON_NAME = create("gui.shared buttons.exit button.name", "<GRADIENT:B3EBF2>&LExit</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_EXIT_BUTTON_LORE = create("gui.shared buttons.exit button.lore",
 			"&e&l%left_click% &7to exit menu"
 	);
 
-	public static TranslationEntry GUI_SHARED_ITEMS_PREVIOUS_BUTTON_NAME = create("gui.shared buttons.previous button.name", "<GRADIENT:65B1B4>&lPrevious Page</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_PREVIOUS_BUTTON_NAME = create("gui.shared buttons.previous button.name", "<GRADIENT:B3EBF2>&lPrevious Page</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_PREVIOUS_BUTTON_LORE = create("gui.shared buttons.previous button.lore",
 			"&e&l%left_click% &7to go back a page"
 	);
 
-	public static TranslationEntry GUI_SHARED_ITEMS_NEXT_BUTTON_NAME = create("gui.shared buttons.next button.name", "<GRADIENT:65B1B4>&lNext Page</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_NEXT_BUTTON_NAME = create("gui.shared buttons.next button.name", "<GRADIENT:B3EBF2>&lNext Page</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_NEXT_BUTTON_LORE = create("gui.shared buttons.next button.lore",
 			"&e&l%left_click% &7to go to next page"
 	);
 
-	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.admin menus.voucher list.title", "%pl_name% &8> &7Listing Vouchers");
+	public static final TranslationEntry GUI_ADMIN_VOUCHER_LIST_TITLE = create("gui.admin menus.voucher list.title", "%pl_name% &8> &7Listing Vouchers");
 
 
 	public static void init() {

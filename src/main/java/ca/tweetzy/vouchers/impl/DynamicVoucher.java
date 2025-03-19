@@ -1,13 +1,12 @@
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.VoucherSettings;
 import ca.tweetzy.vouchers.api.voucher.VoucherType;
 import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 

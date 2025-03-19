@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 public final class VouchersAdminGUI extends VouchersBaseGUI {
 
 	public VouchersAdminGUI(Player player) {
-		super(null, player, "<GRADIENT:fc67fa>&lVouchers</GRADIENT:f4c4f3> &8» &7v%s".formatted(Vouchers.getInstance().getVersion()), 6);
+		super(null, player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7v%s".formatted(Vouchers.getInstance().getVersion()), 6);
 		draw();
 	}
 
@@ -38,7 +38,7 @@ public final class VouchersAdminGUI extends VouchersBaseGUI {
 	protected void draw() {
 
 		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
-				QuickItem.of(CompMaterial.PINK_STAINED_GLASS_PANE).glow(true).make()
+				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
 
