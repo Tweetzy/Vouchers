@@ -22,7 +22,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -131,10 +130,12 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 		if (object.has("reward_options")) {
 			final JsonObject rewardOptionsObject = object.get("reward_options").getAsJsonObject();
 
+			final int maximumRewards = rewardOptionsObject.has("maximum_rewards") ? rewardOptionsObject.get("maximum_rewards").getAsInt() : 1;
+			options.setMaximumRewards(maximumRewards);
+
 			// rewards list
 			if (rewardOptionsObject.has("rewards")) {
 				final JsonArray rewardObjects = rewardOptionsObject.get("rewards").getAsJsonArray();
-				// todo set reward mode
 				final RewardMode rewardMode = rewardOptionsObject.has("reward_mode") ? Enum.valueOf(RewardMode.class, rewardOptionsObject.get("reward_mode").getAsString()) : RewardMode.AUTOMATIC;
 				options.setRewardMode(rewardMode);
 

@@ -5,8 +5,10 @@ import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.voucher.BaseVoucher;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VoucherUpdatingPagedGUI;
 import ca.tweetzy.vouchers.gui.admin.settings.VoucherOverviewGUI;
@@ -16,6 +18,7 @@ import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -81,14 +84,38 @@ public final class VoucherListGUI extends VoucherUpdatingPagedGUI<Voucher> {
 				.of(voucher.getItem())
 				.name(voucher.getDisplayName())
 				.lore(voucher.getDescription())
+				.lore(
+						"",
+						"&e&lLeft Click",
+						"&7To open voucher overview",
+						"",
+						"&e&lRight Click",
+						"&7To give yourself this voucher",
+						"",
+						"&e&lDrop Key",
+						"&7To &cdelete &7this voucher, this can't be undone."
+
+				)
 				.glow(voucher.getSettings().useGlow())
 				.make();
 	}
 
 	@Override
 	protected void onClick(Voucher voucher, GuiClickEvent click) {
-		cancelTask();
-		click.manager.showGUI(click.player, new VoucherOverviewGUI(click.player, voucher));
+		final BaseVoucher baseVoucher = (BaseVoucher) voucher;
+
+		if (click.clickType == ClickType.LEFT) {
+			cancelTask();
+			click.manager.showGUI(click.player, new VoucherOverviewGUI(click.player, voucher));
+		}
+
+		if (click.clickType == ClickType.RIGHT) {
+			PlayerUtil.giveItem(click.player, baseVoucher.generatePhysicalVoucher(click.player));
+		}
+
+		if (click.clickType == ClickType.DROP) {
+			// TODO DELETE
+		}
 	}
 
 	@Override

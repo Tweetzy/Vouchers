@@ -23,6 +23,7 @@ public final class VoucherOptions implements VoucherSettings {
 	private boolean useCooldown;
 	private long cooldown;
 	private RewardMode rewardMode;
+	private int maximumRewards;
 
 	@Override
 	public boolean useGlow() {
@@ -132,5 +133,15 @@ public final class VoucherOptions implements VoucherSettings {
 	@Override
 	public void setRewardMode(RewardMode rewardMode) {
 		this.rewardMode = rewardMode;
+	}
+
+	@Override
+	public int getMaximumRewards() {
+		return this.maximumRewards;
+	}
+
+	@Override
+	public void setMaximumRewards(int maxRewards) {
+		this.maximumUses = maxRewards;
 	}
 }

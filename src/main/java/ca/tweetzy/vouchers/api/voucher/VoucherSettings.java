@@ -48,4 +48,8 @@ public interface VoucherSettings {
 	RewardMode getRewardMode();
 
 	void setRewardMode(final RewardMode rewardMode);
+
+	int getMaximumRewards();
+
+	void setMaximumRewards(final int maxRewards);
 }

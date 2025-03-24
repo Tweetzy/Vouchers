@@ -7,6 +7,7 @@ import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -30,4 +31,5 @@ public final class DynamicVoucher extends StandardVoucher {
 		this.setVoucherType(VoucherType.DYNAMIC);
 		this.arguments = arguments;
 	}
+
 }

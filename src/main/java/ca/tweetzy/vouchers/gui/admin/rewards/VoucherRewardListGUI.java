@@ -4,6 +4,7 @@ import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.settings.TranslationManager;
+import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.MathUtil;
 import ca.tweetzy.flight.utils.QuickItem;
@@ -11,6 +12,7 @@ import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.gui.VoucherUpdatingPagedGUI;
 import ca.tweetzy.vouchers.gui.admin.messages.VoucherMessageTypeGUI;
 import ca.tweetzy.vouchers.gui.admin.settings.VoucherOverviewGUI;
@@ -51,6 +53,58 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
 
+		final List<String> rewardModeLore = switch (this.voucher.getSettings().getRewardMode()) {
+			case AUTOMATIC -> List.of("&7This mode will attempt to give the player", "&7all the rewards in the voucher based on its chance.");
+			case RANDOM -> List.of("&7This mode will give the player 1+ random", "&7reward(s) based on their specified chances.");
+			case SELECTION -> List.of("&7This mode will allow the player to pick", "&71+ rewards, they will be given based on their chance.");
+		};
+
+		// reward type button
+		setButton(getRows() - 1, 2, QuickItem
+				.of(CompMaterial.REPEATER)
+				.name("<GRADIENT:B3EBF2>&LReward Mode</GRADIENT:AEC6CF>")
+				.lore(
+						"&8Used to change the reward mode",
+						"",
+						"&e&lCurrent Mode&F: <GRADIENT:B3EBF2>&L%s</GRADIENT:AEC6CF>".formatted(ChatUtil.capitalizeFully(this.voucher.getSettings().getRewardMode()))
+				)
+				.lore(rewardModeLore)
+				.lore(
+						"",
+						"&e&lClick",
+						"&7To cycle reward modes"
+				)
+				.make(), click -> {
+
+			this.voucher.getSettings().setRewardMode(this.voucher.getSettings().getRewardMode().next());
+			this.voucher.sync(result -> draw());
+		});
+
+		// max rewards  button
+		if (this.voucher.getSettings().getRewardMode() != RewardMode.AUTOMATIC)
+			setButton(getRows() - 1, 6, QuickItem
+					.of(CompMaterial.REPEATER)
+					.name("<GRADIENT:B3EBF2>&LTotal Rewards</GRADIENT:AEC6CF>")
+					.lore(
+							"&8The max # of rewards to be given",
+							"&7When the reward mode isn't set to automatic vouchers",
+							"&7will give keep rolling to give rewards until the player",
+							"&7receives the # of rewards specified.",
+							"",
+							"&7Total Rewards&F: &e%s".formatted(this.voucher.getSettings().getMaximumRewards()),
+							"",
+							"&e&lClick",
+							"&7To adjust the total rewards given"
+					)
+					.make(), click -> {
+
+				cancelTask();
+				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LReward Options</GRADIENT:AEC6CF>", "&eEnter total # of rewards to be given", result -> {
+					this.voucher.getSettings().setMaximumRewards(result <= 0 ? 1 : result > this.voucher.getRewards().size() ? this.voucher.getRewards().size() : result);
+					saveAndReOpen(click.player, true);
+				}, (input) -> Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, "value", input)), () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), MathUtil::isInt, Integer::parseInt);
+			});
+
 		setButton(getRows() - 1, 4, QuickItem
 				.of(CompMaterial.LIME_DYE)
 				.name("<GRADIENT:77DD77>&lAdd Reward</GRADIENT:C1E1C1>")
@@ -68,13 +122,13 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 				.make(), click -> {
 
 			final ItemStack cursor = click.cursor;
-			if (cursor != null && cursor.getType() != CompMaterial.AIR.parseMaterial()) {
+			if (cursor != null && cursor.getType() != CompMaterial.AIR.get()) {
 				this.voucher.getRewards().add(new ItemReward(cursor, 100, 0, new ArrayList<>()));
 				saveAndReOpen(click.player, false);
 				draw();
 			} else {
 				cancelTask();
-				UserInput.get(click.player, "voucher", "command", result -> {
+				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LVoucher Reward</GRADIENT:AEC6CF>", "&eEnter the reward command in chat without the /", result -> {
 					this.voucher.getRewards().add(new CommandReward(ChatColor.stripColor(result), 100, 0, new ArrayList<>()));
 					saveAndReOpen(click.player);
 				}, null, () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), validate -> !validate.isEmpty());
@@ -134,7 +188,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 		switch (click.clickType) {
 			case LEFT -> {
 				cancelTask();
-				UserInput.get(click.player, "reward edit", "enter chance in chat", result -> {
+				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LReward Options</GRADIENT:AEC6CF>", "&eEnter reward chance in chat", result -> {
 					reward.setChance(result < 0 ? 1 : result > 100 ? 100 : result);
 					saveAndReOpen(click.player);
 				}, (input) -> Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, "value", input)), () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), MathUtil::isDouble, Double::parseDouble);
@@ -142,7 +196,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 
 			case RIGHT -> {
 				cancelTask();
-				UserInput.get(click.player, "reward edit", "enter delay in chat", result -> {
+				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LReward Options</GRADIENT:AEC6CF>", "&eEnter the reward delay", result -> {
 					reward.setDelay(result);
 					saveAndReOpen(click.player);
 				}, (input) -> Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, "value", input)), () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), MathUtil::isInt, Integer::parseInt);
@@ -151,6 +205,11 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 			case SHIFT_LEFT -> {
 				cancelTask();
 				click.manager.showGUI(click.player, new VoucherMessageTypeGUI(click.player, this.voucher, reward.getMessages(), true));
+			}
+
+			case DROP -> {
+				this.voucher.getRewards().remove(reward);
+				saveAndReOpen(click.player);
 			}
 		}
 	}

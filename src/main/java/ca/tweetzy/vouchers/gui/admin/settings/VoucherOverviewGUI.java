@@ -3,13 +3,16 @@ package ca.tweetzy.vouchers.gui.admin.settings;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.flight.utils.profiles.builder.XSkull;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import ca.tweetzy.vouchers.gui.admin.VoucherListGUI;
 import ca.tweetzy.vouchers.gui.admin.messages.VoucherMessageTypeGUI;
 import ca.tweetzy.vouchers.gui.admin.rewards.VoucherRewardListGUI;
+import ca.tweetzy.vouchers.model.Extractor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public final class VoucherOverviewGUI extends VouchersBaseGUI {
 
@@ -18,6 +21,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 	public VoucherOverviewGUI(@NonNull Player player, @NonNull final Voucher voucher) {
 		super(new VoucherListGUI(player), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Editing", 6);
 		this.voucher = voucher;
+		setAcceptsItems(true);
 		draw();
 	}
 
@@ -45,6 +49,17 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 				)
 				.make(), click -> {
 
+
+			final ItemStack cursor = click.cursor;
+			if (cursor != null && cursor.getType() != CompMaterial.AIR.get()) {
+
+				String item = cursor.getType() == CompMaterial.PLAYER_HEAD.get() ? Extractor.getTextureUrlFromBase(XSkull.of(cursor).getProfileValue()) : null;
+				if (item == null)
+					item = "%s%s".formatted(cursor.getType().name(), cursor.getItemMeta() != null && cursor.getItemMeta().hasCustomModelData() ? ":" + cursor.getItemMeta().getCustomModelData() : "");
+
+				this.voucher.setItem(item);
+				voucher.sync(synchronizeResult -> draw());
+			}
 		});
 
 		// OPTIONS

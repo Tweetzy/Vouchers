@@ -3,6 +3,7 @@ package ca.tweetzy.vouchers.gui.admin.messages;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.gui.helper.InventoryBorder;
+import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
@@ -58,13 +59,18 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 		setButton(getRows() - 1, 4, QuickItem
 				.of(CompMaterial.LIME_DYE)
 				.name("<GRADIENT:B3EBF2>&LAdd Message</GRADIENT:AEC6CF>")
+				.lore(
+						"&8Used to create a new message",
+						"&7Just like every other setting you can",
+						"&7adjust this in the voucher file.",
+						"",
+						"&e&lClick",
+						"&7To add a &b%s &7message".formatted(ChatUtil.capitalizeFully(this.messageType))
+				)
 				.make(), click -> {
 
 			//
-			UserInput.get(
-					click.player,
-					"vouchers",
-					"enter msg",
+			UserInput.get(click.player, "<GRADIENT:B3EBF2>&LVoucher Message</GRADIENT:AEC6CF>", "&eEnter the message in chat",
 					result -> {
 						if (this.messageType != MessageType.TITLE) {
 							switch (this.messageType) {
@@ -75,10 +81,7 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 
 							this.voucher.sync((synchronizeResult) -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards)));
 						} else {
-							UserInput.get(
-									click.player,
-									"vouchers",
-									"enter subtitle",
+							UserInput.get(click.player, "<GRADIENT:B3EBF2>&LVoucher Subtitle</GRADIENT:AEC6CF>", "&eEnter the subtitle in chat",
 									subtitle -> {
 										this.messages.add(new VoucherTitleMessage(
 												result,

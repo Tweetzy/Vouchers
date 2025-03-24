@@ -27,6 +27,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,7 +104,8 @@ public class StandardVoucher extends BaseVoucher {
 						-1,
 						false,
 						1,
-						RewardMode.AUTOMATIC
+						RewardMode.AUTOMATIC,
+						1
 				),
 				msgs,
 				rewardList
@@ -160,6 +163,18 @@ public class StandardVoucher extends BaseVoucher {
 	}
 
 	@Override
+	public ItemStack generatePhysicalVoucher(Player player) {
+		return QuickItem
+				.of(getItem())
+				.name(getDisplayName())
+				.lore(getDescription())
+				.glow(getSettings().useGlow())
+				.hideTags(true)
+				.tag("Tweetzy:Vouchers", getId())
+				.make();
+	}
+
+	@Override
 	public void store(@NonNull Consumer<Voucher> stored) {
 		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
 			File directory = new File(Vouchers.getInstance().getDataFolder() + "/voucher-files/");
@@ -209,14 +224,6 @@ public class StandardVoucher extends BaseVoucher {
 					}
 				}
 			}
-
-//			else {
-//				// If the file does not exist, simply store the new data
-//				store(null);
-//				if (syncResult != null) {
-//					syncResult.accept();
-//				}
-//			}
 		});
 	}
 
@@ -278,6 +285,8 @@ public class StandardVoucher extends BaseVoucher {
 		// rewards
 		final JsonObject rewardOptionsObject = new JsonObject();
 		rewardOptionsObject.addProperty("reward_mode", this.settings.getRewardMode().name());
+		rewardOptionsObject.addProperty("maximum_rewards", this.settings.getMaximumRewards());
+
 		final JsonArray rewardsObject = new JsonArray();
 		this.rewards.forEach(reward -> {
 			final JsonObject rewardObject = new JsonObject();
