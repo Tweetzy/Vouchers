@@ -6,12 +6,14 @@ import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.flight.utils.profiles.builder.XSkull;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
+import ca.tweetzy.vouchers.gui.admin.ItemSelectorGUI;
 import ca.tweetzy.vouchers.gui.admin.VoucherListGUI;
 import ca.tweetzy.vouchers.gui.admin.messages.VoucherMessageTypeGUI;
 import ca.tweetzy.vouchers.gui.admin.rewards.VoucherRewardListGUI;
 import ca.tweetzy.vouchers.model.VoucherHelper;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 public final class VoucherOverviewGUI extends VouchersBaseGUI {
@@ -49,6 +51,13 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 				)
 				.make(), click -> {
 
+			if (click.clickType == ClickType.RIGHT) {
+				click.manager.showGUI(click.player, new ItemSelectorGUI(this, (event, selected) -> {
+					this.voucher.setItem(selected.getType().name());
+					voucher.sync(synchronizeResult -> click.manager.showGUI(click.player, new VoucherOverviewGUI(click.player, this.voucher)));
+				}));
+				return;
+			}
 
 			final ItemStack cursor = click.cursor;
 			if (cursor != null && cursor.getType() != CompMaterial.AIR.get()) {
