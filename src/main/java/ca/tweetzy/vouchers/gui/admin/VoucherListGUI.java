@@ -9,6 +9,7 @@ import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.BaseVoucher;
+import ca.tweetzy.vouchers.api.voucher.Category;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.VoucherUpdatingPagedGUI;
 import ca.tweetzy.vouchers.gui.admin.settings.VoucherOverviewGUI;
@@ -26,6 +27,8 @@ import java.util.List;
 
 public final class VoucherListGUI extends VoucherUpdatingPagedGUI<Voucher> {
 
+	private Category selectedCategory = Vouchers.getCategoryManager().get("allvouchers");
+
 	public VoucherListGUI(@NonNull final Player player) {
 		super(new VouchersAdminGUI(player), player, TranslationManager.string(Translations.GUI_ADMIN_VOUCHER_LIST_TITLE), 6, 20, new ArrayList<>());
 
@@ -36,7 +39,10 @@ public final class VoucherListGUI extends VoucherUpdatingPagedGUI<Voucher> {
 
 	@Override
 	protected void prePopulate() {
-		this.items = new ArrayList<>(Vouchers.getVoucherManger().getValues());
+		if (this.selectedCategory.getId().equalsIgnoreCase("allvouchers") || this.selectedCategory == null)
+			this.items = new ArrayList<>(Vouchers.getVoucherManager().getValues());
+		else
+			this.items = new ArrayList<>(Vouchers.getVoucherManager().getValues()).stream().filter(voucher -> voucher.getCategoryId().equalsIgnoreCase(this.selectedCategory.getId())).toList();
 	}
 
 	@Override
@@ -45,6 +51,21 @@ public final class VoucherListGUI extends VoucherUpdatingPagedGUI<Voucher> {
 		InventoryBorder.getBorders(6).forEach(slot -> setItem(slot, QuickItem.bg(
 				QuickItem.of(CompMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).glow(true).make()
 		)));
+
+		setButton(getRows() - 1, 6, QuickItem
+				.of(this.selectedCategory.getIcon())
+				.name(this.selectedCategory.getName())
+				.lore(
+						"&8Used to change categories",
+						"",
+						"&e&lClick",
+						"&7To cycle to the next category"
+				)
+				.make(), click -> {
+
+			this.selectedCategory = Vouchers.getCategoryManager().getNextElement(this.selectedCategory);
+			draw();
+		});
 
 		setButton(getRows() - 1, 4, QuickItem
 				.of(CompMaterial.LIME_DYE)
@@ -63,13 +84,13 @@ public final class VoucherListGUI extends VoucherUpdatingPagedGUI<Voucher> {
 			UserInput.get(click.player, "<GRADIENT:B3EBF2>&lVoucher Creation</GRADIENT:AEC6CF>", "&eEnter id for voucher in chat", result -> {
 				StandardVoucher.empty(result).store(stored -> {
 					if (stored != null) {
-						Vouchers.getVoucherManger().add(result, stored);
+						Vouchers.getVoucherManager().add(result, stored);
 						click.manager.showGUI(click.player, new VoucherListGUI(click.player));
 					}
 
 				});
 			}, fail -> {
-				if (Vouchers.getVoucherManger().doesVoucherWithIdExists(fail)) {
+				if (Vouchers.getVoucherManager().doesVoucherWithIdExists(fail)) {
 					Common.tell(click.player, TranslationManager.string(Translations.VOUCHER_EXISTS_ALREADY));
 				}
 			}, () -> click.manager.showGUI(click.player, VoucherListGUI.this), validate -> !validate.isEmpty(), transform -> ChatColor.stripColor(transform).replaceAll("\\s", ""));
@@ -115,6 +136,7 @@ public final class VoucherListGUI extends VoucherUpdatingPagedGUI<Voucher> {
 
 		if (click.clickType == ClickType.DROP) {
 			// TODO DELETE
+			baseVoucher.unStore(result -> draw());
 		}
 	}
 

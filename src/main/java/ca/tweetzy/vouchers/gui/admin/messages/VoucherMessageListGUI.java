@@ -149,7 +149,7 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 			saveVoucher();
 		} else if (clickEvent.clickType == ClickType.RIGHT) {
 			final BaseMessage msg = (BaseMessage) message;
-			msg.send(clickEvent.player, "player", player.getName());
+			msg.send(clickEvent.player);
 		} else if (clickEvent.clickType == ClickType.DROP) {
 			// Handle drop click to remove description
 			this.messages.remove(message);

@@ -18,110 +18,121 @@
 
 package ca.tweetzy.vouchers.listeners;
 
+import ca.tweetzy.flight.nbtapi.NBT;
+import ca.tweetzy.flight.settings.TranslationManager;
+import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.PlayerUtil;
+import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.gui.user.VoucherConfirmationGUI;
+import ca.tweetzy.vouchers.settings.Settings;
+import ca.tweetzy.vouchers.settings.Translations;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 public final class VoucherListeners implements Listener {
 
-	private final List<UUID> blockedFromDrop = new ArrayList<>();
+	@EventHandler
+	public void onVoucherRedeem(final PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		ItemStack item = event.getItem();
 
-//	@EventHandler
-//	public void onVoucherRedeem(final PlayerInteractEvent event) {
-//		final Player player = event.getPlayer();
-//		ItemStack item = event.getItem();
-//		EquipmentSlot hand = event.getHand();
-//
-//		// prevent if sneaking
-//		if (Settings.PREVENT_REDEEM_WHILE_SNEAKING.getBoolean() && player.isSneaking())
-//			return;
-//
-//		if (item == null) item = event.getPlayer().getInventory().getItemInOffHand();
-//
-//		// not even a voucher
-//		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
-//
-//		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-//
-//			final Voucher voucher = Vouchers.getVoucherManager().find(NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:Vouchers")));
-//			final String voucherArgsRaw = NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:VouchersArgs"));
-//
-//			final List<String> voucherArgs = voucherArgsRaw == null ? null : voucherArgsRaw.split(" ").length == 0 ? null : List.of(voucherArgsRaw.split(" "));
-//
-//			// invalid / deleted voucher
-//			if (voucher == null) return;
-//
-//			event.setUseItemInHand(Event.Result.DENY);
-//			voucher.setVoucherHand(hand); // Set the hand the voucher was redeemed in
-//
-//			if (!this.blockedFromDrop.contains(player.getUniqueId()))
-//				this.blockedFromDrop.add(player.getUniqueId());
-//
-//			if (voucher.getOptions().isAskConfirm()) {
-//				Vouchers.getGuiManager().showGUI(player, new GUIConfirm(player, confirmed -> {
-//					if (confirmed) {
-//						if (voucherArgs == null)
-//							Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
-//						else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
-//					} else {
-//						Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_CANCELED_CONFIRM));
-//					}
-//
-//					player.closeInventory();
-//					this.blockedFromDrop.remove(player.getUniqueId());
-//				}, fail -> {
-//					this.blockedFromDrop.remove(player.getUniqueId());
-//					Bukkit.getPluginManager().callEvent(new VoucherRedeemEvent(player, voucher, VoucherRedeemResult.FAIL_CANCELED_CONFIRM));
-//				}));
-//			} else {
-//				if (voucherArgs == null)
-//					Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false);
-//				else Vouchers.getRedeemManager().redeemVoucher(player, voucher, false, false, voucherArgs);
-//
-//				this.blockedFromDrop.remove(player.getUniqueId());
-//			}
-//		}
-//	}
-//
-//	@EventHandler
-//	public void onVoucherSlotChange(final PlayerItemHeldEvent event) {
-//		final Player player = event.getPlayer();
-//		if (!this.blockedFromDrop.contains(player.getUniqueId())) return;
-//
-//		event.setCancelled(true);
-//	}
-//
-//	@EventHandler
-//	public void onVoucherDropAttempt(final PlayerDropItemEvent event) {
-//		final Player player = event.getPlayer();
-//		if (!this.blockedFromDrop.contains(player.getUniqueId())) return;
-//
-//		final ItemStack item = event.getItemDrop().getItemStack();
-//		if (item == null) return;
-//
-//		if (Vouchers.getVoucherManager().isVoucher(item))
-//			event.setCancelled(true);
-//	}
-//
-//	@EventHandler
-//	public void onHandSwapWithVoucher(final PlayerSwapHandItemsEvent event) {
-//		final ItemStack itemMain = event.getMainHandItem();
-//		final ItemStack itemOff = event.getOffHandItem();
-//
-//		if ((itemMain != null && Vouchers.getVoucherManager().isVoucher(itemMain)) || (itemOff != null && Vouchers.getVoucherManager().isVoucher(itemOff))) {
-//			event.setCancelled(true);
-//		}
-//	}
-//
-//	@EventHandler
-//	public void onRenameAttempt(final PrepareAnvilEvent event) {
-//		final ItemStack item = event.getResult();
-//
-//		if (item == null) return;
-//		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
-//
-//		event.setResult(CompMaterial.AIR.parseItem());
-//	}
+		if (event.getHand() == EquipmentSlot.OFF_HAND) {
+			return;
+		}
+
+		// prevent if sneaking
+		if (Settings.PREVENT_REDEEM_WHILE_SNEAKING.getBoolean() && player.isSneaking())
+			return;
+
+		// not even a voucher
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			final Voucher voucher = Vouchers.getVoucherManager().get(NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:Vouchers")));
+			final String voucherArgsRaw = NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:VouchersArgs"));
+
+			final List<String> voucherArgs = voucherArgsRaw == null ? Collections.emptyList() : voucherArgsRaw.split(" ").length == 0 ? Collections.emptyList() : List.of(voucherArgsRaw.split(" "));
+
+			// invalid / deleted voucher
+			if (voucher == null) return;
+
+			// check permission
+			if (voucher.getSettings().usePermission() && !player.hasPermission(voucher.getSettings().getPermission())) {
+				Common.tell(player, TranslationManager.string(Translations.NOT_ALLOWED_TO_USE));
+				return;
+			}
+
+			// check max uses
+			if(Vouchers.getRedeemManager().isAtRedeemLimit(player, voucher)) {
+				Common.tell(player, TranslationManager.string(Translations.REDEEM_LIMIT_REACHED));
+				return;
+			}
+
+			if (voucher.getSettings().useCooldown() && !passedCooldown(player, voucher)) {
+				return;
+			}
+
+			// confirmation ask
+			if (voucher.getSettings().isAskForConfirm()) {
+				Vouchers.getGuiManager().showGUI(player, new VoucherConfirmationGUI(player, confirmed -> {
+					if (confirmed) {
+						Vouchers.newChain().sync(() -> {
+							final boolean successfulUse = voucher.execute(player, voucherArgs.toArray(new String[0]));
+
+							// remove
+							if (successfulUse) {
+								Vouchers.getRedeemManager().registerRedeemIfApplicable(player, voucher);
+
+								if (voucher.getSettings().isRemoveOnUse())
+									PlayerUtil.removeSpecificItemQuantityFromPlayer(player, item, 1);
+
+								if (voucher.getSettings().useCooldown())
+									Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+							}
+						}).execute();
+					}
+
+					player.closeInventory();
+				}));
+			} else {
+				final boolean successfulUse = voucher.execute(player, voucherArgs.toArray(new String[0]));
+
+				// remove
+				if (successfulUse) {
+					Vouchers.getRedeemManager().registerRedeemIfApplicable(player, voucher);
+
+					if (voucher.getSettings().isRemoveOnUse())
+						PlayerUtil.removeSpecificItemQuantityFromPlayer(player, item, 1);
+
+					if (voucher.getSettings().useCooldown())
+						Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+				}
+			}
+		}
+	}
+
+
+	private boolean passedCooldown(Player player, Voucher voucher) {
+		if (!voucher.getSettings().useCooldown()) return true;
+
+		if (Vouchers.getCooldownManager().isPlayerInCooldown(player.getUniqueId()) && Vouchers.getCooldownManager().isPlayerInCooldownForVoucher(player.getUniqueId(), voucher)) {
+			long cooldownTime = Vouchers.getCooldownManager().getCooldownTime(player.getUniqueId(), voucher);
+
+			if (System.currentTimeMillis() < cooldownTime) {
+				Common.tell(player, TranslationManager.string(Translations.WAIT_FOR_COOLDOWN, "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000f)));
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

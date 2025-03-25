@@ -7,13 +7,54 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @UtilityClass
-public final class Extractor {
+public final class VoucherHelper {
+
+	public Map<String, String> extractKeyValuePairs(String input) {
+		Map<String, String> map = new HashMap<>();
+		String[] pairs = input.split("\\s+(?=\\w+:)");
+
+		for (String pair : pairs) {
+			String[] keyValue = pair.split(":");
+			if (keyValue.length == 2) {
+				map.put(keyValue[0], keyValue[1]);
+			}
+		}
+
+		return map;
+	}
+
+	public String dynamicVariablesReplace(String input, String[] values) {
+		Pattern pattern = Pattern.compile("\\{(\\d+)\\}");
+		Matcher matcher = pattern.matcher(input);
+		StringBuffer result = new StringBuffer();
+
+		while (matcher.find()) {
+			int index = Integer.parseInt(matcher.group(1));
+			if (index < values.length) {
+				matcher.appendReplacement(result, values[index]);
+			} else {
+				matcher.appendReplacement(result, matcher.group(0));
+			}
+		}
+		matcher.appendTail(result);
+
+		return result.toString();
+	}
+
+	public List<String> dynamicVariablesReplace(List<String> list, String[] values) {
+		List<String> replaced = new ArrayList<>();
+
+		for (String s : list) {
+			replaced.add(dynamicVariablesReplace(s, values));
+		}
+
+		return replaced;
+	}
 
 	public String getTextureUrlFromBase(String base64String) {
 		try {

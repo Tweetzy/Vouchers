@@ -40,5 +40,5 @@ public abstract class BaseReward implements Reward {
 		return this.messages;
 	}
 
-	public abstract void execute(@NonNull final Player player);
+	public abstract void execute(@NonNull final Player player, String... args);
 }

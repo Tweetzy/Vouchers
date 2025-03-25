@@ -142,6 +142,6 @@ public final class VoucherOptions implements VoucherSettings {
 
 	@Override
 	public void setMaximumRewards(int maxRewards) {
-		this.maximumUses = maxRewards;
+		this.maximumRewards = maxRewards;
 	}
 }

@@ -5,6 +5,7 @@ import ca.tweetzy.flight.utils.Replacer;
 import ca.tweetzy.vouchers.api.voucher.message.BaseMessage;
 import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.hook.PAPIHook;
+import ca.tweetzy.vouchers.model.VoucherHelper;
 import org.bukkit.entity.Player;
 
 public final class VoucherChatMessage extends BaseMessage {
@@ -14,9 +15,10 @@ public final class VoucherChatMessage extends BaseMessage {
 	}
 
 	@Override
-	public void send(Player player, Object[] variables) {
+	public void send(Player player, String[] variables) {
 		String formattedContent = PAPIHook.tryReplace(player, Common.colorize(this.getPrimaryContent()));
-		formattedContent = Replacer.replaceVariables(formattedContent, variables);
+		formattedContent = VoucherHelper.dynamicVariablesReplace(formattedContent, variables);
+		formattedContent = formattedContent.replace("%player%", player.getName());
 		Common.tellNoPrefix(player, formattedContent);
 	}
 }

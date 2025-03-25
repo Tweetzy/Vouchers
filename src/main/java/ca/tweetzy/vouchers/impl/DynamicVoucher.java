@@ -13,9 +13,6 @@ import java.util.List;
 
 public final class DynamicVoucher extends StandardVoucher {
 
-	@Getter
-	@Setter
-	private String[] arguments;
 
 	public DynamicVoucher(
 			@NonNull final String id,
@@ -29,7 +26,7 @@ public final class DynamicVoucher extends StandardVoucher {
 	) {
 		super(id, item, name, description, settings, messages, rewards);
 		this.setVoucherType(VoucherType.DYNAMIC);
-		this.arguments = arguments;
+		this.setArgs(arguments);
 	}
 
 }

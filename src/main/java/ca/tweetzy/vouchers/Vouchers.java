@@ -26,31 +26,34 @@ import ca.tweetzy.flight.database.SQLiteConnector;
 import ca.tweetzy.flight.gui.GuiManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.VouchersAPI;
+import ca.tweetzy.vouchers.api.manager.Manager;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.commands.CommandReload;
+import ca.tweetzy.vouchers.commands.GiveCommand;
 import ca.tweetzy.vouchers.commands.VouchersCommand;
 import ca.tweetzy.vouchers.database.DataManager;
 import ca.tweetzy.vouchers.database.migrations.v3._1_InitialMigration;
 import ca.tweetzy.vouchers.database.migrations.v3._2_CategoryMigration;
 import ca.tweetzy.vouchers.hook.PAPIHook;
-import ca.tweetzy.vouchers.listeners.BlockListeners;
 import ca.tweetzy.vouchers.listeners.VoucherListeners;
+import ca.tweetzy.vouchers.listeners.VoucherPreventionListeners;
+import ca.tweetzy.vouchers.model.manager.CategoryManager;
+import ca.tweetzy.vouchers.model.manager.CooldownManager;
+import ca.tweetzy.vouchers.model.manager.RedeemManager;
 import ca.tweetzy.vouchers.model.manager.VoucherManager;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.settings.Translations;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
-import com.google.gson.JsonParseException;
-import com.google.gson.stream.MalformedJsonException;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -65,6 +68,9 @@ public final class Vouchers extends FlightPlugin {
 	private final GuiManager guiManager = new GuiManager(this);
 	private final CommandManager commandManager = new CommandManager(this);
 	private final VoucherManager voucherManager = new VoucherManager();
+	private final CooldownManager cooldownManager = new CooldownManager();
+	private final RedeemManager redeemManager = new RedeemManager();
+	private final CategoryManager categoryManager = new CategoryManager();
 
 	private VouchersAPI API;
 
@@ -97,23 +103,23 @@ public final class Vouchers extends FlightPlugin {
 		dataMigrationManager.runMigrations();
 
 		getServer().getPluginManager().registerEvents(new VoucherListeners(), this);
-		getServer().getPluginManager().registerEvents(new BlockListeners(), this);
+		getServer().getPluginManager().registerEvents(new VoucherPreventionListeners(), this);
 
 		// ideally initialize after the load
 		taskChainFactory = BukkitTaskChainFactory.create(this);
 
 		this.guiManager.init();
 		this.commandManager.registerCommandDynamically(new VouchersCommand()).addSubCommands(
+				new GiveCommand(),
 				new CommandReload()
 		);
 
-		this.voucherManager.load();
+		List.of(this.voucherManager, this.redeemManager, this.categoryManager).forEach(Manager::load);
 
 		// Placeholder API
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			new PAPIHook().register();
 		}
-
 
 		// SETUP WATCHER
 		this.dataWatcher = FileSystems.getDefault().newWatchService();
@@ -122,7 +128,6 @@ public final class Vouchers extends FlightPlugin {
 		if (!new File(String.valueOf(monitorFolder)).exists()) {
 			new File(String.valueOf(monitorFolder)).mkdir();
 		}
-
 
 		monitorFolder.register(dataWatcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
 
@@ -135,11 +140,9 @@ public final class Vouchers extends FlightPlugin {
 					Thread.currentThread().interrupt();
 					return;
 				} catch (ClosedWatchServiceException e) {
-					// Handle the exception during shutdown
 					if (shuttingDown) {
 						return;
 					} else {
-						// Handle unexpected closure
 						System.err.println("WatchService closed unexpectedly.");
 						return;
 					}
@@ -176,6 +179,7 @@ public final class Vouchers extends FlightPlugin {
 
 							} else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
 								lastModifiedTimes.remove(normalFileName);
+								this.voucherManager.remove(normalFileName);
 							} else if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
 								try {
 									// Check if the file was modified recently
@@ -192,7 +196,7 @@ public final class Vouchers extends FlightPlugin {
 								} catch (IllegalStateException ignored) {
 								}
 							}
-						}catch (Exception ignored) {
+						} catch (Exception ignored) {
 
 						}
 						// Update the file timestamp in the map
@@ -238,11 +242,6 @@ public final class Vouchers extends FlightPlugin {
 		return taskChainFactory.newChain();
 	}
 
-	public static <T> TaskChain<T> newSharedChain(String name) {
-		return taskChainFactory.newSharedChain(name);
-	}
-
-	// data manager
 	public static DataManager getDataManager() {
 		return getInstance().dataManager;
 	}
@@ -251,8 +250,20 @@ public final class Vouchers extends FlightPlugin {
 		return getInstance().API;
 	}
 
-	public static VoucherManager getVoucherManger() {
+	public static VoucherManager getVoucherManager() {
 		return getInstance().voucherManager;
+	}
+
+	public static CategoryManager getCategoryManager() {
+		return getInstance().categoryManager;
+	}
+
+	public static CooldownManager getCooldownManager() {
+		return getInstance().cooldownManager;
+	}
+
+	public static RedeemManager getRedeemManager() {
+		return getInstance().redeemManager;
 	}
 
 	// gui manager

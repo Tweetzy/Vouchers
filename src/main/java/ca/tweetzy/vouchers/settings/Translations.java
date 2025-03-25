@@ -24,6 +24,8 @@ import ca.tweetzy.vouchers.Vouchers;
 import lombok.NonNull;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
+
 public final class Translations extends TranslationManager {
 
 	public Translations(@NonNull JavaPlugin plugin) {
@@ -37,7 +39,7 @@ public final class Translations extends TranslationManager {
 	public static final TranslationEntry REDEEM_LIMIT_REACHED = create("error.redeem limit reached", "&cYou cannot redeem that voucher anymore!");
 	public static final TranslationEntry REDEEM_HISTORY_CLEARED = create("error.redeem history cleared", "&aSuccessfully cleared the redeem history of specified player(s)");
 	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.not allowed to use", "&cYou are not allowed to use that voucher");
-	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.voucher cooldown", "&cYou can redeem that voucher in &4%cooldown_time%");
+	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.voucher cooldown", "&cYou can redeem that voucher in &4%cooldown_time%s");
 	public static final TranslationEntry CATEGORY_CONTAINS_VOUCHER = create("error.category contains voucher", "&CThat category already contains the voucher");
 
 	public static final TranslationEntry DROP_NEAR_PLAYER = create("info.give.dropped near player", "Voucher was dropped near player: %player_name% (full inventory)");
@@ -64,7 +66,12 @@ public final class Translations extends TranslationManager {
 	);
 
 	public static final TranslationEntry GUI_ADMIN_VOUCHER_LIST_TITLE = create("gui.admin menus.voucher list.title", "%pl_name% &8> &7Listing Vouchers");
+	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.user menus.confirm.title", "%pl_name% &8> &7Confirm Redeem?");
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_YES_NAME = create("gui.user menus.confirm.items.yes.name", "<GRADIENT:77DD77>&lConfirm</GRADIENT:C1E1C1>");
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_YES_LORE = create("gui.user menus.confirm.items.yes.lore", "&7Confirms the voucher redeem");
 
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_NO_NAME = create("gui.user menus.confirm.items.no.name", "<GRADIENT:c4332b>&lCancel</GRADIENT:f2837d>");
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_NO_LORE = create("gui.user menus.confirm.items.no.lore", "&7Confirms the voucher redeem");
 
 	public static void init() {
 		new Translations(Vouchers.getInstance()).setup(Vouchers.getInstance());

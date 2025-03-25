@@ -18,7 +18,7 @@
 
 package ca.tweetzy.vouchers.hook;
 
-import ca.tweetzy.vouchers.model.Extractor;
+import ca.tweetzy.vouchers.model.VoucherHelper;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -71,7 +71,7 @@ public final class PAPIHook extends PlaceholderExpansion {
 		if (paramSplit[0].equalsIgnoreCase("redeems")) {
 			if (paramSplit.length < 2) return null;
 
-			final String voucherId = Extractor.grabWordsUntilFlag(paramSplit, 1, "-a");
+			final String voucherId = VoucherHelper.grabWordsUntilFlag(paramSplit, 1, "-a");
 
 			return String.valueOf(0);
 		}

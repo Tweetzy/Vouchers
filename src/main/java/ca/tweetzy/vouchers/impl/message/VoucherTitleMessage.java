@@ -6,6 +6,7 @@ import ca.tweetzy.flight.utils.messages.Titles;
 import ca.tweetzy.vouchers.api.voucher.message.BaseMessage;
 import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.hook.PAPIHook;
+import ca.tweetzy.vouchers.model.VoucherHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -28,9 +29,12 @@ public final class VoucherTitleMessage extends BaseMessage {
 	}
 
 	@Override
-	public void send(Player player, Object[] variables) {
-		String formattedTitle = Replacer.replaceVariables(PAPIHook.tryReplace(player, Common.colorize(this.getPrimaryContent())), variables);
-		String formattedSubtitle = Replacer.replaceVariables(PAPIHook.tryReplace(player, Common.colorize(this.getSecondaryContent())), variables);
+	public void send(Player player, String[] variables) {
+		String formattedTitle = VoucherHelper.dynamicVariablesReplace(PAPIHook.tryReplace(player, Common.colorize(this.getPrimaryContent())), variables);
+		String formattedSubtitle = VoucherHelper.dynamicVariablesReplace(PAPIHook.tryReplace(player, Common.colorize(this.getSecondaryContent())), variables);
+
+		formattedTitle = formattedTitle.replace("%player%", player.getName());
+		formattedSubtitle = formattedSubtitle.replace("%player%", player.getName());
 
 		Titles.sendTitle(player, this.fadeInTime, this.stayTime, this.fadeOutTime, formattedTitle, formattedSubtitle);
 	}

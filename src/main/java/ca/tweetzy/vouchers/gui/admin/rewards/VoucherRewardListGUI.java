@@ -44,7 +44,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 
 	@Override
 	protected void prePopulate() {
-		this.items = new ArrayList<>(Vouchers.getVoucherManger().get(this.voucher.getId()).getRewards());
+		this.items = new ArrayList<>(Vouchers.getVoucherManager().get(this.voucher.getId()).getRewards());
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 
 				cancelTask();
 				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LReward Options</GRADIENT:AEC6CF>", "&eEnter total # of rewards to be given", result -> {
-					this.voucher.getSettings().setMaximumRewards(result <= 0 ? 1 : result > this.voucher.getRewards().size() ? this.voucher.getRewards().size() : result);
+					this.voucher.getSettings().setMaximumRewards(result);
 					saveAndReOpen(click.player, true);
 				}, (input) -> Common.tell(click.player, TranslationManager.string(Translations.NOT_A_NUMBER, "value", input)), () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), MathUtil::isInt, Integer::parseInt);
 			});

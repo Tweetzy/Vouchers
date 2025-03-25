@@ -9,7 +9,7 @@ import ca.tweetzy.vouchers.gui.VouchersBaseGUI;
 import ca.tweetzy.vouchers.gui.admin.VoucherListGUI;
 import ca.tweetzy.vouchers.gui.admin.messages.VoucherMessageTypeGUI;
 import ca.tweetzy.vouchers.gui.admin.rewards.VoucherRewardListGUI;
-import ca.tweetzy.vouchers.model.Extractor;
+import ca.tweetzy.vouchers.model.VoucherHelper;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +53,7 @@ public final class VoucherOverviewGUI extends VouchersBaseGUI {
 			final ItemStack cursor = click.cursor;
 			if (cursor != null && cursor.getType() != CompMaterial.AIR.get()) {
 
-				String item = cursor.getType() == CompMaterial.PLAYER_HEAD.get() ? Extractor.getTextureUrlFromBase(XSkull.of(cursor).getProfileValue()) : null;
+				String item = cursor.getType() == CompMaterial.PLAYER_HEAD.get() ? VoucherHelper.getTextureUrlFromBase(XSkull.of(cursor).getProfileValue()) : null;
 				if (item == null)
 					item = "%s%s".formatted(cursor.getType().name(), cursor.getItemMeta() != null && cursor.getItemMeta().hasCustomModelData() ? ":" + cursor.getItemMeta().getCustomModelData() : "");
 

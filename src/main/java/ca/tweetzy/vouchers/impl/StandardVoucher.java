@@ -15,6 +15,7 @@ import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
+import ca.tweetzy.vouchers.hook.PAPIHook;
 import ca.tweetzy.vouchers.impl.message.VoucherActionBarMessage;
 import ca.tweetzy.vouchers.impl.message.VoucherBroadcastMessage;
 import ca.tweetzy.vouchers.impl.message.VoucherChatMessage;
@@ -22,11 +23,13 @@ import ca.tweetzy.vouchers.impl.message.VoucherTitleMessage;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
 import ca.tweetzy.vouchers.model.TimeConverter;
+import ca.tweetzy.vouchers.model.VoucherHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.NonNull;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +37,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -47,6 +52,9 @@ public class StandardVoucher extends BaseVoucher {
 	private final List<Message> messages;
 	private final List<Reward> rewards;
 
+	@Setter
+	private String category = "allvouchers";
+
 	public StandardVoucher(
 			@NonNull final String id,
 			@NonNull final String item,
@@ -56,7 +64,7 @@ public class StandardVoucher extends BaseVoucher {
 			@NonNull final List<Message> messages,
 			@NonNull final List<Reward> rewards
 	) {
-		super(VoucherType.STANDARD);
+		super(VoucherType.STANDARD, new String[]{});
 		this.id = id;
 		this.item = item;
 		this.name = name;
@@ -71,7 +79,7 @@ public class StandardVoucher extends BaseVoucher {
 		final List<Reward> rewardList = new ArrayList<>();
 
 		msgs.add(new VoucherBroadcastMessage("&aDefault broadcast message"));
-		msgs.add(new VoucherChatMessage("&aHi &e%player &7this is a chat msg"));
+		msgs.add(new VoucherChatMessage("&aHi &e%player% &7this is a chat msg"));
 		msgs.add(new VoucherActionBarMessage("&aThis is an actionbar msg"));
 		msgs.add(new VoucherTitleMessage("&aDefault title msg", "&bDefault subtitle msg", 20, 20, 20));
 
@@ -166,11 +174,12 @@ public class StandardVoucher extends BaseVoucher {
 	public ItemStack generatePhysicalVoucher(Player player) {
 		return QuickItem
 				.of(getItem())
-				.name(getDisplayName())
-				.lore(getDescription())
+				.name(VoucherHelper.dynamicVariablesReplace(PAPIHook.tryReplace(player, getDisplayName()), getArgs()))
+				.lore(VoucherHelper.dynamicVariablesReplace(PAPIHook.tryReplace(player, getDescription()), getArgs()))
 				.glow(getSettings().useGlow())
 				.hideTags(true)
 				.tag("Tweetzy:Vouchers", getId())
+				.tag("Tweetzy:VouchersArgs", String.join(" ", getArgs()))
 				.make();
 	}
 
@@ -226,6 +235,88 @@ public class StandardVoucher extends BaseVoucher {
 			}
 		});
 	}
+
+//	@Override
+//	public void store(@NonNull Consumer<Voucher> stored) {
+//		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
+//			synchronized (this) { // Synchronize access to prevent concurrent issues
+//				File directory = new File(Vouchers.getInstance().getDataFolder() + "/voucher-files/");
+//				if (!directory.exists()) {
+//					directory.mkdir();
+//				}
+//
+//				File tempFile = new File(String.format("%s/voucher-files/%s.tmp", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
+//				File targetFile = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
+//
+//				try (Writer writer = new FileWriter(tempFile)) {
+//					Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+//					gson.toJson(getAsJSON(), writer); // Write data to temporary file
+//					writer.flush(); // Ensure all data is written before closing
+//
+//					if (targetFile.exists()) {
+//						targetFile.delete(); // Delete the existing file before renaming
+//					}
+//					tempFile.renameTo(targetFile); // Rename temp file to target file
+//					stored.accept(this);
+//				} catch (IOException e) {
+//					e.printStackTrace(); // Log any errors for debugging
+//				}
+//			}
+//		});
+//	}
+//
+//	@Override
+//	public void sync(@Nullable Consumer<SynchronizeResult> syncResult) {
+//		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
+//			synchronized (this) { // Synchronize access to prevent concurrent issues
+//				File targetFile = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
+//				File tempFile = new File(String.format("%s/voucher-files/%s.tmp", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
+//
+//				if (targetFile.exists()) {
+//					try (Reader reader = new FileReader(targetFile)) {
+//						Gson gson = new Gson();
+//						JsonObject existingData = gson.fromJson(reader, JsonObject.class);
+//						JsonObject newData = gson.fromJson(getAsJSON(), JsonObject.class);
+//
+//						// Update only changed fields
+//						updateChangedFields(existingData, newData);
+//
+//						// Write updated data to a temporary file
+//						try (Writer writer = new FileWriter(tempFile)) {
+//							Gson gsonWriter = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+//							gsonWriter.toJson(existingData, writer); // Write updated data
+//
+//							writer.flush(); // Ensure all data is written before closing
+//
+//							if (targetFile.exists()) {
+//								targetFile.delete(); // Delete the existing file before renaming
+//							}
+//							tempFile.renameTo(targetFile); // Rename temp file to target file
+//
+//							if (syncResult != null) {
+//								syncResult.accept(SynchronizeResult.SUCCESS);
+//							}
+//						} catch (IOException e) {
+//							e.printStackTrace(); // Log error for debugging
+//							if (syncResult != null) {
+//								syncResult.accept(SynchronizeResult.FAILURE);
+//							}
+//						}
+//					} catch (IOException e) {
+//						e.printStackTrace(); // Log error for debugging
+//						if (syncResult != null) {
+//							syncResult.accept(SynchronizeResult.FAILURE);
+//						}
+//					}
+//				} else {
+//					if (syncResult != null) {
+//						syncResult.accept(SynchronizeResult.FAILURE); // Handle case where file doesn't exist
+//					}
+//				}
+//			}
+//		});
+//	}
+
 
 	// Helper method to update only changed fields
 	private void updateChangedFields(JsonObject existingData, JsonObject newData) {
@@ -346,6 +437,11 @@ public class StandardVoucher extends BaseVoucher {
 		messagesObject.add("titles", titleMessages);
 
 		return messagesObject;
+	}
+
+	@Override
+	public String getCategoryId() {
+		return this.category;
 	}
 
 	@Override

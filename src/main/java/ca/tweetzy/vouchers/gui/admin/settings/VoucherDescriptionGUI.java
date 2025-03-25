@@ -34,7 +34,7 @@ public class VoucherDescriptionGUI extends VoucherUpdatingPagedGUI<String> {
 
 	@Override
 	protected void prePopulate() {
-		this.voucher = Vouchers.getVoucherManger().get(this.voucher.getId());
+		this.voucher = Vouchers.getVoucherManager().get(this.voucher.getId());
 		this.items = this.voucher.getDescription();
 	}
 

@@ -1,6 +1,9 @@
 package ca.tweetzy.vouchers.model.manager;
 
+import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.comp.enums.CompSound;
+import ca.tweetzy.flight.nbtapi.NBT;
+import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.manager.KeyValueManager;
@@ -24,10 +27,11 @@ import com.google.gson.JsonParser;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +44,11 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 
 	public boolean doesVoucherWithIdExists(@NonNull final String voucherId) {
 		return this.getManagerContent().containsKey(ChatColor.stripColor(voucherId).toLowerCase());
+	}
+
+	public boolean isVoucher(final ItemStack itemStack) {
+		if (itemStack == null || itemStack.getType() == CompMaterial.AIR.get() || itemStack.getAmount() == 0) return false;
+		return NBT.get(itemStack, nbt -> (boolean) nbt.hasTag("Tweetzy:Vouchers"));
 	}
 
 	@Override
@@ -168,7 +177,7 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 			}
 		}
 
-		return new StandardVoucher(
+		StandardVoucher standardVoucher = new StandardVoucher(
 				voucherId,
 				object.has("item") ? object.get("item").getAsString() : "PAPER",
 				displayName,
@@ -177,6 +186,12 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 				extractMessages(object),
 				rewardList
 		);
+
+		if (object.has("category")) {
+			standardVoucher.setCategory(object.get("category").getAsString());
+		}
+
+		return standardVoucher;
 	}
 
 	public List<Message> extractMessages(@NonNull final JsonObject object) {

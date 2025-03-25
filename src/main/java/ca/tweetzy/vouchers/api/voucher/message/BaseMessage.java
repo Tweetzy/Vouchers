@@ -19,6 +19,6 @@ public abstract class BaseMessage implements Message {
 		this.primaryContent = primaryContent;
 	}
 
-	public abstract void send(final Player player, Object... variables);
+	public abstract void send(final Player player, String... variables);
 
 }
