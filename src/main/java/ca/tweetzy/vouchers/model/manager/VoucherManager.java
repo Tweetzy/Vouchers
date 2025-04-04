@@ -159,10 +159,21 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 					final List<Message> rewardMessages = extractMessages(rewardObject);
 
 					if (rewardType == RewardType.COMMAND) {
+						final String name = rewardObject.has("name") ?  rewardObject.get("name").getAsString() : "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>";
+						final List<String> cmdDesc = new ArrayList<>();
+						if (rewardObject.has("description")) {
+							final JsonArray descArr = rewardObject.get("description").getAsJsonArray();
+							descArr.forEach(element -> cmdDesc.add(element.getAsString()));
+						} else {
+							cmdDesc.add("&7Default command description");
+						}
+
 						rewardList.add(new CommandReward(
 								rewardObject.get("command").getAsString(),
 								chance,
 								delay,
+								name,
+								cmdDesc,
 								rewardMessages
 						));
 					} else {

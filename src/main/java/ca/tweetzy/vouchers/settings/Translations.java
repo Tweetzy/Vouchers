@@ -73,6 +73,27 @@ public final class Translations extends TranslationManager {
 	public static final TranslationEntry GUI_CONFIRM_ITEMS_NO_NAME = create("gui.user menus.confirm.items.no.name", "<GRADIENT:c4332b>&lCancel</GRADIENT:f2837d>");
 	public static final TranslationEntry GUI_CONFIRM_ITEMS_NO_LORE = create("gui.user menus.confirm.items.no.lore", "&7Confirms the voucher redeem");
 
+
+	public static final TranslationEntry GUI_REWARD_SELECTION_TITLE = create("gui.user menus.reward selection.title", "%pl_name% &8> &7Select &e%total_rewards% &7reward(s)");
+	public static final TranslationEntry GUI_REWARD_SELECTION_LORE_SELECTED = create("gui.user menus.reward selection.items.reward.lore.selected",
+			"&8&m-------------------------",
+			"&7Chance&f: &a%reward_chance%&f%",
+			"",
+			"<GRADIENT:B3EBF2>&lSelected</GRADIENT:AEC6CF>",
+			"",
+			"&e&lClick",
+			"&7To un-select this reward"
+	);
+
+	public static final TranslationEntry GUI_REWARD_SELECTION_LORE_UN_SELECTED = create("gui.user menus.reward selection.items.reward.lore.unselected",
+			"&8&m-------------------------",
+			"&7Chance&f: &a%reward_chance%&f%",
+			"",
+			"&e&lClick",
+			"&7To select this reward"
+	);
+
+
 	public static void init() {
 		new Translations(Vouchers.getInstance()).setup(Vouchers.getInstance());
 	}

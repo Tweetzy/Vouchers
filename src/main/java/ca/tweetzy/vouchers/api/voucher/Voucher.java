@@ -1,6 +1,7 @@
 package ca.tweetzy.vouchers.api.voucher;
 
 import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.DoubleProbabilityCollection;
 import ca.tweetzy.vouchers.api.sync.*;
 import ca.tweetzy.vouchers.api.voucher.message.BaseMessage;
@@ -8,6 +9,7 @@ import ca.tweetzy.vouchers.api.voucher.message.Message;
 import ca.tweetzy.vouchers.api.voucher.reward.BaseReward;
 import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
+import ca.tweetzy.vouchers.gui.user.VoucherRewardSelectionGUI;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -66,6 +68,7 @@ public interface Voucher extends Displayable, Identifiable<String>, Storeable<Vo
 
 		if (getSettings().getRewardMode() == RewardMode.SELECTION) {
 			// open selection menu
+			Vouchers.getGuiManager().showGUI(player, new VoucherRewardSelectionGUI(player, this, arguments));
 		}
 
 

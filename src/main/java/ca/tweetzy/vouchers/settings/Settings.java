@@ -20,6 +20,7 @@ package ca.tweetzy.vouchers.settings;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.config.ConfigEntry;
+import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.settings.FlightSettings;
 import ca.tweetzy.vouchers.Vouchers;
 
@@ -58,6 +59,22 @@ public final class Settings extends FlightSettings {
 	public static final ConfigEntry GUI_CONFIRM_ITEMS_YES = create("gui.user menus.confirm.items.yes.item", CompMaterial.LIME_STAINED_GLASS_PANE.name());
 	public static final ConfigEntry GUI_CONFIRM_ITEMS_NO = create("gui.user menus.confirm.items.no.item", CompMaterial.RED_STAINED_GLASS_PANE.name());
 	public static final ConfigEntry GUI_CONFIRM_BG = create("gui.user menus.confirm.background", CompMaterial.BLACK_STAINED_GLASS_PANE.name());
+
+	public static final ConfigEntry GUI_REWARD_SELECTION_BG = create("gui.user menus.reward selection.background", CompMaterial.BLACK_STAINED_GLASS_PANE.name());
+	public static final ConfigEntry GUI_REWARD_SELECTION_ROWS = create("gui.user menus.reward selection.rows", 6);
+	public static final ConfigEntry GUI_REWARD_SELECTION_FILL_SLOTS = create("gui.user menus.reward selection.fill slots", InventoryBorder.getInsideBorders(6));
+	public static final ConfigEntry GUI_REWARD_SELECTION_DECORATION = create("gui.user menus.reward selection.decoration", List.of(
+			"slot:0-8 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:45-53 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:9 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:18 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:27 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:36 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:17 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:26 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:35 item:LIGHT_BLUE_STAINED_GLASS_PANE",
+			"slot:44 item:LIGHT_BLUE_STAINED_GLASS_PANE"
+	));
 
 
 	public static void init() {

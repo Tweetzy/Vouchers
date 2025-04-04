@@ -83,7 +83,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 		// max rewards  button
 		if (this.voucher.getSettings().getRewardMode() != RewardMode.AUTOMATIC)
 			setButton(getRows() - 1, 6, QuickItem
-					.of(CompMaterial.REPEATER)
+					.of(CompMaterial.LEVER)
 					.name("<GRADIENT:B3EBF2>&LTotal Rewards</GRADIENT:AEC6CF>")
 					.lore(
 							"&8The max # of rewards to be given",
@@ -121,7 +121,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 				)
 				.make(), click -> {
 
-			final ItemStack cursor = click.cursor;
+			final ItemStack cursor = click.cursor.clone();
 			if (cursor != null && cursor.getType() != CompMaterial.AIR.get()) {
 				this.voucher.getRewards().add(new ItemReward(cursor, 100, 0, new ArrayList<>()));
 				saveAndReOpen(click.player, false);
@@ -129,7 +129,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 			} else {
 				cancelTask();
 				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LVoucher Reward</GRADIENT:AEC6CF>", "&eEnter the reward command in chat without the /", result -> {
-					this.voucher.getRewards().add(new CommandReward(ChatColor.stripColor(result), 100, 0, new ArrayList<>()));
+					this.voucher.getRewards().add(new CommandReward(ChatColor.stripColor(result), 100, 0, "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>", List.of("&7Default command description"), new ArrayList<>()));
 					saveAndReOpen(click.player);
 				}, null, () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), validate -> !validate.isEmpty());
 

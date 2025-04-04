@@ -44,7 +44,8 @@ public abstract class VouchersPagedGUI<T> extends BaseGUI {
 		populateItems();
 		drawFixed();
 
-		applyBackExit();
+		if (autoApplyBackExit())
+			applyBackExit();
 	}
 
 	protected void prePopulate() {
@@ -148,5 +149,9 @@ public abstract class VouchersPagedGUI<T> extends BaseGUI {
 	@Override
 	protected int getNextButtonSlot() {
 		return 50;
+	}
+
+	protected boolean autoApplyBackExit() {
+		return true;
 	}
 }

@@ -8,11 +8,20 @@ import lombok.experimental.UtilityClass;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @UtilityClass
 public final class VoucherHelper {
+
+	public boolean runChance(double chance) {
+		// Convert the chance to a decimal between 0 and 1
+		double decimalChance = chance / 100;
+
+		double randomValue = ThreadLocalRandom.current().nextDouble();
+		return randomValue < decimalChance;
+	}
 
 	public Map<String, String> extractKeyValuePairs(String input) {
 		Map<String, String> map = new HashMap<>();
@@ -26,6 +35,29 @@ public final class VoucherHelper {
 		}
 
 		return map;
+	}
+
+	public List<Integer> extractNumbers(String input) {
+		List<Integer> numbers = new ArrayList<>();
+		String[] parts = input.split(",");
+
+		for (String part : parts) {
+			if (part.contains("-")) {
+				// Handle range
+				String[] rangeParts = part.split("-");
+				int start = Integer.parseInt(rangeParts[0].trim());
+				int end = Integer.parseInt(rangeParts[1].trim());
+
+				for (int i = start; i <= end; i++) {
+					numbers.add(i);
+				}
+			} else {
+				// Handle single number
+				numbers.add(Integer.parseInt(part.trim()));
+			}
+		}
+
+		return numbers;
 	}
 
 	public String dynamicVariablesReplace(String input, String[] values) {

@@ -35,10 +35,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -93,6 +94,8 @@ public class StandardVoucher extends BaseVoucher {
 				"eco give %player% 1000",
 				100,
 				0,
+				"<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>",
+				List.of("&7Default command description"),
 				List.of(new VoucherChatMessage("&bYou won &a$100"), new VoucherBroadcastMessage("&e%player% &7has won &a$1000"))
 		));
 
@@ -206,132 +209,18 @@ public class StandardVoucher extends BaseVoucher {
 			File file = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
 
 			if (file.exists()) {
-				try (Reader reader = new FileReader(file)) {
-					Gson gson = new Gson();
-					JsonObject existingData = gson.fromJson(reader, JsonObject.class);
-					JsonObject newData = gson.fromJson(getAsJSON(), JsonObject.class);
-
-					// Update only changed fields
-					updateChangedFields(existingData, newData);
-
-					// Write the updated data back to the file
-					try (Writer writer = new FileWriter(file)) {
-						Gson gsonWriter = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-						gsonWriter.toJson(existingData, writer);
-
-						if (syncResult != null) {
-							syncResult.accept(SynchronizeResult.SUCCESS);
-						}
-					} catch (IOException e) {
-						if (syncResult != null) {
-							syncResult.accept(SynchronizeResult.FAILURE);
-						}
+				try (Writer writer = new FileWriter(file)) {
+					Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+					gson.toJson(getAsJSON(), writer);
+					if (syncResult != null) {
+						syncResult.accept(SynchronizeResult.SUCCESS);
 					}
 				} catch (IOException e) {
-					if (syncResult != null) {
+					if (syncResult != null)
 						syncResult.accept(SynchronizeResult.FAILURE);
-					}
 				}
 			}
 		});
-	}
-
-//	@Override
-//	public void store(@NonNull Consumer<Voucher> stored) {
-//		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
-//			synchronized (this) { // Synchronize access to prevent concurrent issues
-//				File directory = new File(Vouchers.getInstance().getDataFolder() + "/voucher-files/");
-//				if (!directory.exists()) {
-//					directory.mkdir();
-//				}
-//
-//				File tempFile = new File(String.format("%s/voucher-files/%s.tmp", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
-//				File targetFile = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
-//
-//				try (Writer writer = new FileWriter(tempFile)) {
-//					Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-//					gson.toJson(getAsJSON(), writer); // Write data to temporary file
-//					writer.flush(); // Ensure all data is written before closing
-//
-//					if (targetFile.exists()) {
-//						targetFile.delete(); // Delete the existing file before renaming
-//					}
-//					tempFile.renameTo(targetFile); // Rename temp file to target file
-//					stored.accept(this);
-//				} catch (IOException e) {
-//					e.printStackTrace(); // Log any errors for debugging
-//				}
-//			}
-//		});
-//	}
-//
-//	@Override
-//	public void sync(@Nullable Consumer<SynchronizeResult> syncResult) {
-//		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
-//			synchronized (this) { // Synchronize access to prevent concurrent issues
-//				File targetFile = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
-//				File tempFile = new File(String.format("%s/voucher-files/%s.tmp", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
-//
-//				if (targetFile.exists()) {
-//					try (Reader reader = new FileReader(targetFile)) {
-//						Gson gson = new Gson();
-//						JsonObject existingData = gson.fromJson(reader, JsonObject.class);
-//						JsonObject newData = gson.fromJson(getAsJSON(), JsonObject.class);
-//
-//						// Update only changed fields
-//						updateChangedFields(existingData, newData);
-//
-//						// Write updated data to a temporary file
-//						try (Writer writer = new FileWriter(tempFile)) {
-//							Gson gsonWriter = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-//							gsonWriter.toJson(existingData, writer); // Write updated data
-//
-//							writer.flush(); // Ensure all data is written before closing
-//
-//							if (targetFile.exists()) {
-//								targetFile.delete(); // Delete the existing file before renaming
-//							}
-//							tempFile.renameTo(targetFile); // Rename temp file to target file
-//
-//							if (syncResult != null) {
-//								syncResult.accept(SynchronizeResult.SUCCESS);
-//							}
-//						} catch (IOException e) {
-//							e.printStackTrace(); // Log error for debugging
-//							if (syncResult != null) {
-//								syncResult.accept(SynchronizeResult.FAILURE);
-//							}
-//						}
-//					} catch (IOException e) {
-//						e.printStackTrace(); // Log error for debugging
-//						if (syncResult != null) {
-//							syncResult.accept(SynchronizeResult.FAILURE);
-//						}
-//					}
-//				} else {
-//					if (syncResult != null) {
-//						syncResult.accept(SynchronizeResult.FAILURE); // Handle case where file doesn't exist
-//					}
-//				}
-//			}
-//		});
-//	}
-
-
-	// Helper method to update only changed fields
-	private void updateChangedFields(JsonObject existingData, JsonObject newData) {
-		for (String key : newData.keySet()) {
-			if (!existingData.has(key) || !existingData.get(key).equals(newData.get(key))) {
-				existingData.add(key, newData.get(key));
-			}
-		}
-
-		// Optionally, remove fields that are present in existing data but not in new data
-		for (String key : existingData.keySet()) {
-			if (!newData.has(key)) {
-				existingData.remove(key);
-			}
-		}
 	}
 
 	@Override
@@ -382,12 +271,18 @@ public class StandardVoucher extends BaseVoucher {
 		this.rewards.forEach(reward -> {
 			final JsonObject rewardObject = new JsonObject();
 			rewardObject.addProperty("chance", reward.getChance());
-			rewardObject.addProperty("delay", reward.getDelay());
+			rewardObject.addProperty("delay", reward.getDelay());;
+
 			rewardObject.add("messages", convertMessagesToObject(reward.getMessages()));
 
 			if (reward instanceof CommandReward commandReward) {
 				rewardObject.addProperty("type", RewardType.COMMAND.name());
 				rewardObject.addProperty("command", commandReward.getCommand());
+				rewardObject.addProperty("name", commandReward.getName());
+
+				final JsonArray cmdDesc = new JsonArray();
+				commandReward.getDescription().forEach(cmdDesc::add);
+				rewardObject.add("description", cmdDesc);
 			}
 
 			if (reward instanceof ItemReward itemReward) {

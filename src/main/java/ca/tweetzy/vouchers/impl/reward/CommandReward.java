@@ -20,10 +20,15 @@ import java.util.List;
 public final class CommandReward extends BaseReward {
 
 	private String command;
+	private String name;
+	private List<String> description;
 
-	public CommandReward(@NonNull final String command, final double chance, final int delay, @NonNull final List<Message> messages) {
+
+	public CommandReward(@NonNull final String command, final double chance, final int delay, String name, List<String> description, @NonNull final List<Message> messages) {
 		super(RewardType.COMMAND, chance, delay, messages);
 		this.command = command;
+		this.name = name;
+		this.description = description;
 	}
 
 	@Override
