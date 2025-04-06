@@ -1,30 +1,37 @@
+/*
+ * Vouchers
+ * Copyright 2025 Kiran Hart
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ca.tweetzy.vouchers.impl;
 
-import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Category;
-import com.google.gson.JsonArray;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Consumer;
 
 @AllArgsConstructor
 public final class VoucherCategory implements Category {
 
 	private final String id;
-	private String name;
-	private String description;
-	private ItemStack icon;
-	private HashSet<String> vouchers;
+	private final String name;
+	private final String icon;
 
 	@Override
-	public String getId() {
-		return this.id;
+	public @NonNull String getId() {
+		return this.id.toLowerCase();
 	}
 
 	@Override
@@ -32,74 +39,9 @@ public final class VoucherCategory implements Category {
 		return this.name;
 	}
 
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	@Override
-	public String getDescription() {
-		return this.description;
-	}
-
-	@Override
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	@Override
-	public ItemStack getItem() {
+	public String getIcon() {
 		return this.icon;
-	}
-
-	@Override
-	public void setItem(ItemStack icon) {
-		this.icon = icon;
-	}
-
-	@Override
-	public Set<String> getVoucherIds() {
-		return this.vouchers;
-	}
-
-	@Override
-	public String getJSONString() {
-		final JsonArray array = new JsonArray();
-
-		getVoucherIds().forEach(array::add);
-
-		return array.toString();
-	}
-
-
-	@Override
-	public void store(@NonNull Consumer<Category> stored) {
-		Vouchers.getDataManager().createCategory(this, (error, created) -> {
-			if (error == null && created != null) {
-				Vouchers.getCategoryManager().add(created);
-				stored.accept(created);
-			} else {
-				stored.accept(null);
-			}
-		});
-	}
-
-	@Override
-	public void unStore(@Nullable Consumer<SynchronizeResult> syncResult) {
-		Vouchers.getDataManager().deleteCategory(getId().toLowerCase(), (error, res) -> {
-			if (error == null && res)
-				Vouchers.getCategoryManager().remove(getId());
-
-			if (syncResult != null)
-				syncResult.accept(error == null && res ? SynchronizeResult.SUCCESS : SynchronizeResult.FAILURE);
-		});
-	}
-
-	@Override
-	public void sync(@Nullable Consumer<SynchronizeResult> syncResult) {
-		Vouchers.getDataManager().updateCategory(this, (error, res) -> {
-			if (syncResult != null)
-				syncResult.accept(error == null && res ? SynchronizeResult.SUCCESS : SynchronizeResult.FAILURE);
-		});
 	}
 }

@@ -1,7 +1,26 @@
+/*
+ * Vouchers
+ * Copyright 2025 Kiran Hart
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ca.tweetzy.vouchers.gui;
 
 import ca.tweetzy.flight.gui.Gui;
 import ca.tweetzy.flight.gui.template.BaseGUI;
+import ca.tweetzy.flight.hooks.PlaceholderAPIHook;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.settings.Settings;
@@ -18,16 +37,19 @@ public abstract class VouchersBaseGUI extends BaseGUI {
 
 	public VouchersBaseGUI(Gui parent, @NonNull final Player player, @NonNull String title, int rows) {
 		super(parent, title, rows);
+		setTitle(PlaceholderAPIHook.tryReplace(player, title));
 		this.player = player;
 	}
 
 	public VouchersBaseGUI(Gui parent, @NonNull final Player player, @NonNull String title) {
 		super(parent, title);
+		setTitle(PlaceholderAPIHook.tryReplace(player, title));
 		this.player = player;
 	}
 
 	public VouchersBaseGUI(@NonNull final Player player, @NonNull String title) {
 		super(title);
+		setTitle(PlaceholderAPIHook.tryReplace(player, title));
 		this.player = player;
 	}
 

@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 package ca.tweetzy.vouchers.api.sync;
 
+import com.google.gson.JsonObject;
+
 public interface Jsonable {
 
-	String getJSONString();
+	JsonObject getAsJSON();
 }

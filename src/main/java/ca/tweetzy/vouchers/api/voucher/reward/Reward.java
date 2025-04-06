@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,20 @@
 
 package ca.tweetzy.vouchers.api.voucher.reward;
 
-import ca.tweetzy.vouchers.api.sync.Jsonable;
-import org.bukkit.entity.Player;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
 
 import java.util.List;
 
-public interface Reward extends Jsonable {
-
-	RewardType getType();
-
-	int getDelay();
+public interface Reward {
 
 	double getChance();
 
-	void setDelay(int delay);
+	void setChance(final double chance);
 
-	void setChance(double chance);
+	int getDelay();
 
-	boolean execute(Player player, boolean guarantee, List<String> args);
+	void setDelay(final int delay);
 
-	default String getFriendlyFormat() {
-		return null;
-	}
+	List<Message> getMessages();
+
 }

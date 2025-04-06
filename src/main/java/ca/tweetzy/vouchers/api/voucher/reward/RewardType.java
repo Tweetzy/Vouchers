@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,15 @@
 
 package ca.tweetzy.vouchers.api.voucher.reward;
 
-public enum RewardType {
+import ca.tweetzy.vouchers.api.sync.Navigable;
 
-	COMMAND,
-	ITEM
+public enum RewardType implements Navigable<RewardType> {
+
+	ITEM,
+	COMMAND;
+
+	@Override
+	public Class<RewardType> enumClass() {
+		return RewardType.class;
+	}
 }

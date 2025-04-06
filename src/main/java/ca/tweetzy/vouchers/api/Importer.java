@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 
 package ca.tweetzy.vouchers.api;
 
+import ca.tweetzy.vouchers.api.voucher.Voucher;
+
+import java.util.List;
+import java.util.function.Consumer;
+
 public interface Importer {
 
-	String getName();
-
-	String getAuthor();
-
-	void load();
+	boolean process(Consumer<List<Voucher>> vouchers);
 }

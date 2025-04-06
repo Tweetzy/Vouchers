@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,64 +18,43 @@
 
 package ca.tweetzy.vouchers.impl.reward;
 
-import ca.tweetzy.flight.nbtapi.NBT;
-import ca.tweetzy.flight.utils.SerializeUtil;
+import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.voucher.reward.AbstractReward;
+import ca.tweetzy.vouchers.api.voucher.message.BaseMessage;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.reward.BaseReward;
 import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
-import ca.tweetzy.vouchers.model.Chance;
-import ca.tweetzy.vouchers.model.Giver;
-import com.google.gson.JsonObject;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 
-public final class ItemReward extends AbstractReward {
+@Setter
+@Getter
+public final class ItemReward extends BaseReward {
 
-	@Getter
-	private final ItemStack item;
+	private ItemStack item;
 
-	public ItemReward(ItemStack item, double chance) {
-		super(RewardType.ITEM, chance, 0);
+	public ItemReward(@NonNull final ItemStack item, final double chance, final int delay, @NonNull final List<Message> messages) {
+		super(RewardType.COMMAND, chance, delay, messages);
 		this.item = item;
 	}
 
-
 	@Override
-	public boolean execute(Player player, boolean guarantee, List<String> args) {
-		if (guarantee) {
-			if (this.getDelay() != -1)
-				Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> Giver.giveItem(player, this.item), this.getDelay());
-			else
-				Giver.giveItem(player, this.item);
-			return true;
+	public void execute(@NonNull Player player, String[] args) {
+
+		if (getDelay() >= 1) {
+			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> {
+				PlayerUtil.giveItem(player, this.item);
+				getMessages().stream().map(msg -> (BaseMessage) msg).forEach(msg -> msg.send(player, args));
+			}, getDelay());
+		} else {
+			PlayerUtil.giveItem(player, this.item);
+			getMessages().stream().map(msg -> (BaseMessage) msg).forEach(msg -> msg.send(player, args));
 		}
-
-		if (!Chance.tryChance(this.getChance())) return false;
-
-		if (this.getDelay() != -1)
-			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> Giver.giveItem(player, this.item), this.getDelay());
-		else
-			Giver.giveItem(player, this.item);
-
-		return true;
 	}
-
-	@Override
-	public String getJSONString() {
-		final JsonObject object = new JsonObject();
-
-		object.addProperty("item", SerializeUtil.encodeItem(this.item));
-		object.addProperty("itemNew", NBT.itemStackToNBT(this.item).toString());
-		object.addProperty("chance", this.getChance());
-		object.addProperty("type", RewardType.ITEM.name());
-
-		return object.toString();
-	}
-
 }

@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,7 @@
 
 package ca.tweetzy.vouchers.api.voucher.message;
 
-import ca.tweetzy.vouchers.api.sync.Jsonable;
-import ca.tweetzy.vouchers.api.voucher.Voucher;
-import ca.tweetzy.vouchers.api.voucher.reward.Reward;
-import org.bukkit.entity.Player;
-
-import java.util.List;
-
-public interface Message extends Jsonable {
+public interface Message {
 
 	MessageType getMessageType();
-
-	String getMessage();
-
-	int getFadeInDuration();
-
-	int getStayDuration();
-
-	int getFadeOutDuration();
-
-	void setMessage(String message);
-
-	void setFadeInDuration(int ticks);
-
-	void setStayDuration(int ticks);
-
-	void setFadeOutDuration(int ticks);
-
-	void send(Player player, Voucher voucher, List<String> args);
-
-	void send(Player player, Voucher voucher, List<String> args, Reward reward);
-
-	String getColouredAndReplaced(Player player, Voucher voucher);
-
-	String getColouredAndReplaced(Player player, Voucher voucher, Reward reward);
 }

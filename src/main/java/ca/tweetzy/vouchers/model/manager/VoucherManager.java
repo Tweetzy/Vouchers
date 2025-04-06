@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,40 @@
 package ca.tweetzy.vouchers.model.manager;
 
 import ca.tweetzy.flight.comp.enums.CompMaterial;
+import ca.tweetzy.flight.comp.enums.CompSound;
 import ca.tweetzy.flight.nbtapi.NBT;
+import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.manager.KeyValueManager;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.message.Message;
+import ca.tweetzy.vouchers.api.voucher.reward.Reward;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
+import ca.tweetzy.vouchers.impl.StandardVoucher;
+import ca.tweetzy.vouchers.impl.VoucherOptions;
+import ca.tweetzy.vouchers.impl.message.VoucherActionBarMessage;
+import ca.tweetzy.vouchers.impl.message.VoucherBroadcastMessage;
+import ca.tweetzy.vouchers.impl.message.VoucherChatMessage;
+import ca.tweetzy.vouchers.impl.message.VoucherTitleMessage;
+import ca.tweetzy.vouchers.impl.reward.CommandReward;
+import ca.tweetzy.vouchers.impl.reward.ItemReward;
+import ca.tweetzy.vouchers.model.TimeConverter;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.units.qual.N;
+
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class VoucherManager extends KeyValueManager<String, Voucher> {
 
@@ -33,30 +60,207 @@ public final class VoucherManager extends KeyValueManager<String, Voucher> {
 		super("Voucher");
 	}
 
-	public void add(Voucher voucher) {
-		if (this.managerContent.containsKey(voucher.getId().toLowerCase())) return;
-		this.managerContent.put(voucher.getId().toLowerCase(), voucher);
+	public boolean doesVoucherWithIdExists(@NonNull final String voucherId) {
+		return this.getManagerContent().containsKey(ChatColor.stripColor(voucherId).toLowerCase());
 	}
 
-	public Voucher find(@NonNull final String id){
-		return this.managerContent.getOrDefault(id.toLowerCase(), null);
-	}
-
-	public boolean isVoucher(final ItemStack item) {
-		if (item == null || item.getType() == CompMaterial.AIR.parseMaterial() || item.getAmount() == 0) return false;
-
-		return NBT.get(item, nbt -> (boolean) nbt.hasTag("Tweetzy:Vouchers"));
+	public boolean isVoucher(final ItemStack itemStack) {
+		if (itemStack == null || itemStack.getType() == CompMaterial.AIR.get() || itemStack.getAmount() == 0) return false;
+		return NBT.get(itemStack, nbt -> (boolean) nbt.hasTag("Tweetzy:Vouchers"));
 	}
 
 	@Override
 	public void load() {
-		clear();
+		// load existing voucher files
+		Bukkit.getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
 
-		Vouchers.getDataManager().getVouchers((error, all) -> {
-			if (error == null)
-				all.forEach(voucher -> add(voucher.getId(), voucher));
-			else
-				error.printStackTrace();
+			File vouchersDirectory = new File(Vouchers.getInstance().getDataFolder() + "/voucher-files");
+			File[] files = vouchersDirectory.listFiles();
+
+			if (files == null) return;
+
+			for (File file : files) {
+				final String voucherId = file.getName().replace(".json", "").toLowerCase();
+				final Voucher voucher = loadVoucherFromFile(file);
+
+				if (voucher != null)
+					add(voucherId, voucher);
+			}
+
 		});
+	}
+
+	public Voucher loadVoucherFromFile(File file) {
+		final String voucherId = file.getName().replace(".json", "").toLowerCase();
+		final JsonObject object;
+		try {
+			object = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+
+		if (!object.has("appearance")) {
+			return null;
+		}
+
+		final JsonObject appearanceObject = object.get("appearance").getAsJsonObject();
+		final String displayName = appearanceObject.has("display_name") ? appearanceObject.get("display_name").getAsString() : "Un-named voucher";
+
+		final ArrayList<String> description = new ArrayList<>();
+
+		if (appearanceObject.has("description")) {
+			final JsonArray descArr = appearanceObject.get("description").getAsJsonArray();
+			descArr.forEach(element -> description.add(element.getAsString()));
+		}
+
+		final VoucherOptions options = new VoucherOptions();
+		options.setUseGlow(appearanceObject.has("glow") && appearanceObject.get("glow").getAsBoolean());
+
+		// permissions
+		if (object.has("permissions")) {
+			final JsonObject permissionObject = object.get("permissions").getAsJsonObject();
+			options.setUsePermission(permissionObject.has("requires_permission") && permissionObject.get("requires_permission").getAsBoolean());
+			options.setPermission(permissionObject.has("use_permission") ? permissionObject.get("use_permission").getAsString() : "vouchers.use.%s".formatted(voucherId));
+		}
+
+		// sounds
+		if (object.has("sounds")) {
+			final JsonObject soundsObject = object.get("sounds").getAsJsonObject();
+			options.setUseSound(soundsObject.has("play_sound") && soundsObject.get("play_sound").getAsBoolean());
+			options.setSound(soundsObject.has("use_sound") ? CompSound.of(soundsObject.get("use_sound").getAsString()).orElse(CompSound.ENTITY_BAT_TAKEOFF) : CompSound.ENTITY_BAT_TAKEOFF);
+		}
+
+		// usage
+		if (object.has("usage")) {
+			final JsonObject usageObject = object.get("usage").getAsJsonObject();
+			options.setRemoveOnUse(usageObject.has("remove_on_use") && usageObject.get("remove_on_use").getAsBoolean());
+			options.setAskForConfirmation(usageObject.has("ask_for_confirm") && usageObject.get("ask_for_confirm").getAsBoolean());
+			options.setMaximumUses(usageObject.has("maximum_uses") ? usageObject.get("maximum_uses").getAsInt() : -1);
+
+			if (usageObject.has("cooldown")) {
+				final JsonObject cooldownObject = usageObject.get("cooldown").getAsJsonObject();
+				options.setUseCooldown(cooldownObject.has("use_cooldown") && cooldownObject.get("use_cooldown").getAsBoolean());
+
+				if (cooldownObject.has("cooldown_time")) {
+					final String rawCooldownTime = cooldownObject.get("cooldown_time").getAsString();
+					final long milliseconds = TimeConverter.convertHumanReadableTime(rawCooldownTime);
+
+					options.setCooldown(TimeUnit.MILLISECONDS.toSeconds(milliseconds));
+				}
+			}
+
+		}
+
+		// rewards
+		final List<Reward> rewardList = new ArrayList<>();
+
+		if (object.has("reward_options")) {
+			final JsonObject rewardOptionsObject = object.get("reward_options").getAsJsonObject();
+
+			final int maximumRewards = rewardOptionsObject.has("maximum_rewards") ? rewardOptionsObject.get("maximum_rewards").getAsInt() : 1;
+			options.setMaximumRewards(maximumRewards);
+
+			// rewards list
+			if (rewardOptionsObject.has("rewards")) {
+				final JsonArray rewardObjects = rewardOptionsObject.get("rewards").getAsJsonArray();
+				final RewardMode rewardMode = rewardOptionsObject.has("reward_mode") ? Enum.valueOf(RewardMode.class, rewardOptionsObject.get("reward_mode").getAsString()) : RewardMode.AUTOMATIC;
+				options.setRewardMode(rewardMode);
+
+				rewardObjects.forEach(rewardObjectElement -> {
+					final JsonObject rewardObject = rewardObjectElement.getAsJsonObject();
+					// TODO figure out the type of reward it is
+					if (!rewardObject.has("type") || !rewardObject.has("chance") || !rewardObject.has("delay")) return;
+
+					final RewardType rewardType = Enum.valueOf(RewardType.class, rewardObject.get("type").getAsString());
+					final double chance = rewardObject.get("chance").getAsDouble();
+					final int delay = rewardObject.get("delay").getAsInt();
+					final List<Message> rewardMessages = extractMessages(rewardObject);
+
+					if (rewardType == RewardType.COMMAND) {
+						final String name = rewardObject.has("name") ?  rewardObject.get("name").getAsString() : "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>";
+						final List<String> cmdDesc = new ArrayList<>();
+						if (rewardObject.has("description")) {
+							final JsonArray descArr = rewardObject.get("description").getAsJsonArray();
+							descArr.forEach(element -> cmdDesc.add(element.getAsString()));
+						} else {
+							cmdDesc.add("&7Default command description");
+						}
+
+						rewardList.add(new CommandReward(
+								rewardObject.get("command").getAsString(),
+								chance,
+								delay,
+								name,
+								cmdDesc,
+								rewardMessages
+						));
+					} else {
+						rewardList.add(new ItemReward(
+								QuickItem.getItem(rewardObject.get("item").getAsString()),
+								chance,
+								delay,
+								rewardMessages
+						));
+					}
+				});
+			}
+		}
+
+		StandardVoucher standardVoucher = new StandardVoucher(
+				voucherId,
+				object.has("item") ? object.get("item").getAsString() : "PAPER",
+				displayName,
+				description,
+				options,
+				extractMessages(object),
+				rewardList
+		);
+
+		if (object.has("category")) {
+			standardVoucher.setCategory(object.get("category").getAsString());
+		}
+
+		return standardVoucher;
+	}
+
+	public List<Message> extractMessages(@NonNull final JsonObject object) {
+		final List<Message> messageList = new ArrayList<>();
+
+		if (object.has("messages")) {
+			final JsonObject messagesObject = object.get("messages").getAsJsonObject();
+
+			// broadcast messages
+			if (messagesObject.has("broadcast"))
+				messagesObject.get("broadcast").getAsJsonArray().forEach(element -> {
+					final String line = element.getAsString();
+					messageList.add(new VoucherBroadcastMessage(line));
+				});
+
+			if (messagesObject.has("chat_messages"))
+				messagesObject.get("chat_messages").getAsJsonArray().forEach(element -> {
+					final String line = element.getAsString();
+					messageList.add(new VoucherChatMessage(line));
+				});
+
+			if (messagesObject.has("actionbar"))
+				messagesObject.get("actionbar").getAsJsonArray().forEach(element -> {
+					final String line = element.getAsString();
+					messageList.add(new VoucherActionBarMessage(line));
+				});
+
+			if (messagesObject.has("titles"))
+				messagesObject.get("titles").getAsJsonArray().forEach(element -> {
+					final JsonObject titleObject = element.getAsJsonObject();
+					messageList.add(new VoucherTitleMessage(
+							titleObject.get("title").getAsString(),
+							titleObject.get("subtitle").getAsString(),
+							titleObject.get("fade_in").getAsInt(),
+							titleObject.get("stay_duration").getAsInt(),
+							titleObject.get("fade_out").getAsInt()
+					));
+				});
+		}
+
+		return messageList;
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2022-2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,11 @@ import ca.tweetzy.flight.command.AllowedExecutor;
 import ca.tweetzy.flight.command.Command;
 import ca.tweetzy.flight.command.ReturnType;
 import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.gui.admin.VoucherListGUI;
 import ca.tweetzy.vouchers.impl.importer.VouchersImporter;
+import ca.tweetzy.vouchers.settings.Settings;
+import ca.tweetzy.vouchers.settings.Translations;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -35,11 +39,22 @@ public final class CommandImport extends Command {
 
 	@Override
 	protected ReturnType execute(CommandSender sender, String... args) {
-		new VouchersImporter().load();
 
-		Common.tell(sender, "&aImported any vouchers found within the exported v2 file. /vouchers to view");
-		Common.tell(sender, "&cWhile the importer shouldn't miss anything, it's always recommended to go back");
-		Common.tell(sender, "&cinto the /vouchers list and check if everything is correct!");
+		Vouchers.newChain().async(() -> {
+
+			new VouchersImporter().process(found -> {
+				if (found.isEmpty()) return;
+
+				found.forEach(foundVoucher -> foundVoucher.store(store -> {
+					if (store != null) {
+						Vouchers.getVoucherManager().add(store.getId().toLowerCase(), store);
+						tell(sender, "&aConverted v3 voucher &6%s &ato v4 format".formatted(store.getId()));
+					}
+				}));
+			});
+
+		}).execute();
+
 
 		return ReturnType.SUCCESS;
 	}

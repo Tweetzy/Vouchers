@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2022-2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
 
 package ca.tweetzy.vouchers.hook;
 
-import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.model.FlagExtractor;
+import ca.tweetzy.vouchers.model.VoucherHelper;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -72,10 +71,9 @@ public final class PAPIHook extends PlaceholderExpansion {
 		if (paramSplit[0].equalsIgnoreCase("redeems")) {
 			if (paramSplit.length < 2) return null;
 
-			final String voucherId = FlagExtractor.grabWordsUntilFlag(paramSplit, 1, "-a");
-			final int totalRedeems = Vouchers.getRedeemManager().getTotalRedeems(player.getUniqueId(), voucherId);
+			final String voucherId = VoucherHelper.grabWordsUntilFlag(paramSplit, 1, "-a");
 
-			return String.valueOf(totalRedeems);
+			return String.valueOf(0);
 		}
 
 		return null;

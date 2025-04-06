@@ -1,0 +1,68 @@
+{
+  "item": "PAPER:5",
+  "appearance": {
+    "display_name": "&7Epic Voucher",
+    "description": [
+      "&7Example Line 1",
+      "&7Example Line 2",
+      "&7Example Line 3"
+    ],
+    "glow": true
+  },
+  "permissions": {
+    "requires_permission": false,
+    "use_permission": "vouchers.use.example"
+  },
+  "sounds": {
+    "play_sound": true,
+    "use_sound": "EXPERIENCE_ORB_PICKUP"
+  },
+  "usage": {
+    "remove_on_use": true,
+    "ask_for_confirm": true,
+    "maximum_uses": -1,
+    "cooldown:": {
+      "use_cooldown": false,
+      "cooldown_time": "10 seconds"
+    }
+  },
+  "messages": {
+    "broadcast": [
+      "&a%player% &ehas redeemed the voucher&f: %voucher_display_name%"
+    ],
+    "chat_messages": [
+      "&aCongratulations on redeeming the %voucher_display_name% &avoucher"
+    ],
+    "actionbar": [
+      "&eVoucher has been redeemed"
+    ],
+    "titles": [
+      {
+        "title": "&bRedeemed Voucher",
+        "subtitle": "&cYou redeemed a voucher",
+        "fade_in": 10,
+        "stay_duration": 20,
+        "fade_out": 10
+      }
+    ]
+  },
+  "reward_options": {
+    "reward_mode": "AUTOMATIC",
+    "rewards": [
+      {
+        "type": "COMMAND",
+        "command": "eco give %player% 1000",
+        "chance": 100.0,
+        "delay": "-1",
+        "messages": {
+          "broadcast": [
+            "&a%player% &ehas won $1000 from the voucher"
+          ],
+          "chat_messages": [
+            "&aCongratulations on receiving $1000"
+          ]
+        }
+      }
+    ]
+  }
+}

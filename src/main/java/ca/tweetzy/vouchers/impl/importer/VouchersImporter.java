@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,200 +19,216 @@
 package ca.tweetzy.vouchers.impl.importer;
 
 import ca.tweetzy.flight.comp.enums.CompSound;
+import ca.tweetzy.flight.utils.QuickItem;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.api.Importer;
-import ca.tweetzy.vouchers.api.voucher.*;
+import ca.tweetzy.vouchers.api.VoucherImporter;
+import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.message.Message;
-import ca.tweetzy.vouchers.api.voucher.message.MessageType;
 import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
-import ca.tweetzy.vouchers.impl.ActiveVoucher;
-import ca.tweetzy.vouchers.impl.VoucherMessage;
-import ca.tweetzy.vouchers.impl.VoucherSettings;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardType;
+import ca.tweetzy.vouchers.impl.StandardVoucher;
+import ca.tweetzy.vouchers.impl.VoucherOptions;
+import ca.tweetzy.vouchers.impl.message.VoucherActionBarMessage;
+import ca.tweetzy.vouchers.impl.message.VoucherBroadcastMessage;
+import ca.tweetzy.vouchers.impl.message.VoucherChatMessage;
+import ca.tweetzy.vouchers.impl.message.VoucherTitleMessage;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
 import ca.tweetzy.vouchers.impl.reward.ItemReward;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.EquipmentSlot;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import lombok.NonNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public final class VouchersImporter implements Importer {
+public final class VouchersImporter extends VoucherImporter {
 
-	@Override
-	public String getName() {
-		return "Vouchers";
+	public VouchersImporter() {
+		super("Vouchers");
 	}
 
 	@Override
-	public String getAuthor() {
-		return "Kiran Hart";
-	}
+	public boolean process(Consumer<List<Voucher>> vouchers) {
+		final List<Voucher> foundVouchers = new ArrayList<>();
 
-	@Override
-	public void load() {
-		final File file = new File(Vouchers.getInstance().getDataFolder() + File.separator + "vouchers-v3.yml");
+		File directory = new File(Vouchers.getInstance().getDataFolder() + "/vouchers/");
+		if (!directory.exists()) return false;
 
-		if (!file.exists()) {
-			return;
+		final File[] versionThreeVouchers = directory.listFiles();
+		if (versionThreeVouchers == null) return false;
+
+		// load files and convert
+		for (File file : versionThreeVouchers) {
+			final Voucher voucher = loadFoundVoucher(file);
+
+			if (voucher != null)
+				foundVouchers.add(voucher);
 		}
 
-		final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-		final ConfigurationSection section = configuration.getConfigurationSection("vouchers");
+		vouchers.accept(foundVouchers);
+		return true;
+	}
 
-		if (section == null || section.getKeys(false).size() == 0) return;
+	public Voucher loadFoundVoucher(File file) {
+		final String voucherId = file.getName().replace(".json", "").toLowerCase();
+		final JsonObject object;
+		try {
+			object = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 
-		// loop through all vouchers
-		section.getKeys(false).forEach(voucherNode -> {
+		final String displayName = object.has("displayName") ? object.get("displayName").getAsString() : "Un-named voucher";
+		final ArrayList<String> description = new ArrayList<>();
 
-			final List<Reward> voucherRewards = new ArrayList<>();
-			final ConfigurationSection rewardSection = section.getConfigurationSection(voucherNode + ".rewards");
+		if (object.has("description")) {
+			final JsonArray descArr = object.get("description").getAsJsonArray();
+			descArr.forEach(element -> description.add(element.getAsString()));
+		}
 
-			if (rewardSection != null && rewardSection.getKeys(false).size() != 0) {
+		final VoucherOptions options = new VoucherOptions();
+		options.setUseGlow(object.has("glowing") && object.get("glowing").getAsBoolean());
 
-				rewardSection.getKeys(false).forEach(rewardKey -> {
+		// permissions
+		options.setUsePermission(object.has("requirePermission") && object.get("requirePermission").getAsBoolean());
+		options.setPermission(object.has("permission") ? object.get("permission").getAsString() : "vouchers.use.%s".formatted(voucherId));
 
-					if (rewardSection.getString(rewardKey + ".type").equalsIgnoreCase("command")) {
-						voucherRewards.add(new CommandReward(
-								rewardSection.getString(rewardKey + ".command").replace("{player}", "%player%"),
-								rewardSection.getDouble(rewardKey + ".chance"),
-								0
-						));
+		// sounds
+		options.setUseSound(object.has("playSound") && object.get("playSound").getAsBoolean());
+		options.setSound(object.has("sound") ? CompSound.of(object.get("sound").getAsString()).orElse(CompSound.ENTITY_BAT_TAKEOFF) : CompSound.ENTITY_BAT_TAKEOFF);
+
+		options.setRemoveOnUse(object.has("removeOnUse") && object.get("removeOnUse").getAsBoolean());
+		options.setAskForConfirmation(object.has("askForConfirm") && object.get("askForConfirm").getAsBoolean());
+		options.setMaximumUses(object.has("maxUses") ? object.get("maxUses").getAsInt() : -1);
+
+		final int rawCooldownTime = object.get("cooldown").getAsInt();
+		options.setUseCooldown(rawCooldownTime > 0);
+		options.setCooldown(rawCooldownTime);
+
+		final RewardMode rewardMode = object.has("rewardMode") ? Enum.valueOf(RewardMode.class, object.get("rewardMode").getAsString()) : RewardMode.AUTOMATIC;
+
+		options.setMaximumRewards(1);
+		options.setRewardMode(rewardMode);
+
+		// rewards
+		final List<Reward> rewardList = new ArrayList<>();
+
+		// rewards list
+		if (object.has("rewards")) {
+			final JsonArray rewardObjects = object.get("rewards").getAsJsonArray();
+
+			rewardObjects.forEach(rewardObjectElement -> {
+				final JsonObject rewardObject = rewardObjectElement.getAsJsonObject();
+
+				if (!rewardObject.has("type") || !rewardObject.has("chance")) return;
+
+				final RewardType rewardType = Enum.valueOf(RewardType.class, rewardObject.get("type").getAsString());
+				final double chance = rewardObject.get("chance").getAsDouble();
+				final int delay = rewardObject.get("delay").getAsInt();
+
+				if (rewardType == RewardType.COMMAND) {
+					final String name = rewardObject.has("name") ? rewardObject.get("name").getAsString() : "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>";
+					final List<String> cmdDesc = new ArrayList<>();
+					if (rewardObject.has("description")) {
+						final JsonArray descArr = rewardObject.get("description").getAsJsonArray();
+						descArr.forEach(element -> cmdDesc.add(element.getAsString()));
 					} else {
-						if (rewardSection.contains(rewardKey + ".item"))
-							voucherRewards.add(new ItemReward(
-									rewardSection.getItemStack(rewardKey + ".item"),
-									rewardSection.getDouble(rewardKey + ".chance")
-							));
+						cmdDesc.add("&7Default command description");
 					}
 
-				});
-			}
+					rewardList.add(new CommandReward(
+							rewardObject.get("command").getAsString(),
+							chance,
+							delay,
+							name,
+							cmdDesc,
+							new ArrayList<>()
+					));
+				} else {
+					rewardList.add(new ItemReward(
+							QuickItem.getItem(rewardObject.get("item").getAsString()),
+							chance,
+							delay,
+							new ArrayList<>()
+					));
+				}
+			});
+		}
 
-			final List<Message> messages = new ArrayList<>();
+		return new StandardVoucher(
+				voucherId,
+				object.has("item") ? object.get("item").getAsString() : "PAPER",
+				displayName,
+				description,
+				options,
+				extractMessages(object),
+				rewardList
+		);
+	}
 
-			if (section.getBoolean(voucherNode + ".setting.broadcast redeem")) {
-				messages.add(new VoucherMessage(
-						MessageType.BROADCAST,
-						section.getString(voucherNode + ".setting.broadcast msg"),
-						0, 0, 0
-				));
-			}
+	public List<Message> extractMessages(@NonNull final JsonObject object) {
+		final List<Message> messageList = new ArrayList<>();
 
-			if (section.getBoolean(voucherNode + ".setting.send title")) {
-				messages.add(new VoucherMessage(
-						MessageType.TITLE,
-						section.getString(voucherNode + ".setting.title"),
-						20, 20, 20
-				));
-			}
-
-			if (section.getBoolean(voucherNode + ".setting.send subtitle")) {
-				messages.add(new VoucherMessage(
-						MessageType.SUBTITLE,
-						section.getString(voucherNode + ".setting.subtitle"),
-						20, 20, 20
-				));
-			}
-
-			if (section.getBoolean(voucherNode + ".setting.send actionbar")) {
-				messages.add(new VoucherMessage(
-						MessageType.ACTION_BAR,
-						section.getString(voucherNode + ".setting.actionbar"),
-						0, 0, 0
-				));
-			}
-
-			messages.add(new VoucherMessage(
-					MessageType.CHAT,
-					section.getString(voucherNode + ".setting.redeem msg"),
-					0, 0, 0
-			));
-
-			final VoucherOptions options = new VoucherSettings(
-					-1,
-					section.getInt(voucherNode + ".setting.cooldown"),
-					section.getBoolean(voucherNode + ".setting.glow"),
-					section.getBoolean(voucherNode + ".setting.ask confirm"),
-					true,
-					section.getBoolean(voucherNode + ".setting.require permission"),
-					true,
-					CompSound.ENTITY_EXPERIENCE_ORB_PICKUP,
-					section.getString(voucherNode + ".setting.permission"),
-					messages
-			);
-
-
-			final Voucher voucher = new ActiveVoucher(
-					voucherNode,
-					section.getString(voucherNode + ".display name"),
-					section.getItemStack(voucherNode + ".icon"),
-					section.getStringList(voucherNode + ".description"),
-					RewardMode.valueOf(section.getString(voucherNode + ".setting.reward mode").toUpperCase()),
-					options,
-					voucherRewards,
-					EquipmentSlot.HAND
-			);
-
-			Vouchers.getDataManager().createVoucher(voucher, (error, created) -> {
-				if (error == null)
-					Vouchers.getVoucherManager().add(created);
+		// broadcast messages
+		if (object.has("broadcastMessages"))
+			object.get("broadcastMessages").getAsJsonArray().forEach(element -> {
+				final String line = element.getAsString();
+				messageList.add(new VoucherBroadcastMessage(line));
 			});
 
-		});
+		if (object.has("chatMessages"))
+			object.get("chatMessages").getAsJsonArray().forEach(element -> {
+				final String line = element.getAsString();
+				messageList.add(new VoucherChatMessage(line));
+			});
+
+		if (object.has("actionbarMessages"))
+			object.get("actionbarMessages").getAsJsonArray().forEach(element -> {
+				final String line = element.getAsString();
+				messageList.add(new VoucherActionBarMessage(line));
+			});
+
+
+		String title = "", subtitle = "";
+		int fadeIn = 20, duration = 20, fadeOut = 20;
+
+		if (object.has("titleMessage")) {
+			final JsonObject titleObject = object.get("titleMessage").getAsJsonObject();
+			if (titleObject.has("message")) {
+				title = titleObject.get("message").getAsString();
+				fadeIn = titleObject.get("fadeIn").getAsInt();
+				duration = titleObject.get("stay").getAsInt();
+				fadeOut = titleObject.get("fadeOut").getAsInt();
+			}
+		}
+
+		if (object.has("subtitleMessage")) {
+			final JsonObject titleObject = object.get("subtitleMessage").getAsJsonObject();
+			if (titleObject.has("message")) {
+				subtitle = titleObject.get("message").getAsString();
+			}
+		}
+
+		if (!title.isBlank() || !subtitle.isBlank())
+			messageList.add(new VoucherTitleMessage(
+					title, subtitle, fadeIn, duration, fadeOut
+			));
+
+		return messageList;
+	}
+
+	@Override
+	protected boolean foundVouchers() {
+		File directory = new File(Vouchers.getInstance().getDataFolder() + "/vouchers/");
+		if (!directory.exists()) return false;
+
+		final File[] versionThreeVouchers = directory.listFiles();
+		return versionThreeVouchers != null && versionThreeVouchers.length != 0;
 	}
 }
-
-
-//		Common.runAsync(() -> {
-//
-//final File file = FileUtil.getOrMakeFile("vouchers-v3.yml");
-//		YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-//
-//		Vouchers.getVoucherManager().getVouchers().forEach(voucher -> {
-//
-//		configuration.set("vouchers." + voucher.getId() + ".icon", voucher.getIcon().toItem());
-//		configuration.set("vouchers." + voucher.getId() + ".display name", voucher.getDisplayName());
-//		configuration.set("vouchers." + voucher.getId() + ".description", voucher.getDescription());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.reward mode", voucher.getSettings().getRewardMode().name());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.sound", voucher.getSettings().getSound().name());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.glow", voucher.getSettings().isGlowing());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.ask confirm", voucher.getSettings().askConfirm());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.require permission", voucher.getSettings().requiresUsePermission());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.permission", voucher.getSettings().getPermission());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.broadcast redeem", voucher.getSettings().broadcastRedeem());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.send title", voucher.getSettings().sendTitle());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.send subtitle", voucher.getSettings().sendSubtitle());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.send actionbar", voucher.getSettings().sendActionBar());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.broadcast msg", voucher.getSettings().getBroadcastMessage());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.title", voucher.getSettings().getTitle());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.subtitle", voucher.getSettings().getSubtitle());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.actionbar", voucher.getSettings().getActionBar());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.redeem msg", voucher.getSettings().getRedeemMessage());
-//		configuration.set("vouchers." + voucher.getId() + ".setting.cooldown", voucher.getSettings().getCooldown());
-//
-//		voucher.getRewards().forEach(reward -> {
-//final String rewardUUID = UUID.randomUUID().toString();
-//
-//		configuration.set("vouchers." + voucher.getId() + ".rewards." + rewardUUID + ".chance", reward.getChance());
-//		configuration.set("vouchers." + voucher.getId() + ".rewards." + rewardUUID + ".type", reward.getRewardType().name());
-//
-//		if (reward.getRewardType() == RewardType.COMMAND)
-//		configuration.set("vouchers." + voucher.getId() + ".rewards." + rewardUUID + ".command", reward.getCommand());
-//		else
-//		configuration.set("vouchers." + voucher.getId() + ".rewards." + rewardUUID + ".item", reward.getItem());
-//
-//		});
-//
-//		});
-//
-//		try {
-//		configuration.save(file);
-//		Common.logFramed("&aExported vouchers into import file for v3");
-//		} catch (IOException e) {
-//		e.printStackTrace();
-//		}
-//
-//		});

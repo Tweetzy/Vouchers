@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2022-2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class CooldownManager {
 
@@ -46,7 +43,7 @@ public final class CooldownManager {
 			voucherCooldowns = player.getPersistentDataContainer().get(COOLDOWN_KEY, COOLDOWN_TYPE);
 		}
 
-		voucherCooldowns.put(voucher.getId(), System.currentTimeMillis() + (voucher.getOptions().getCooldown() * 1000L));
+		voucherCooldowns.put(voucher.getId(), System.currentTimeMillis() + (voucher.getSettings().getCooldown() * 1000L));
 		player.getPersistentDataContainer().set(COOLDOWN_KEY, COOLDOWN_TYPE, voucherCooldowns);
 	}
 

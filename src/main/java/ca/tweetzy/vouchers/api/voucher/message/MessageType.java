@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,8 @@ package ca.tweetzy.vouchers.api.voucher.message;
 
 public enum MessageType {
 
-	BROADCAST,
-	CHAT,
-	ACTION_BAR,
 	TITLE,
-	SUBTITLE
+	ACTION_BAR,
+	CHAT,
+	BROADCAST
 }

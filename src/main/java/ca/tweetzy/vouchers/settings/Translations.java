@@ -1,6 +1,6 @@
 /*
  * Vouchers
- * Copyright 2022 Kiran Hart
+ * Copyright 2022-2025 Kiran Hart
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ import ca.tweetzy.vouchers.Vouchers;
 import lombok.NonNull;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
+
 public final class Translations extends TranslationManager {
 
 	public Translations(@NonNull JavaPlugin plugin) {
@@ -32,74 +34,61 @@ public final class Translations extends TranslationManager {
 	}
 
 	public static final TranslationEntry VOUCHER_EXISTS_ALREADY = create("error.voucher already exists", "&cA voucher with that id already exists");
-	public static final TranslationEntry CATEGORY_EXISTS_ALREADY = create("error.category already exists", "&cA category with that id already exists");
 	public static final TranslationEntry VOUCHER_NOT_FOUND = create("error.voucher not found", "&cCannot find a voucher with the id: &4%voucher_id%");
 	public static final TranslationEntry REDEEM_LIMIT_REACHED = create("error.redeem limit reached", "&cYou cannot redeem that voucher anymore!");
 	public static final TranslationEntry REDEEM_HISTORY_CLEARED = create("error.redeem history cleared", "&aSuccessfully cleared the redeem history of specified player(s)");
 	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.not allowed to use", "&cYou are not allowed to use that voucher");
-	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.voucher cooldown", "&cYou can redeem that voucher in &4%cooldown_time%");
-	public static final TranslationEntry CATEGORY_CONTAINS_VOUCHER = create("error.category contains voucher", "&CThat category already contains the voucher");
+	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.voucher cooldown", "&cYou can redeem that voucher in &4%cooldown_time%s");
 
 	public static final TranslationEntry DROP_NEAR_PLAYER = create("info.give.dropped near player", "Voucher was dropped near player: %player_name% (full inventory)");
 	public static final TranslationEntry GIVEN_TO_PLAYER = create("info.give.placed into inventory", "Voucher was placed in player: %player_name%'s inventory");
 
-	public static TranslationEntry GUI_SHARED_ITEMS_BACK_BUTTON_NAME = create("gui.shared buttons.back button.name", "<GRADIENT:65B1B4>&LGo Back</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_BACK_BUTTON_NAME = create("gui.shared buttons.back button.name", "<GRADIENT:B3EBF2>&LGo Back</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_BACK_BUTTON_LORE = create("gui.shared buttons.back button.lore",
 			"&e&l%left_click% &7to go back"
 	);
 
-	public static TranslationEntry GUI_SHARED_ITEMS_EXIT_BUTTON_NAME = create("gui.shared buttons.exit button.name", "<GRADIENT:65B1B4>&LExit</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_EXIT_BUTTON_NAME = create("gui.shared buttons.exit button.name", "<GRADIENT:B3EBF2>&LExit</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_EXIT_BUTTON_LORE = create("gui.shared buttons.exit button.lore",
 			"&e&l%left_click% &7to exit menu"
 	);
 
-	public static TranslationEntry GUI_SHARED_ITEMS_PREVIOUS_BUTTON_NAME = create("gui.shared buttons.previous button.name", "<GRADIENT:65B1B4>&lPrevious Page</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_PREVIOUS_BUTTON_NAME = create("gui.shared buttons.previous button.name", "<GRADIENT:B3EBF2>&lPrevious Page</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_PREVIOUS_BUTTON_LORE = create("gui.shared buttons.previous button.lore",
 			"&e&l%left_click% &7to go back a page"
 	);
 
-	public static TranslationEntry GUI_SHARED_ITEMS_NEXT_BUTTON_NAME = create("gui.shared buttons.next button.name", "<GRADIENT:65B1B4>&lNext Page</GRADIENT:2B6F8A>");
+	public static TranslationEntry GUI_SHARED_ITEMS_NEXT_BUTTON_NAME = create("gui.shared buttons.next button.name", "<GRADIENT:B3EBF2>&lNext Page</GRADIENT:AEC6CF>");
 	public static TranslationEntry GUI_SHARED_ITEMS_NEXT_BUTTON_LORE = create("gui.shared buttons.next button.lore",
 			"&e&l%left_click% &7to go to next page"
 	);
 
-	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.confirm.title", "&bVouchers &8> &7Confirm Action");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_NAME = create("gui.confirm.items.yes.name", "&a&lconfirm");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_YES_LORE = create("gui.confirm.items.yes.lore", "&b&lClick &8» &7To confirm action");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_NAME = create("gui.confirm.items.no.name", "&c&lCancel");
-	public static final TranslationEntry GUI_CONFIRM_ITEM_NO_LORE = create("gui.confirm.items.no.lore", "&b&lClick &8» &7To cancel action");
+	public static final TranslationEntry GUI_ADMIN_VOUCHER_LIST_TITLE = create("gui.admin menus.voucher list.title", "%pl_name% &8> &7Listing Vouchers");
+	public static final TranslationEntry GUI_CONFIRM_TITLE = create("gui.user menus.confirm.title", "%pl_name% &8> &7Confirm Redeem?");
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_YES_NAME = create("gui.user menus.confirm.items.yes.name", "<GRADIENT:77DD77>&lConfirm</GRADIENT:C1E1C1>");
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_YES_LORE = create("gui.user menus.confirm.items.yes.lore", "&7Confirms the voucher redeem");
 
-	public static final TranslationEntry GUI_REWARD_SELECT_TITLE = create("gui.select reward.title", "&bVouchers &8> &7Select Reward");
-	public static final TranslationEntry GUI_REWARD_SELECT_CMD_NAME = create("gui.select reward.items.command.name", "&B&lCommand Reward");
-	public static final TranslationEntry GUI_REWARD_SELECT_CMD_LORE = create("gui.select reward.items.command.lore",
-			"&7Command&f: &b%reward_command%",
-			"&7Chance&F: &b%reward_chance%",
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_NO_NAME = create("gui.user menus.confirm.items.no.name", "<GRADIENT:c4332b>&lCancel</GRADIENT:f2837d>");
+	public static final TranslationEntry GUI_CONFIRM_ITEMS_NO_LORE = create("gui.user menus.confirm.items.no.lore", "&7Confirms the voucher redeem");
+
+
+	public static final TranslationEntry GUI_REWARD_SELECTION_TITLE = create("gui.user menus.reward selection.title", "%pl_name% &8> &7Select &e%total_rewards% &7reward(s)");
+	public static final TranslationEntry GUI_REWARD_SELECTION_LORE_SELECTED = create("gui.user menus.reward selection.items.reward.lore.selected",
+			"&8&m-------------------------",
+			"&7Chance&f: &a%reward_chance%&f%",
 			"",
-			"&b&lClick &8» &7To select this reward"
-	);
-
-	public static final TranslationEntry GUI_REWARD_SELECT_ITEM_LORE = create("gui.select reward.items.item.lore",
-			"&7Chance&F: &b%reward_chance%",
+			"<GRADIENT:B3EBF2>&lSelected</GRADIENT:AEC6CF>",
 			"",
-			"&b&lClick &8» &7To select this reward"
+			"&e&lClick",
+			"&7To un-select this reward"
 	);
 
-	public static final TranslationEntry VOUCHER_REWARD_INFO_HEADER = create("info.reward.structure.header",
-			"<center><GRADIENT:fc67fa>&lVoucher Rewards</GRADIENT:f4c4f3>",
-			""
-	);
-
-	public static final TranslationEntry VOUCHER_REWARD_INFO_FOOTER = create("info.reward.structure.footer",
-			""
-
-	);
-
-	public static final TranslationEntry VOUCHER_REWARD_INFO_COMMAND = create("info.reward.command",
-			"<center>&a&l+ &e%reward_command%"
-	);
-
-	public static final TranslationEntry VOUCHER_REWARD_INFO_ITEM = create("info.reward.item",
-			"<center>&a&l+ &fx&7%item_quantity% &e%item_name%"
+	public static final TranslationEntry GUI_REWARD_SELECTION_LORE_UN_SELECTED = create("gui.user menus.reward selection.items.reward.lore.unselected",
+			"&8&m-------------------------",
+			"&7Chance&f: &a%reward_chance%&f%",
+			"",
+			"&e&lClick",
+			"&7To select this reward"
 	);
 
 
