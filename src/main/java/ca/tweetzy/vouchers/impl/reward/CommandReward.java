@@ -54,11 +54,13 @@ public final class CommandReward extends BaseReward {
 		final String cmd = VoucherHelper.dynamicVariablesReplace(PAPIHook.tryReplace(player, this.command), args).replace("%player%", player.getName());
 
 		if (getDelay() >= 1) {
-			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd), getDelay());
+			Bukkit.getServer().getScheduler().runTaskLater(Vouchers.getInstance(), () -> {
+				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+				getMessages().stream().map(msg -> (BaseMessage) msg).forEach(msg -> msg.send(player, args));
+			}, getDelay());
 		} else {
 			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+			getMessages().stream().map(msg -> (BaseMessage) msg).forEach(msg -> msg.send(player, args));
 		}
-
-		getMessages().stream().map(msg -> (BaseMessage) msg).forEach(msg -> msg.send(player, args));
 	}
 }

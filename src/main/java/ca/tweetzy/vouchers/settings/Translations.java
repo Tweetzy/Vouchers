@@ -34,7 +34,6 @@ public final class Translations extends TranslationManager {
 	}
 
 	public static final TranslationEntry VOUCHER_EXISTS_ALREADY = create("error.voucher already exists", "&cA voucher with that id already exists");
-	public static final TranslationEntry CATEGORY_EXISTS_ALREADY = create("error.category already exists", "&cA category with that id already exists");
 	public static final TranslationEntry VOUCHER_NOT_FOUND = create("error.voucher not found", "&cCannot find a voucher with the id: &4%voucher_id%");
 	public static final TranslationEntry REDEEM_LIMIT_REACHED = create("error.redeem limit reached", "&cYou cannot redeem that voucher anymore!");
 	public static final TranslationEntry REDEEM_HISTORY_CLEARED = create("error.redeem history cleared", "&aSuccessfully cleared the redeem history of specified player(s)");
