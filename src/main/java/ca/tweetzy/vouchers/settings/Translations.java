@@ -40,7 +40,6 @@ public final class Translations extends TranslationManager {
 	public static final TranslationEntry REDEEM_HISTORY_CLEARED = create("error.redeem history cleared", "&aSuccessfully cleared the redeem history of specified player(s)");
 	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.not allowed to use", "&cYou are not allowed to use that voucher");
 	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.voucher cooldown", "&cYou can redeem that voucher in &4%cooldown_time%s");
-	public static final TranslationEntry CATEGORY_CONTAINS_VOUCHER = create("error.category contains voucher", "&CThat category already contains the voucher");
 
 	public static final TranslationEntry DROP_NEAR_PLAYER = create("info.give.dropped near player", "Voucher was dropped near player: %player_name% (full inventory)");
 	public static final TranslationEntry GIVEN_TO_PLAYER = create("info.give.placed into inventory", "Voucher was placed in player: %player_name%'s inventory");

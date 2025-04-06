@@ -69,7 +69,7 @@ public final class Vouchers extends FlightPlugin {
 	private final GuiManager guiManager = new GuiManager(this);
 	private final CommandManager commandManager = new CommandManager(this);
 	private final VoucherManager voucherManager = new VoucherManager();
-	private final CooldownManager cooldownManager = new CooldownManager();
+	private final CooldownManager cooldownManager = new CooldownManager(this);
 	private final RedeemManager redeemManager = new RedeemManager();
 	private final CategoryManager categoryManager = new CategoryManager();
 

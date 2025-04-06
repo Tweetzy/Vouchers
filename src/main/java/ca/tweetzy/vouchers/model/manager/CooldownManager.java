@@ -18,40 +18,52 @@
 
 package ca.tweetzy.vouchers.model.manager;
 
+import ca.tweetzy.vouchers.api.CooldownDataType;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import lombok.NonNull;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class CooldownManager {
 
-	private final Map<UUID, HashMap<String, Long>> cooldowns = new ConcurrentHashMap<>();
+	private final CooldownDataType COOLDOWN_TYPE = new CooldownDataType();
+	private final NamespacedKey COOLDOWN_KEY;
 
-	public void addPlayerToCooldown(@NonNull final UUID player, @NonNull final Voucher voucher) {
+	public CooldownManager(JavaPlugin plugin) {
+		COOLDOWN_KEY = new NamespacedKey(plugin, "VouchersCooldowns");
+	}
+
+	public void addPlayerToCooldown(@NonNull final Player player, @NonNull final Voucher voucher) {
 		HashMap<String, Long> voucherCooldowns = new HashMap<>();
 
-		if (this.cooldowns.containsKey(player)) {
-			voucherCooldowns = this.cooldowns.get(player);
+		if (player.getPersistentDataContainer().has(COOLDOWN_KEY, COOLDOWN_TYPE)) {
+			voucherCooldowns = player.getPersistentDataContainer().get(COOLDOWN_KEY, COOLDOWN_TYPE);
 		}
 
-		// add them
 		voucherCooldowns.put(voucher.getId(), System.currentTimeMillis() + (voucher.getSettings().getCooldown() * 1000L));
-		this.cooldowns.put(player, voucherCooldowns);
+		player.getPersistentDataContainer().set(COOLDOWN_KEY, COOLDOWN_TYPE, voucherCooldowns);
 	}
 
-	public boolean isPlayerInCooldown(@NonNull final UUID player) {
-		return this.cooldowns.containsKey(player);
+
+	public boolean isPlayerInCooldown(@NonNull final Player player) {
+		return player.getPersistentDataContainer().has(COOLDOWN_KEY, COOLDOWN_TYPE);
 	}
 
-	public boolean isPlayerInCooldownForVoucher(@NonNull final UUID player, @NonNull final Voucher voucher) {
-		return isPlayerInCooldown(player) && this.cooldowns.get(player).containsKey(voucher.getId());
+	public boolean isPlayerInCooldownForVoucher(@NonNull final Player player, @NonNull final Voucher voucher) {
+		HashMap<String, Long> voucherCooldowns = player.getPersistentDataContainer().get(COOLDOWN_KEY, COOLDOWN_TYPE);
+		if (voucherCooldowns == null) return false;
+
+		return isPlayerInCooldown(player) && voucherCooldowns.containsKey(voucher.getId());
 	}
 
-	public long getCooldownTime(@NonNull final UUID player, @NonNull final Voucher voucher) {
+	public long getCooldownTime(@NonNull final Player player, @NonNull final Voucher voucher) {
 		if (!isPlayerInCooldownForVoucher(player, voucher)) return 0L;
-		return this.cooldowns.get(player).get(voucher.getId());
+		final HashMap<String, Long> voucherCooldowns = player.getPersistentDataContainer().get(COOLDOWN_KEY, COOLDOWN_TYPE);
+
+		if (voucherCooldowns == null) return 0L;
+		return voucherCooldowns.get(voucher.getId());
 	}
 }

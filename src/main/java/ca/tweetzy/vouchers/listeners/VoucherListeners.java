@@ -25,6 +25,9 @@ import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.gui.user.VoucherConfirmationGUI;
+import ca.tweetzy.vouchers.model.TimeConverter;
+import ca.tweetzy.vouchers.model.VoucherHelper;
+import ca.tweetzy.vouchers.model.manager.CooldownManager;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.settings.Translations;
 import org.bukkit.entity.Player;
@@ -96,7 +99,7 @@ public final class VoucherListeners implements Listener {
 									PlayerUtil.removeSpecificItemQuantityFromPlayer(player, item, 1);
 
 								if (voucher.getSettings().useCooldown())
-									Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+									Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
 							}
 						}).execute();
 					}
@@ -114,7 +117,7 @@ public final class VoucherListeners implements Listener {
 						PlayerUtil.removeSpecificItemQuantityFromPlayer(player, item, 1);
 
 					if (voucher.getSettings().useCooldown())
-						Vouchers.getCooldownManager().addPlayerToCooldown(player.getUniqueId(), voucher);
+						Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
 				}
 			}
 		}
@@ -124,11 +127,13 @@ public final class VoucherListeners implements Listener {
 	private boolean passedCooldown(Player player, Voucher voucher) {
 		if (!voucher.getSettings().useCooldown()) return true;
 
-		if (Vouchers.getCooldownManager().isPlayerInCooldown(player.getUniqueId()) && Vouchers.getCooldownManager().isPlayerInCooldownForVoucher(player.getUniqueId(), voucher)) {
-			long cooldownTime = Vouchers.getCooldownManager().getCooldownTime(player.getUniqueId(), voucher);
+		if (Vouchers.getCooldownManager().isPlayerInCooldown(player) && Vouchers.getCooldownManager().isPlayerInCooldownForVoucher(player, voucher)) {
+			long cooldownTime = Vouchers.getCooldownManager().getCooldownTime(player, voucher);
 
 			if (System.currentTimeMillis() < cooldownTime) {
-				Common.tell(player, TranslationManager.string(Translations.WAIT_FOR_COOLDOWN, "cooldown_time", String.format("%,.2f", (cooldownTime - System.currentTimeMillis()) / 1000f)));
+
+				final String time = TimeConverter.convertSecondsToHumanReadable((cooldownTime - System.currentTimeMillis()) / 1000L);
+				Common.tell(player, TranslationManager.string(Translations.WAIT_FOR_COOLDOWN, "cooldown_time", time));
 				return false;
 			}
 		}
