@@ -32,6 +32,9 @@ public interface Voucher extends Displayable, Identifiable<String>, Storeable<Vo
 	}
 
 	default boolean execute(Player player, String[] arguments) {
+		// play sound
+		getSettings().getSound().play(player);
+
 		// send messages
 		getMessages().stream().map(msg -> (BaseMessage) msg).forEach(baseMessage -> baseMessage.send(player, arguments));
 

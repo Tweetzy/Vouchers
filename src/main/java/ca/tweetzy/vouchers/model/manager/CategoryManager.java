@@ -22,23 +22,17 @@ public final class CategoryManager extends ListManager<Category> {
 	}
 
 	public Category getNextElement(Category current) {
-		// Check if the list is empty
 		if (this.managerContent.isEmpty()) {
 			return null;
 		}
 
-		// Find the index of the current object
 		int index = this.managerContent.indexOf(current);
 
-		// Handle the case where the current object is not in the list
 		if (index == -1) {
 			return null;
 		}
 
-		// Calculate the next index, wrapping around if necessary
 		int nextIndex = (index + 1) % this.managerContent.size();
-
-		// Return the object at the next index
 		return this.managerContent.get(nextIndex);
 	}
 

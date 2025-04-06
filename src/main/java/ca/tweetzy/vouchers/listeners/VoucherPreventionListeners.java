@@ -23,6 +23,7 @@ import ca.tweetzy.vouchers.Vouchers;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -80,4 +81,11 @@ public final class VoucherPreventionListeners implements Listener {
 		event.getItemDrop().setInvulnerable(true);
 	}
 
+
+	@EventHandler
+	public void onVoucherSmelt(final FurnaceBurnEvent event) {
+		final ItemStack item =   event.getFuel();
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+		event.setCancelled(true);
+	}
 }
