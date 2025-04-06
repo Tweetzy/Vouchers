@@ -44,7 +44,10 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 
 	@Override
 	protected void prePopulate() {
-		this.items = new ArrayList<>(Vouchers.getVoucherManager().get(this.voucher.getId()).getRewards());
+
+		final Voucher relocated = Vouchers.getVoucherManager().get(this.voucher.getId());
+		if (relocated != null)
+			this.items = new ArrayList<>(relocated.getRewards());
 	}
 
 	@Override

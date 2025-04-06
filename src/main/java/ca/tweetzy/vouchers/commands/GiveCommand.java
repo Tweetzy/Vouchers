@@ -49,8 +49,11 @@ public final class GiveCommand extends Command {
 
 		if (voucherArgs != null){
 			baseVoucher.setArgs(voucherArgs);
-			PlayerUtil.giveItem(target, baseVoucher.generatePhysicalVoucher(target));
+			for (int i = 0 ; i < quantity; i++)
+				PlayerUtil.giveItem(target, baseVoucher.generatePhysicalVoucher(target));
 		}else {
+			for (int i = 0 ; i < quantity; i++)
+				PlayerUtil.giveItem(target, baseVoucher.generatePhysicalVoucher(target));
 		}
 
 		return ReturnType.SUCCESS;
@@ -60,6 +63,15 @@ public final class GiveCommand extends Command {
 
 	@Override
 	protected List<String> tab(CommandSender sender, String... args) {
+		if (args.length == 1)
+			return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+
+		if (args.length == 2)
+			return List.of("1", "2", "3", "4", "5");
+
+		if (args.length == 3)
+			return Vouchers.getVoucherManager().getValues().stream().map(Voucher::getId).toList();
+
 		return List.of();
 	}
 

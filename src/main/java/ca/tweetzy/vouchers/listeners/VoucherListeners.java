@@ -56,7 +56,7 @@ public final class VoucherListeners implements Listener {
 		// not even a voucher
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
 			final Voucher voucher = Vouchers.getVoucherManager().get(NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:Vouchers")));
 			final String voucherArgsRaw = NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:VouchersArgs"));
 

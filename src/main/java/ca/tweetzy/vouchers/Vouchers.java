@@ -28,6 +28,7 @@ import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.api.VouchersAPI;
 import ca.tweetzy.vouchers.api.manager.Manager;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.commands.CommandImport;
 import ca.tweetzy.vouchers.commands.CommandReload;
 import ca.tweetzy.vouchers.commands.GiveCommand;
 import ca.tweetzy.vouchers.commands.VouchersCommand;
@@ -111,7 +112,8 @@ public final class Vouchers extends FlightPlugin {
 		this.guiManager.init();
 		this.commandManager.registerCommandDynamically(new VouchersCommand()).addSubCommands(
 				new GiveCommand(),
-				new CommandReload()
+				new CommandReload(),
+				new CommandImport()
 		);
 
 		List.of(this.voucherManager, this.redeemManager, this.categoryManager).forEach(Manager::load);

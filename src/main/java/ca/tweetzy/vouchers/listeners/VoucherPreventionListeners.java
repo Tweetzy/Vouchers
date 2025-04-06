@@ -25,6 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,8 +46,10 @@ public final class VoucherPreventionListeners implements Listener {
 		final ItemStack toBePlaced = event.getItemInHand();
 		if (toBePlaced.getType() == CompMaterial.AIR.get()) return;
 
-		if (Vouchers.getVoucherManager().isVoucher(toBePlaced))
+		if (Vouchers.getVoucherManager().isVoucher(toBePlaced)) {
 			event.setCancelled(true);
+			event.setBuild(false);
+		}
 	}
 
 	@EventHandler
@@ -69,4 +72,12 @@ public final class VoucherPreventionListeners implements Listener {
 
 		event.setResult(CompMaterial.AIR.parseItem());
 	}
+
+	@EventHandler
+	public void onVoucherTossEvent(final PlayerDropItemEvent event) {
+		final ItemStack item = event.getItemDrop().getItemStack();
+		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
+		event.getItemDrop().setInvulnerable(true);
+	}
+
 }
