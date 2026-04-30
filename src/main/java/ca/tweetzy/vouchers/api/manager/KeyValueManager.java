@@ -41,6 +41,10 @@ public abstract class KeyValueManager<K, V> extends Manager {
 		this.managerContent.put(k, v);
 	}
 
+	public void update(@NonNull final K k, @NonNull final V v) {
+		this.managerContent.put(k, v);
+	}
+
 	public void remove(@NonNull final K k) {
 		this.managerContent.remove(k);
 	}

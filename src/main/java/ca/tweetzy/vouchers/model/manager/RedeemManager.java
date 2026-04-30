@@ -18,12 +18,14 @@
 
 package ca.tweetzy.vouchers.model.manager;
 
+import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.manager.KeyValueManager;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.redeem.Redeem;
 import ca.tweetzy.vouchers.impl.VoucherRedeem;
+import ca.tweetzy.vouchers.settings.Translations;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -62,10 +64,15 @@ public final class RedeemManager extends KeyValueManager<UUID, Redeem> {
 
 	public void registerRedeemIfApplicable(@NonNull final Player player, @NonNull final Voucher voucher) {
 		Vouchers.getDataManager().createVoucherRedeem(new VoucherRedeem(UUID.randomUUID(), player.getUniqueId(), voucher.getId().toLowerCase(), System.currentTimeMillis()), (error, createdRedeem) -> {
-			if (error == null)
+			if (error == null && createdRedeem != null) {
 				this.add(createdRedeem);
-			else
+				return;
+			}
+			if (error != null) {
+				Common.log("&cFailed to record voucher redeem for " + player.getName() + " (" + voucher.getId() + "): " + error.getMessage());
 				error.printStackTrace();
+				Common.tell(player, TranslationManager.string(Translations.REDEEM_RECORD_FAILED));
+			}
 		});
 	}
 

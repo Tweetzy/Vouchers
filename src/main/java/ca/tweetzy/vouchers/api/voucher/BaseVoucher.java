@@ -46,11 +46,30 @@ public abstract class BaseVoucher implements Voucher {
 	@Override
 	public void unStore(@Nullable Consumer<SynchronizeResult> syncResult) {
 		Vouchers.newChain().async(() -> {
-			File voucherFile = new File(Vouchers.getInstance().getDataFolder() + "/voucher-files/%s.json".formatted(getId().toLowerCase()));
-			boolean success = voucherFile.delete();
-
-			if (success)
-				Vouchers.getVoucherManager().remove(getId());
+			File voucherFile = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
+			boolean success = false;
+			try {
+				if (voucherFile.exists()) {
+					success = voucherFile.delete();
+					if (success) {
+						Vouchers.getInstance().getServer().getScheduler().runTask(Vouchers.getInstance(), () -> {
+							Vouchers.getVoucherManager().remove(getId());
+						});
+					} else {
+						Vouchers.getInstance().getLogger().warning("Failed to delete voucher file: " + voucherFile.getName());
+					}
+				} else {
+					Vouchers.getInstance().getLogger().warning("Voucher file does not exist: " + voucherFile.getName());
+					// Still remove from manager if file doesn't exist
+					Vouchers.getInstance().getServer().getScheduler().runTask(Vouchers.getInstance(), () -> {
+						Vouchers.getVoucherManager().remove(getId());
+					});
+					success = true; // Consider it successful if already removed
+				}
+			} catch (Exception e) {
+				Vouchers.getInstance().getLogger().severe("Error deleting voucher file " + voucherFile.getName() + ": " + e.getMessage());
+				e.printStackTrace();
+			}
 
 			if (syncResult != null)
 				syncResult.accept(success ? SynchronizeResult.SUCCESS : SynchronizeResult.FAILURE);

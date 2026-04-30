@@ -36,6 +36,7 @@ public final class VoucherConfirmationGUI extends VouchersBaseGUI {
 	public VoucherConfirmationGUI(@NonNull final Player player, @NonNull final Consumer<Boolean> confirmed) {
 		super(null, player, TranslationManager.string(Translations.GUI_CONFIRM_TITLE), 3);
 		setDefaultItem(QuickItem.bg(Settings.GUI_CONFIRM_BG.getString()));
+		setGlobalClickDelay(200L);
 		this.confirmed = confirmed;
 		draw();
 	}

@@ -31,7 +31,7 @@ import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.reward.Reward;
 import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
-import ca.tweetzy.vouchers.gui.VoucherUpdatingPagedGUI;
+import ca.tweetzy.vouchers.gui.VouchersPagedGUI;
 import ca.tweetzy.vouchers.gui.admin.messages.VoucherMessageTypeGUI;
 import ca.tweetzy.vouchers.gui.admin.settings.VoucherOverviewGUI;
 import ca.tweetzy.vouchers.impl.reward.CommandReward;
@@ -47,25 +47,25 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> {
+public final class VoucherRewardListGUI extends VouchersPagedGUI<Reward> {
 
-	private final Voucher voucher;
+	private Voucher voucher;
 
 	public VoucherRewardListGUI(@NonNull Player player, @NonNull final Voucher voucher) {
-		super(new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Edit Rewards", 6, 20, new ArrayList<>());
+		super(new VoucherOverviewGUI(player, voucher), player, "<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8» &7Edit Rewards", 6, new ArrayList<>());
 		this.voucher = voucher;
-		setOnOpen(open -> startTask());
-		applyClose();
 		setAcceptsItems(true);
 		draw();
 	}
 
 	@Override
 	protected void prePopulate() {
-
+		// Refresh voucher from manager to get latest data
 		final Voucher relocated = Vouchers.getVoucherManager().get(this.voucher.getId());
-		if (relocated != null)
+		if (relocated != null) {
+			this.voucher = relocated; // Update voucher reference
 			this.items = new ArrayList<>(relocated.getRewards());
+		}
 	}
 
 	@Override
@@ -119,7 +119,6 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 					)
 					.make(), click -> {
 
-				cancelTask();
 				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LReward Options</GRADIENT:AEC6CF>", "&eEnter total # of rewards to be given", result -> {
 					this.voucher.getSettings().setMaximumRewards(result);
 					saveAndReOpen(click.player, true);
@@ -142,15 +141,16 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 				)
 				.make(), click -> {
 
-			final ItemStack cursor = click.cursor.clone();
+			final ItemStack cursor = click.cursor != null ? click.cursor.clone() : null;
 			if (cursor != null && cursor.getType() != CompMaterial.AIR.get()) {
 				this.voucher.getRewards().add(new ItemReward(cursor, 100, 0, new ArrayList<>()));
 				saveAndReOpen(click.player, false);
 				draw();
 			} else {
-				cancelTask();
 				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LVoucher Reward</GRADIENT:AEC6CF>", "&eEnter the reward command in chat without the /", result -> {
-					this.voucher.getRewards().add(new CommandReward(ChatColor.stripColor(result), 100, 0, "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>", List.of("&7Default command description"), new ArrayList<>()));
+					final List<String> defaultDesc = new ArrayList<>();
+					defaultDesc.add("&7Default command description");
+					this.voucher.getRewards().add(new CommandReward(ChatColor.stripColor(result), 100, 0, "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>", defaultDesc, new ArrayList<>()));
 					saveAndReOpen(click.player);
 				}, null, () -> click.manager.showGUI(click.player, VoucherRewardListGUI.this), validate -> !validate.isEmpty());
 
@@ -197,7 +197,7 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 				"&e&lShift+Left Click",
 				"&7To &aadd&7/&eedit&7/&cremove &7reward messages",
 				"",
-				"&e&lDrop Key",
+				"&e&lDrop Key &7(Press Q)",
 				"&7To &cremove &7this reward from the voucher"
 		));
 
@@ -208,7 +208,6 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 	protected void onClick(Reward reward, GuiClickEvent click) {
 		switch (click.clickType) {
 			case LEFT -> {
-				cancelTask();
 				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LReward Options</GRADIENT:AEC6CF>", "&eEnter reward chance in chat", result -> {
 					reward.setChance(result < 0 ? 1 : result > 100 ? 100 : result);
 					saveAndReOpen(click.player);
@@ -216,7 +215,6 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 			}
 
 			case RIGHT -> {
-				cancelTask();
 				UserInput.get(click.player, "<GRADIENT:B3EBF2>&LReward Options</GRADIENT:AEC6CF>", "&eEnter the reward delay", result -> {
 					reward.setDelay(result);
 					saveAndReOpen(click.player);
@@ -224,7 +222,6 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 			}
 
 			case SHIFT_LEFT -> {
-				cancelTask();
 				click.manager.showGUI(click.player, new VoucherMessageTypeGUI(click.player, this.voucher, reward.getMessages(), true));
 			}
 
@@ -241,11 +238,21 @@ public final class VoucherRewardListGUI extends VoucherUpdatingPagedGUI<Reward> 
 
 	private void saveAndReOpen(@NonNull final Player player, boolean open) {
 		this.voucher.sync(result -> {
-			if (result == SynchronizeResult.FAILURE)
+			if (result == SynchronizeResult.FAILURE) {
 				Common.tell(this.player, "&cSomething went wrong while saving the voucher.");
+				return;
+			}
 
-			if (open)
-				Vouchers.getGuiManager().showGUI(player, new VoucherRewardListGUI(player, this.voucher));
+			// Get fresh voucher from manager after successful save
+			final Voucher freshVoucher = Vouchers.getVoucherManager().get(this.voucher.getId());
+			if (freshVoucher != null) {
+				this.voucher = freshVoucher; // Update local reference
+			}
+
+			if (open) {
+				// Use fresh voucher or current voucher
+				Vouchers.getGuiManager().showGUI(player, new VoucherRewardListGUI(player, freshVoucher != null ? freshVoucher : this.voucher));
+			}
 		});
 	}
 

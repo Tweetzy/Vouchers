@@ -23,14 +23,18 @@ import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.PlayerUtil;
 import ca.tweetzy.vouchers.Vouchers;
+import ca.tweetzy.vouchers.api.events.VoucherPostRedeemEvent;
+import ca.tweetzy.vouchers.api.events.VoucherPreRedeemEvent;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
+import ca.tweetzy.vouchers.api.voucher.reward.RewardMode;
 import ca.tweetzy.vouchers.gui.user.VoucherConfirmationGUI;
+import ca.tweetzy.vouchers.gui.user.VoucherRewardSelectionGUI;
 import ca.tweetzy.vouchers.model.TimeConverter;
-import ca.tweetzy.vouchers.model.VoucherHelper;
-import ca.tweetzy.vouchers.model.manager.CooldownManager;
 import ca.tweetzy.vouchers.settings.Settings;
 import ca.tweetzy.vouchers.settings.Translations;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -46,83 +50,110 @@ public final class VoucherListeners implements Listener {
 	@EventHandler
 	public void onVoucherRedeem(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-		ItemStack item = event.getItem();
+		final ItemStack item = event.getItem();
 
 		if (event.getHand() == EquipmentSlot.OFF_HAND) {
 			return;
 		}
 
-		// prevent if sneaking
 		if (Settings.PREVENT_REDEEM_WHILE_SNEAKING.getBoolean() && player.isSneaking())
 			return;
 
-		// not even a voucher
 		if (!Vouchers.getVoucherManager().isVoucher(item)) return;
 
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-			final Voucher voucher = Vouchers.getVoucherManager().get(NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:Vouchers")));
-			final String voucherArgsRaw = NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:VouchersArgs"));
+		final Action action = event.getAction();
+		if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK) {
+			return;
+		}
 
-			final List<String> voucherArgs = voucherArgsRaw == null ? Collections.emptyList() : voucherArgsRaw.split(" ").length == 0 ? Collections.emptyList() : List.of(voucherArgsRaw.split(" "));
+		final Voucher voucher = Vouchers.getVoucherManager().get(NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:Vouchers")));
+		final String voucherArgsRaw = NBT.get(item, nbt -> (String) nbt.getString("Tweetzy:VouchersArgs"));
 
-			// invalid / deleted voucher
-			if (voucher == null) return;
+		final List<String> voucherArgs = voucherArgsRaw == null ? Collections.emptyList() : voucherArgsRaw.split(" ").length == 0 ? Collections.emptyList() : List.of(voucherArgsRaw.split(" "));
+		final String[] argsArray = voucherArgs.toArray(new String[0]);
 
-			// check permission
-			if (voucher.getSettings().usePermission() && !player.hasPermission(voucher.getSettings().getPermission())) {
-				Common.tell(player, TranslationManager.string(Translations.NOT_ALLOWED_TO_USE));
-				return;
-			}
+		if (voucher == null) {
+			blockVoucherInteract(event);
+			return;
+		}
 
-			// check max uses
-			if(Vouchers.getRedeemManager().isAtRedeemLimit(player, voucher)) {
-				Common.tell(player, TranslationManager.string(Translations.REDEEM_LIMIT_REACHED));
-				return;
-			}
+		if (voucher.getSettings().usePermission() && !player.hasPermission(voucher.getSettings().getPermission())) {
+			blockVoucherInteract(event);
+			Common.tell(player, TranslationManager.string(Translations.NOT_ALLOWED_TO_USE));
+			return;
+		}
 
-			if (voucher.getSettings().useCooldown() && !passedCooldown(player, voucher)) {
-				return;
-			}
+		if (Vouchers.getRedeemManager().isAtRedeemLimit(player, voucher)) {
+			blockVoucherInteract(event);
+			Common.tell(player, TranslationManager.string(Translations.REDEEM_LIMIT_REACHED));
+			return;
+		}
 
-			// confirmation ask
-			if (voucher.getSettings().isAskForConfirm()) {
-				Vouchers.getGuiManager().showGUI(player, new VoucherConfirmationGUI(player, confirmed -> {
-					if (confirmed) {
-						Vouchers.newChain().sync(() -> {
-							final boolean successfulUse = voucher.execute(player, voucherArgs.toArray(new String[0]));
+		if (voucher.getSettings().useCooldown() && !passedCooldown(player, voucher)) {
+			blockVoucherInteract(event);
+			return;
+		}
 
-							// remove
-							if (successfulUse) {
-								Vouchers.getRedeemManager().registerRedeemIfApplicable(player, voucher);
+		blockVoucherInteract(event);
 
-								if (voucher.getSettings().isRemoveOnUse())
-									PlayerUtil.removeSpecificItemQuantityFromPlayer(player, item, 1);
-
-								if (voucher.getSettings().useCooldown())
-									Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
-							}
-						}).execute();
-					}
-
-					player.closeInventory();
-				}));
-			} else {
-				final boolean successfulUse = voucher.execute(player, voucherArgs.toArray(new String[0]));
-
-				// remove
-				if (successfulUse) {
-					Vouchers.getRedeemManager().registerRedeemIfApplicable(player, voucher);
-
-					if (voucher.getSettings().isRemoveOnUse())
-						PlayerUtil.removeSpecificItemQuantityFromPlayer(player, item, 1);
-
-					if (voucher.getSettings().useCooldown())
-						Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
+		if (voucher.getSettings().isAskForConfirm()) {
+			Vouchers.getGuiManager().showGUI(player, new VoucherConfirmationGUI(player, confirmed -> {
+				if (confirmed) {
+					Vouchers.newChain().sync(() -> runRedeemFlow(player, voucher, voucherArgsRaw, argsArray)).execute();
 				}
-			}
+				player.closeInventory();
+			}));
+		} else {
+			runRedeemFlow(player, voucher, voucherArgsRaw, argsArray);
 		}
 	}
 
+	private static void runRedeemFlow(final Player player, final Voucher voucher, final String voucherArgsRaw, final String[] argsArray) {
+		final VoucherPreRedeemEvent pre = new VoucherPreRedeemEvent(player, voucher, argsArray);
+		Bukkit.getPluginManager().callEvent(pre);
+		if (pre.isCancelled()) return;
+
+		if (voucher.getSettings().getRewardMode() == RewardMode.SELECTION) {
+			voucher.execute(player, argsArray);
+			Vouchers.getGuiManager().showGUI(player, new VoucherRewardSelectionGUI(player, voucher, argsArray, voucherArgsRaw,
+					() -> applyPostRedeemEffects(player, voucher, argsArray, voucherArgsRaw)));
+			return;
+		}
+
+		final boolean successfulUse = voucher.execute(player, argsArray);
+		if (successfulUse) {
+			applyPostRedeemEffects(player, voucher, argsArray, voucherArgsRaw);
+		}
+	}
+
+	private static void applyPostRedeemEffects(final Player player, final Voucher voucher, final String[] argsArray, final String voucherArgsRaw) {
+		final ItemStack stackForRemove = voucher.getSettings().isRemoveOnUse()
+				? Vouchers.getVoucherManager().findMatchingVoucherStack(player, voucher.getId(), voucherArgsRaw)
+				: null;
+
+		if (voucher.getSettings().isRemoveOnUse() && stackForRemove == null) {
+			Common.tell(player, TranslationManager.string(Translations.VOUCHER_ITEM_NOT_FOUND));
+			return;
+		}
+
+		Vouchers.getRedeemManager().registerRedeemIfApplicable(player, voucher);
+
+		if (voucher.getSettings().isRemoveOnUse() && stackForRemove != null) {
+			PlayerUtil.removeSpecificItemQuantityFromPlayer(player, stackForRemove, 1);
+		}
+
+		if (voucher.getSettings().useCooldown()) {
+			Vouchers.getCooldownManager().addPlayerToCooldown(player, voucher);
+		}
+
+		Bukkit.getPluginManager().callEvent(new VoucherPostRedeemEvent(player, voucher, argsArray));
+	}
+
+	private static void blockVoucherInteract(final PlayerInteractEvent event) {
+		event.setCancelled(true);
+		event.setUseItemInHand(Event.Result.DENY);
+		event.setUseInteractedBlock(Event.Result.DENY);
+	}
 
 	private boolean passedCooldown(Player player, Voucher voucher) {
 		if (!voucher.getSettings().useCooldown()) return true;

@@ -24,6 +24,7 @@ import ca.tweetzy.flight.gui.helper.InventoryBorder;
 import ca.tweetzy.flight.utils.ChatUtil;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.sync.SynchronizeResult;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.message.BaseMessage;
@@ -97,7 +98,19 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 								case BROADCAST -> this.messages.add(new VoucherBroadcastMessage(result));
 							}
 
-							this.voucher.sync((synchronizeResult) -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards)));
+							this.voucher.sync((synchronizeResult) -> {
+								if (synchronizeResult == SynchronizeResult.SUCCESS) {
+									// Get fresh voucher from manager
+									final Voucher freshVoucher = Vouchers.getVoucherManager().get(this.voucher.getId());
+									if (freshVoucher != null) {
+										click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, freshVoucher, this.messages, this.messageType, this.fromRewards));
+									} else {
+										click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards));
+									}
+								} else {
+									click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards));
+								}
+							});
 						} else {
 							UserInput.get(click.player, "<GRADIENT:B3EBF2>&LVoucher Subtitle</GRADIENT:AEC6CF>", "&eEnter the subtitle in chat",
 									subtitle -> {
@@ -106,7 +119,19 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 												subtitle,
 												20, 20, 20
 										));
-										this.voucher.sync((synchronizeResult) -> click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards)));
+										this.voucher.sync((synchronizeResult) -> {
+								if (synchronizeResult == SynchronizeResult.SUCCESS) {
+									// Get fresh voucher from manager
+									final Voucher freshVoucher = Vouchers.getVoucherManager().get(this.voucher.getId());
+									if (freshVoucher != null) {
+										click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, freshVoucher, this.messages, this.messageType, this.fromRewards));
+									} else {
+										click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards));
+									}
+								} else {
+									click.manager.showGUI(click.player, new VoucherMessageListGUI(click.player, this.voucher, this.messages, this.messageType, this.fromRewards));
+								}
+							});
 									},
 									null,
 									() -> click.manager.showGUI(click.player, VoucherMessageListGUI.this),
@@ -137,7 +162,7 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 				"&7To run this message. Players will see it if",
 				"&7it is a broadcast message.",
 				"",
-				"&e&lDrop Key",
+				"&e&lDrop Key &7(Press Q)",
 				"&7To &cdelete &7this message"
 		));
 
@@ -179,20 +204,44 @@ public final class VoucherMessageListGUI extends VouchersPagedGUI<Message> {
 
 	private void saveVoucher() {
 		this.voucher.sync(result -> {
-			if (result == SynchronizeResult.FAILURE)
+			if (result == SynchronizeResult.FAILURE) {
 				Common.tell(this.player, "&cSomething went wrong while saving the voucher.");
+				return;
+			}
+			// Refresh voucher from manager after successful save
+			final Voucher freshVoucher = Vouchers.getVoucherManager().get(this.voucher.getId());
+			if (freshVoucher != null) {
+				this.voucher = freshVoucher;
+				// Update messages list reference if needed
+				if (this.fromRewards) {
+					// Messages are part of a reward, so we need to find the reward
+					// This is handled by the parent GUI, so we just update voucher reference
+				} else {
+					this.messages = this.voucher.getMessages();
+				}
+			}
 		});
 	}
 
 	private void handleSwap(Message message) {
 		if (lastClickedMessage != null) {
-			// Swap logic here
+			// Swap logic - swap in the actual messages list
 			int index1 = messages.indexOf(lastClickedMessage);
 			int index2 = messages.indexOf(message);
-			if (index1 != -1 && index2 != -1) {
+			if (index1 != -1 && index2 != -1 && index1 != index2) {
 				Message temp = messages.get(index1);
 				messages.set(index1, messages.get(index2));
 				messages.set(index2, temp);
+				// Update items list to match
+				this.items = new ArrayList<>(this.items);
+				// Find and swap in items list too
+				int itemIndex1 = items.indexOf(lastClickedMessage);
+				int itemIndex2 = items.indexOf(message);
+				if (itemIndex1 != -1 && itemIndex2 != -1) {
+					Message tempItem = items.get(itemIndex1);
+					items.set(itemIndex1, items.get(itemIndex2));
+					items.set(itemIndex2, tempItem);
+				}
 				draw(); // Redraw the GUI
 			}
 			lastClickedMessage = null;

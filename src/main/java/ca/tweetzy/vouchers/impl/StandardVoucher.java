@@ -54,9 +54,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -102,26 +105,37 @@ public class StandardVoucher extends BaseVoucher {
 		msgs.add(new VoucherActionBarMessage("&aThis is an actionbar msg"));
 		msgs.add(new VoucherTitleMessage("&aDefault title msg", "&bDefault subtitle msg", 20, 20, 20));
 
+		final List<Message> cakeRewardMessages = new ArrayList<>();
+		cakeRewardMessages.add(new VoucherChatMessage("&bYou won some cake"));
+		cakeRewardMessages.add(new VoucherTitleMessage("&bReward Won", "&e+1 Cake", 20, 20, 20));
+		
 		rewardList.add(new ItemReward(
 				CompMaterial.CAKE.parseItem(),
 				100,
 				0,
-				List.of(new VoucherChatMessage("&bYou won some cake"), new VoucherTitleMessage("&bReward Won", "&e+1 Cake", 20, 20, 20))));
+				cakeRewardMessages));
 
+		final List<String> cmdDesc = new ArrayList<>();
+		cmdDesc.add("&7Default command description");
+		
+		final List<Message> cmdRewardMessages = new ArrayList<>();
+		cmdRewardMessages.add(new VoucherChatMessage("&bYou won &a$100"));
+		cmdRewardMessages.add(new VoucherBroadcastMessage("&e%player% &7has won &a$1000"));
+		
 		rewardList.add(new CommandReward(
 				"eco give %player% 1000",
 				100,
 				0,
 				"<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>",
-				List.of("&7Default command description"),
-				List.of(new VoucherChatMessage("&bYou won &a$100"), new VoucherBroadcastMessage("&e%player% &7has won &a$1000"))
+				cmdDesc,
+				cmdRewardMessages
 		));
 
 		return new StandardVoucher(
 				id.toLowerCase(),
 				"PAPER",
 				"&e%s Voucher".formatted(id),
-				List.of("&7This is the default lore for new vouchers", "&7You can change this in the file or gui"),
+				new ArrayList<>(List.of("&7This is the default lore for new vouchers", "&7You can change this in the file or gui")),
 				new VoucherOptions(
 						true,
 						true,
@@ -209,14 +223,85 @@ public class StandardVoucher extends BaseVoucher {
 		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
 			File directory = new File(Vouchers.getInstance().getDataFolder() + "/voucher-files/");
 			if (!directory.exists()) {
-				directory.mkdir();
+				if (!directory.mkdirs()) {
+					Vouchers.getInstance().getLogger().severe("Failed to create voucher-files directory!");
+					try {
+						stored.accept(null);
+					} catch (Exception ex) {
+						Vouchers.getInstance().getLogger().severe("Error in store callback: " + ex.getMessage());
+					}
+					return;
+				}
 			}
 
-			try (Writer writer = new FileWriter(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()))) {
-				Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-				gson.toJson(getAsJSON(), writer);
-				stored.accept(this);
+			File file = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
+			
+			try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
+				 FileChannel channel = raf.getChannel();
+				 FileLock lock = channel.tryLock()) {
+				
+				if (lock == null) {
+					// Could not acquire lock, retry after short delay
+					Vouchers.getInstance().getServer().getScheduler().runTaskLaterAsynchronously(Vouchers.getInstance(), () -> store(stored), 5L);
+					return;
+				}
+				
+				// Lock acquired, write file using FileChannel
+				try {
+					// Prepare JSON content first before truncating
+					Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+					String jsonContent = gson.toJson(getAsJSON());
+					
+					// Convert string to bytes
+					byte[] jsonBytes = jsonContent.getBytes(StandardCharsets.UTF_8);
+					ByteBuffer buffer = ByteBuffer.wrap(jsonBytes);
+					
+					// Truncate file to 0 length to overwrite (only after we have the content ready)
+					channel.truncate(0);
+					channel.position(0);
+					
+					// Write JSON directly to FileChannel (avoids FileWriter lock conflicts)
+					while (buffer.hasRemaining()) {
+						channel.write(buffer);
+					}
+					channel.force(true); // Force write to disk
+					
+					stored.accept(this);
+				} catch (IOException e) {
+					Vouchers.getInstance().getLogger().severe("Failed to store voucher " + getId() + ": " + e.getMessage());
+					e.printStackTrace();
+					// Still call stored callback with null to indicate failure
+					try {
+						stored.accept(null);
+					} catch (Exception ex) {
+						Vouchers.getInstance().getLogger().severe("Error in store callback: " + ex.getMessage());
+					}
+				} catch (Exception e) {
+					Vouchers.getInstance().getLogger().severe("Unexpected error storing voucher " + getId() + ": " + e.getMessage());
+					e.printStackTrace();
+					try {
+						stored.accept(null);
+					} catch (Exception ex) {
+						Vouchers.getInstance().getLogger().severe("Error in store callback: " + ex.getMessage());
+					}
+				}
 			} catch (IOException e) {
+				Vouchers.getInstance().getLogger().severe("Failed to acquire file lock for voucher " + getId() + ": " + e.getMessage());
+				e.printStackTrace();
+				// Call stored callback with null to indicate failure
+				try {
+					stored.accept(null);
+				} catch (Exception ex) {
+					Vouchers.getInstance().getLogger().severe("Error in store callback: " + ex.getMessage());
+				}
+			} catch (Exception e) {
+				Vouchers.getInstance().getLogger().severe("Unexpected error in store method for voucher " + getId() + ": " + e.getMessage());
+				e.printStackTrace();
+				try {
+					stored.accept(null);
+				} catch (Exception ex) {
+					Vouchers.getInstance().getLogger().severe("Error in store callback: " + ex.getMessage());
+				}
 			}
 		});
 	}
@@ -226,16 +311,104 @@ public class StandardVoucher extends BaseVoucher {
 		Vouchers.getInstance().getServer().getScheduler().runTaskAsynchronously(Vouchers.getInstance(), () -> {
 			File file = new File(String.format("%s/voucher-files/%s.json", Vouchers.getInstance().getDataFolder(), getId().toLowerCase()));
 
-			if (file.exists()) {
-				try (Writer writer = new FileWriter(file)) {
-					Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-					gson.toJson(getAsJSON(), writer);
-					if (syncResult != null) {
-						syncResult.accept(SynchronizeResult.SUCCESS);
+			if (!file.exists()) {
+				if (syncResult != null) {
+					syncResult.accept(SynchronizeResult.FAILURE);
+				}
+				return;
+			}
+
+			// Retry logic for file locking
+			int maxRetries = 5;
+			int retryDelay = 100; // milliseconds
+			
+			for (int attempt = 0; attempt < maxRetries; attempt++) {
+				try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
+					 FileChannel channel = raf.getChannel();
+					 FileLock lock = channel.tryLock()) {
+					
+					if (lock == null) {
+						// Could not acquire lock, wait and retry
+						if (attempt < maxRetries - 1) {
+							try {
+								Thread.sleep(retryDelay);
+							} catch (InterruptedException e) {
+								Thread.currentThread().interrupt();
+								if (syncResult != null) {
+									syncResult.accept(SynchronizeResult.FAILURE);
+								}
+								return;
+							}
+							continue;
+						} else {
+							// Last attempt failed
+							Vouchers.getInstance().getLogger().warning("Failed to acquire file lock for voucher " + getId() + " after " + maxRetries + " attempts");
+							if (syncResult != null) {
+								syncResult.accept(SynchronizeResult.FAILURE);
+							}
+							return;
+						}
 					}
+					
+					// Lock acquired, write file using FileChannel
+					try {
+						// Prepare JSON content first before truncating
+						Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+						String jsonContent = gson.toJson(getAsJSON());
+						
+						// Convert string to bytes
+						byte[] jsonBytes = jsonContent.getBytes(StandardCharsets.UTF_8);
+						ByteBuffer buffer = ByteBuffer.wrap(jsonBytes);
+						
+						// Truncate file to 0 length to overwrite (only after we have the content ready)
+						channel.truncate(0);
+						channel.position(0);
+						
+						// Write JSON directly to FileChannel (avoids FileWriter lock conflicts)
+						while (buffer.hasRemaining()) {
+							channel.write(buffer);
+						}
+						channel.force(true); // Force write to disk
+						
+						// Update manager with saved voucher instance on main thread
+						Vouchers.getInstance().getServer().getScheduler().runTask(Vouchers.getInstance(), () -> {
+							Vouchers.getVoucherManager().update(getId(), this);
+						});
+						
+						if (syncResult != null) {
+							syncResult.accept(SynchronizeResult.SUCCESS);
+						}
+					} catch (IOException e) {
+						Vouchers.getInstance().getLogger().severe("Failed to sync voucher " + getId() + ": " + e.getMessage());
+						e.printStackTrace();
+						if (syncResult != null) {
+							syncResult.accept(SynchronizeResult.FAILURE);
+						}
+					}
+					
+					// Success, exit retry loop
+					return;
+					
 				} catch (IOException e) {
-					if (syncResult != null)
-						syncResult.accept(SynchronizeResult.FAILURE);
+					if (attempt < maxRetries - 1) {
+						try {
+							Thread.sleep(retryDelay);
+						} catch (InterruptedException ie) {
+							Thread.currentThread().interrupt();
+							if (syncResult != null) {
+								syncResult.accept(SynchronizeResult.FAILURE);
+							}
+							return;
+						}
+						continue;
+					} else {
+						Vouchers.getInstance().getLogger().severe("Failed to acquire file lock for voucher " + getId() + ": " + e.getMessage());
+						e.printStackTrace();
+						if (syncResult != null) {
+							syncResult.accept(SynchronizeResult.FAILURE);
+						}
+						return;
+					}
 				}
 			}
 		});
@@ -338,8 +511,8 @@ public class StandardVoucher extends BaseVoucher {
 				titleObject.addProperty("title", titleMessage.getPrimaryContent());
 				titleObject.addProperty("subtitle", titleMessage.getSecondaryContent());
 				titleObject.addProperty("fade_in", titleMessage.getFadeInTime());
-				titleObject.addProperty("stay_duration", titleMessage.getFadeInTime());
-				titleObject.addProperty("fade_out", titleMessage.getFadeInTime());
+				titleObject.addProperty("stay_duration", titleMessage.getStayTime());
+				titleObject.addProperty("fade_out", titleMessage.getFadeOutTime());
 				titleMessages.add(titleObject);
 			}
 		});

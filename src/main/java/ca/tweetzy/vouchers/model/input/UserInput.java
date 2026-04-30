@@ -37,23 +37,55 @@ public final class UserInput {
 			Predicate<String> validation,
 			Function<String, T> transformer
 	) {
-		new TitleInput(Vouchers.getInstance(), player, title, subTitle) {
-			@Override
-			public boolean onResult(String string) {
-				if (validation.test(string)) {
-					T transformed = transformer.apply(string);
-					onSuccess.onSuccess(transformed);
-					return true;
+		if (player == null || !player.isOnline()) {
+			Vouchers.getInstance().getLogger().warning("Attempted to get user input from null or offline player");
+			return;
+		}
+		
+		try {
+			new TitleInput(Vouchers.getInstance(), player, title, subTitle) {
+				@Override
+				public boolean onResult(String string) {
+					try {
+						if (validation.test(string)) {
+							T transformed = transformer.apply(string);
+							onSuccess.onSuccess(transformed);
+							return true;
+						}
+						if (onFailure != null) {
+							onFailure.onFailure(string);
+						}
+						return false;
+					} catch (Exception e) {
+						Vouchers.getInstance().getLogger().severe("Error processing user input result: " + e.getMessage());
+						e.printStackTrace();
+						return false;
+					}
 				}
-				onFailure.onFailure(string);
-				return false;
-			}
 
-			@Override
-			public void onExit(Player player) {
-				onExit.onExit();
+				@Override
+				public void onExit(Player player) {
+					try {
+						if (onExit != null) {
+							onExit.onExit();
+						}
+					} catch (Exception e) {
+						Vouchers.getInstance().getLogger().severe("Error in user input exit callback: " + e.getMessage());
+						e.printStackTrace();
+					}
+				}
+			};
+		} catch (Exception e) {
+			Vouchers.getInstance().getLogger().severe("Failed to create TitleInput for player " + player.getName() + ": " + e.getMessage());
+			e.printStackTrace();
+			if (onExit != null) {
+				try {
+					onExit.onExit();
+				} catch (Exception ex) {
+					Vouchers.getInstance().getLogger().severe("Error calling exit callback after TitleInput failure: " + ex.getMessage());
+				}
 			}
-		};
+		}
 	}
 
 	public static void get(

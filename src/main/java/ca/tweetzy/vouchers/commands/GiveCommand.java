@@ -20,6 +20,7 @@ package ca.tweetzy.vouchers.commands;
 
 import ca.tweetzy.flight.command.AllowedExecutor;
 import ca.tweetzy.flight.command.Command;
+import ca.tweetzy.flight.command.CommandContext;
 import ca.tweetzy.flight.command.ReturnType;
 import ca.tweetzy.flight.settings.TranslationManager;
 import ca.tweetzy.flight.utils.MathUtil;
@@ -32,7 +33,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 public final class GiveCommand extends Command {
@@ -42,26 +42,26 @@ public final class GiveCommand extends Command {
 	}
 
 	@Override
-	protected ReturnType execute(CommandSender sender, String... args) {
+	protected ReturnType execute(CommandContext context) {
 		// player <#> <voucher>
-		if (args.length < 3) return ReturnType.INVALID_SYNTAX;
+		if (context.getArgCount() < 3) return ReturnType.INVALID_SYNTAX;
 
-		final Player target = Bukkit.getPlayerExact(args[0]);
+		final Player target = Bukkit.getPlayerExact(context.getArg(0));
 
 		if (target == null) {
-			tell(sender, TranslationManager.string(Translations.PLAYER_NOT_FOUND, "value", args[0]));
+			tell(context.getSender(), TranslationManager.string(Translations.PLAYER_NOT_FOUND, "value", context.getArg(0)));
 			return ReturnType.FAIL;
 		}
 
-		final int quantity = MathUtil.isInt(args[1]) ? Integer.parseInt(args[1]) : 1;
+		final int quantity = MathUtil.isInt(context.getArg(1)) ? Integer.parseInt(context.getArg(1)) : 1;
 
-		final Voucher voucher = Vouchers.getVoucherManager().get(args[2].toLowerCase());
+		final Voucher voucher = Vouchers.getVoucherManager().get(context.getArg(2).toLowerCase());
 		if (voucher == null) {
-			tell(sender, TranslationManager.string(Translations.VOUCHER_NOT_FOUND, "voucher_id", args[2]));
+			tell(context.getSender(), TranslationManager.string(Translations.VOUCHER_NOT_FOUND, "voucher_id", context.getArg(2)));
 			return ReturnType.FAIL;
 		}
 
-		final String[] voucherArgs = args.length > 3 ? Arrays.copyOfRange(args, 3, args.length) : null;
+		final String[] voucherArgs = context.getArgCount() > 3 ? context.getArgs(3) : null;
 
 		final BaseVoucher baseVoucher = (BaseVoucher) voucher;
 
@@ -77,20 +77,28 @@ public final class GiveCommand extends Command {
 		return ReturnType.SUCCESS;
 	}
 
-
+	@Override
+	protected ReturnType execute(CommandSender sender, String... args) {
+		return execute(new CommandContext(sender, args, getSubCommands().get(0)));
+	}
 
 	@Override
-	protected List<String> tab(CommandSender sender, String... args) {
-		if (args.length == 1)
+	protected List<String> tab(CommandContext context) {
+		if (context.getArgCount() == 1)
 			return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
 
-		if (args.length == 2)
+		if (context.getArgCount() == 2)
 			return List.of("1", "2", "3", "4", "5");
 
-		if (args.length == 3)
+		if (context.getArgCount() == 3)
 			return Vouchers.getVoucherManager().getValues().stream().map(Voucher::getId).toList();
 
 		return List.of();
+	}
+
+	@Override
+	protected List<String> tab(CommandSender sender, String... args) {
+		return tab(new CommandContext(sender, args, getSubCommands().get(0)));
 	}
 
 	@Override

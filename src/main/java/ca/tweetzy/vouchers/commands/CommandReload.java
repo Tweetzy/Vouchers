@@ -20,6 +20,7 @@ package ca.tweetzy.vouchers.commands;
 
 import ca.tweetzy.flight.command.AllowedExecutor;
 import ca.tweetzy.flight.command.Command;
+import ca.tweetzy.flight.command.CommandContext;
 import ca.tweetzy.flight.command.ReturnType;
 import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.vouchers.settings.Settings;
@@ -35,18 +36,28 @@ public final class CommandReload extends Command {
 	}
 
 	@Override
-	protected ReturnType execute(CommandSender sender, String... args) {
+	protected ReturnType execute(CommandContext context) {
 		Settings.init();
 		Translations.init();
 		Common.setPrefix(Settings.PREFIX.getStringOr("<GRADIENT:B3EBF2>&lVouchers</GRADIENT:AEC6CF> &8»"));
-		tell(sender, "&aSuccessfully reloaded all configuration files.");
+		tell(context.getSender(), "&aReloaded configuration (settings and messages). Use &f/vouchers syncfiles &ato reload voucher definitions from disk.");
 
 		return ReturnType.SUCCESS;
 	}
 
 	@Override
-	protected List<String> tab(CommandSender sender, String... args) {
+	protected ReturnType execute(CommandSender sender, String... args) {
+		return execute(new CommandContext(sender, args, getSubCommands().get(0)));
+	}
+
+	@Override
+	protected List<String> tab(CommandContext context) {
 		return null;
+	}
+
+	@Override
+	protected List<String> tab(CommandSender sender, String... args) {
+		return tab(new CommandContext(sender, args, getSubCommands().get(0)));
 	}
 
 	@Override

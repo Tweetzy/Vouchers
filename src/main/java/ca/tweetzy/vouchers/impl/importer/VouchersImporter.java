@@ -80,28 +80,32 @@ public final class VouchersImporter extends VoucherImporter {
 		final JsonObject object;
 		try {
 			object = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			return null;
 		}
 
-		final String displayName = object.has("displayName") ? object.get("displayName").getAsString() : "Un-named voucher";
+		final String displayName = object.has("displayName") && !object.get("displayName").isJsonNull() ? object.get("displayName").getAsString() : "Un-named voucher";
 		final ArrayList<String> description = new ArrayList<>();
 
 		if (object.has("description")) {
 			final JsonArray descArr = object.get("description").getAsJsonArray();
-			descArr.forEach(element -> description.add(element.getAsString()));
+			descArr.forEach(element -> {
+				if (element != null && !element.isJsonNull()) {
+					description.add(element.getAsString());
+				}
+			});
 		}
 
 		final VoucherOptions options = new VoucherOptions();
 		options.setUseGlow(object.has("glowing") && object.get("glowing").getAsBoolean());
 
 		// permissions
-		options.setUsePermission(object.has("requirePermission") && object.get("requirePermission").getAsBoolean());
-		options.setPermission(object.has("permission") ? object.get("permission").getAsString() : "vouchers.use.%s".formatted(voucherId));
+		options.setUsePermission(object.has("requirePermission") && !object.get("requirePermission").isJsonNull() && object.get("requirePermission").getAsBoolean());
+		options.setPermission(object.has("permission") && !object.get("permission").isJsonNull() ? object.get("permission").getAsString() : "vouchers.use.%s".formatted(voucherId));
 
 		// sounds
-		options.setUseSound(object.has("playSound") && object.get("playSound").getAsBoolean());
-		options.setSound(object.has("sound") ? CompSound.of(object.get("sound").getAsString()).orElse(CompSound.ENTITY_BAT_TAKEOFF) : CompSound.ENTITY_BAT_TAKEOFF);
+		options.setUseSound(object.has("playSound") && !object.get("playSound").isJsonNull() && object.get("playSound").getAsBoolean());
+		options.setSound(object.has("sound") && !object.get("sound").isJsonNull() ? CompSound.of(object.get("sound").getAsString()).orElse(CompSound.ENTITY_BAT_TAKEOFF) : CompSound.ENTITY_BAT_TAKEOFF);
 
 		options.setRemoveOnUse(object.has("removeOnUse") && object.get("removeOnUse").getAsBoolean());
 		options.setAskForConfirmation(object.has("askForConfirm") && object.get("askForConfirm").getAsBoolean());
@@ -133,11 +137,17 @@ public final class VouchersImporter extends VoucherImporter {
 				final int delay = rewardObject.get("delay").getAsInt();
 
 				if (rewardType == RewardType.COMMAND) {
-					final String name = rewardObject.has("name") ? rewardObject.get("name").getAsString() : "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>";
+					if (!rewardObject.has("command") || rewardObject.get("command").isJsonNull()) return;
+					
+					final String name = rewardObject.has("name") && !rewardObject.get("name").isJsonNull() ? rewardObject.get("name").getAsString() : "<GRADIENT:B3EBF2>&LVoucher Command Reward</GRADIENT:AEC6CF>";
 					final List<String> cmdDesc = new ArrayList<>();
 					if (rewardObject.has("description")) {
 						final JsonArray descArr = rewardObject.get("description").getAsJsonArray();
-						descArr.forEach(element -> cmdDesc.add(element.getAsString()));
+						descArr.forEach(element -> {
+							if (element != null && !element.isJsonNull()) {
+								cmdDesc.add(element.getAsString());
+							}
+						});
 					} else {
 						cmdDesc.add("&7Default command description");
 					}
@@ -151,6 +161,8 @@ public final class VouchersImporter extends VoucherImporter {
 							new ArrayList<>()
 					));
 				} else {
+					if (!rewardObject.has("item") || rewardObject.get("item").isJsonNull()) return;
+					
 					rewardList.add(new ItemReward(
 							QuickItem.getItem(rewardObject.get("item").getAsString()),
 							chance,
@@ -163,7 +175,7 @@ public final class VouchersImporter extends VoucherImporter {
 
 		return new StandardVoucher(
 				voucherId,
-				object.has("item") ? object.get("item").getAsString() : "PAPER",
+				object.has("item") && !object.get("item").isJsonNull() ? object.get("item").getAsString() : "PAPER",
 				displayName,
 				description,
 				options,
@@ -178,20 +190,26 @@ public final class VouchersImporter extends VoucherImporter {
 		// broadcast messages
 		if (object.has("broadcastMessages"))
 			object.get("broadcastMessages").getAsJsonArray().forEach(element -> {
-				final String line = element.getAsString();
-				messageList.add(new VoucherBroadcastMessage(line));
+				if (element != null && !element.isJsonNull()) {
+					final String line = element.getAsString();
+					messageList.add(new VoucherBroadcastMessage(line));
+				}
 			});
 
 		if (object.has("chatMessages"))
 			object.get("chatMessages").getAsJsonArray().forEach(element -> {
-				final String line = element.getAsString();
-				messageList.add(new VoucherChatMessage(line));
+				if (element != null && !element.isJsonNull()) {
+					final String line = element.getAsString();
+					messageList.add(new VoucherChatMessage(line));
+				}
 			});
 
 		if (object.has("actionbarMessages"))
 			object.get("actionbarMessages").getAsJsonArray().forEach(element -> {
-				final String line = element.getAsString();
-				messageList.add(new VoucherActionBarMessage(line));
+				if (element != null && !element.isJsonNull()) {
+					final String line = element.getAsString();
+					messageList.add(new VoucherActionBarMessage(line));
+				}
 			});
 
 
@@ -200,17 +218,17 @@ public final class VouchersImporter extends VoucherImporter {
 
 		if (object.has("titleMessage")) {
 			final JsonObject titleObject = object.get("titleMessage").getAsJsonObject();
-			if (titleObject.has("message")) {
+			if (titleObject.has("message") && !titleObject.get("message").isJsonNull()) {
 				title = titleObject.get("message").getAsString();
-				fadeIn = titleObject.get("fadeIn").getAsInt();
-				duration = titleObject.get("stay").getAsInt();
-				fadeOut = titleObject.get("fadeOut").getAsInt();
+				fadeIn = titleObject.has("fadeIn") && !titleObject.get("fadeIn").isJsonNull() ? titleObject.get("fadeIn").getAsInt() : 20;
+				duration = titleObject.has("stay") && !titleObject.get("stay").isJsonNull() ? titleObject.get("stay").getAsInt() : 20;
+				fadeOut = titleObject.has("fadeOut") && !titleObject.get("fadeOut").isJsonNull() ? titleObject.get("fadeOut").getAsInt() : 20;
 			}
 		}
 
 		if (object.has("subtitleMessage")) {
 			final JsonObject titleObject = object.get("subtitleMessage").getAsJsonObject();
-			if (titleObject.has("message")) {
+			if (titleObject.has("message") && !titleObject.get("message").isJsonNull()) {
 				subtitle = titleObject.get("message").getAsString();
 			}
 		}

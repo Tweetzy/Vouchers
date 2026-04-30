@@ -36,6 +36,11 @@ public final class Settings extends FlightSettings {
 	public static final ConfigEntry LOG_VOUCHER_GIVE_STATUS = create("log voucher give status", true, "If true, vouchers will log if the voucher was placed in the user's inventory or dropped");
 	public static final ConfigEntry PREVENT_REDEEM_WHILE_SNEAKING = create("prevent redeem while sneaking", false, "If true, players cannot redeem a voucher while shifting/sneaking");
 
+	public static final ConfigEntry ALLOW_COMMAND_REWARDS = create("security.allow command rewards", true, "If false, command-type rewards never run.");
+	public static final ConfigEntry COMMAND_REWARD_PREFIX_WHITELIST = create("security.command reward prefix whitelist", List.<String>of(),
+			"If non-empty, the final command (after placeholders) must start with one of these prefixes (case-insensitive). Empty = no prefix restriction.");
+	public static final ConfigEntry LOG_COMMAND_REWARDS = create("security.log command rewards at info", true, "Log each command reward execution at INFO with player name and command.");
+
 	public static final ConfigEntry CATEGORIES = create("categories", List.of(
 			"id:food name:&eFood Vouchers item:APPLE",
 			"id:money name:&aMoney Vouchers item:SUNFLOWER"

@@ -18,7 +18,18 @@
 
 package ca.tweetzy.vouchers.api;
 
+import ca.tweetzy.vouchers.model.manager.CategoryManager;
+import ca.tweetzy.vouchers.model.manager.CooldownManager;
+import ca.tweetzy.vouchers.model.manager.RedeemManager;
+import ca.tweetzy.vouchers.model.manager.VoucherManager;
+
 public interface VouchersAPI {
 
+	VoucherManager getVoucherManager();
 
+	RedeemManager getRedeemManager();
+
+	CooldownManager getCooldownManager();
+
+	CategoryManager getCategoryManager();
 }

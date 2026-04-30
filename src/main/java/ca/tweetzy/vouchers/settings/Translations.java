@@ -39,6 +39,9 @@ public final class Translations extends TranslationManager {
 	public static final TranslationEntry REDEEM_HISTORY_CLEARED = create("error.redeem history cleared", "&aSuccessfully cleared the redeem history of specified player(s)");
 	public static final TranslationEntry NOT_ALLOWED_TO_USE = create("error.not allowed to use", "&cYou are not allowed to use that voucher");
 	public static final TranslationEntry WAIT_FOR_COOLDOWN = create("error.voucher cooldown", "&cYou can redeem that voucher in &4%cooldown_time%s");
+	public static final TranslationEntry VOUCHER_ITEM_NOT_FOUND = create("error.voucher item not found", "&cCould not find the voucher item in your inventory. Nothing was consumed.");
+	public static final TranslationEntry REDEEM_RECORD_FAILED = create("error.redeem record failed", "&cYour rewards were given but the redeem could not be saved. Please contact staff.");
+	public static final TranslationEntry COMMAND_REWARD_BLOCKED = create("error.command reward blocked", "&cThat voucher's command reward is not allowed on this server.");
 
 	public static final TranslationEntry DROP_NEAR_PLAYER = create("info.give.dropped near player", "Voucher was dropped near player: %player_name% (full inventory)");
 	public static final TranslationEntry GIVEN_TO_PLAYER = create("info.give.placed into inventory", "Voucher was placed in player: %player_name%'s inventory");

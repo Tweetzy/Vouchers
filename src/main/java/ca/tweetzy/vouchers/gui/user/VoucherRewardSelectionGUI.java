@@ -21,7 +21,9 @@ package ca.tweetzy.vouchers.gui.user;
 import ca.tweetzy.flight.comp.enums.CompMaterial;
 import ca.tweetzy.flight.gui.events.GuiClickEvent;
 import ca.tweetzy.flight.settings.TranslationManager;
+import ca.tweetzy.flight.utils.Common;
 import ca.tweetzy.flight.utils.QuickItem;
+import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.api.voucher.Voucher;
 import ca.tweetzy.vouchers.api.voucher.reward.BaseReward;
 import ca.tweetzy.vouchers.api.voucher.reward.Reward;
@@ -43,15 +45,19 @@ public final class VoucherRewardSelectionGUI extends VouchersPagedGUI<Reward> {
 
 	private final Voucher voucher;
 	private final String[] arguments;
+	private final String voucherArgsRaw;
 	private final List<Reward> selectedRewards;
+	private final Runnable onSelectionRedeemComplete;
 
-	public VoucherRewardSelectionGUI(@NonNull Player player, @NonNull final Voucher voucher, String[] arguments) {
+	public VoucherRewardSelectionGUI(@NonNull Player player, @NonNull final Voucher voucher, String[] arguments, String voucherArgsRaw, Runnable onSelectionRedeemComplete) {
 		super(null, player, TranslationManager.string(Translations.GUI_REWARD_SELECTION_TITLE, "total_rewards", voucher.getSettings().getMaximumRewards()), Settings.GUI_REWARD_SELECTION_ROWS.getInt(), new ArrayList<>());
 		setDefaultItem(QuickItem.bg(Settings.GUI_REWARD_SELECTION_BG.getString()));
 
 		this.voucher = voucher;
 		this.arguments = arguments;
+		this.voucherArgsRaw = voucherArgsRaw;
 		this.selectedRewards = new ArrayList<>();
+		this.onSelectionRedeemComplete = onSelectionRedeemComplete;
 		setAllowClose(false);
 
 		draw();
@@ -114,6 +120,12 @@ public final class VoucherRewardSelectionGUI extends VouchersPagedGUI<Reward> {
 		}
 
 		if (this.selectedRewards.size() == this.voucher.getSettings().getMaximumRewards()) {
+			if (this.voucher.getSettings().isRemoveOnUse()) {
+				if (Vouchers.getVoucherManager().findMatchingVoucherStack(clickEvent.player, this.voucher.getId(), this.voucherArgsRaw) == null) {
+					Common.tell(clickEvent.player, TranslationManager.string(Translations.VOUCHER_ITEM_NOT_FOUND));
+					return;
+				}
+			}
 			this.selectedRewards.forEach(selectedReward -> {
 				if (VoucherHelper.runChance(selectedReward.getChance())) {
 					final BaseReward baseReward = (BaseReward) selectedReward;
@@ -122,6 +134,9 @@ public final class VoucherRewardSelectionGUI extends VouchersPagedGUI<Reward> {
 			});
 
 			this.selectedRewards.clear();
+			if (this.onSelectionRedeemComplete != null) {
+				this.onSelectionRedeemComplete.run();
+			}
 			clickEvent.gui.exit();
 			return;
 		}

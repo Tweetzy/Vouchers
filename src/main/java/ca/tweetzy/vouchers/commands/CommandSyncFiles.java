@@ -23,39 +23,35 @@ import ca.tweetzy.flight.command.Command;
 import ca.tweetzy.flight.command.CommandContext;
 import ca.tweetzy.flight.command.ReturnType;
 import ca.tweetzy.vouchers.Vouchers;
-import ca.tweetzy.vouchers.impl.importer.VouchersImporter;
+import ca.tweetzy.vouchers.model.manager.VoucherManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
-public final class CommandImport extends Command {
+public final class CommandSyncFiles extends Command {
 
-	public CommandImport() {
-		super(AllowedExecutor.BOTH, "import");
+	public CommandSyncFiles() {
+		super(AllowedExecutor.BOTH, "syncfiles");
 	}
 
 	@Override
 	protected ReturnType execute(CommandContext context) {
-		final CommandSender sender = context.getSender();
+		final AtomicReference<VoucherManager.SyncFromDiskResult> resultRef = new AtomicReference<>();
 
-		Vouchers.newChain().async(() -> {
-
-			new VouchersImporter().process(found -> {
-				if (found.isEmpty()) return;
-
-				found.forEach(foundVoucher -> foundVoucher.store(store -> {
-					if (store != null) {
-						Vouchers.getVoucherManager().add(store.getId().toLowerCase(), store);
-						tell(sender, "&aConverted v3 voucher &6%s &ato v4 format".formatted(store.getId()));
-					} else {
-						tell(sender, "&cThe v3 voucher &6%s &4could not be converted, please create manually".formatted(store.getId()));
-
+		Vouchers.newChain()
+				.async(() -> resultRef.set(Vouchers.getVoucherManager().syncFromDisk()))
+				.sync(() -> {
+					final VoucherManager.SyncFromDiskResult r = resultRef.get();
+					if (r == null) {
+						tell(context.getSender(), "&cSync failed unexpectedly.");
+						return;
 					}
-				}));
-			});
-
-		}).execute();
-
+					tell(context.getSender(), "&aSynced voucher files: &f%d &aupdated, &f%d &aremoved, &f%d &afailed to load."
+							.formatted(r.updated(), r.removed(), r.failed()));
+					tell(context.getSender(), "&7(&f/vouchers reload &7only reloads settings and language; it does &cnot &7reload voucher JSON from disk.)");
+				})
+				.execute();
 
 		return ReturnType.SUCCESS;
 	}
@@ -77,7 +73,7 @@ public final class CommandImport extends Command {
 
 	@Override
 	public String getPermissionNode() {
-		return "vouchers.command.import";
+		return "vouchers.command.syncfiles";
 	}
 
 	@Override

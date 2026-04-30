@@ -20,6 +20,7 @@ package ca.tweetzy.vouchers.commands;
 
 import ca.tweetzy.flight.command.AllowedExecutor;
 import ca.tweetzy.flight.command.Command;
+import ca.tweetzy.flight.command.CommandContext;
 import ca.tweetzy.flight.command.ReturnType;
 import ca.tweetzy.vouchers.Vouchers;
 import ca.tweetzy.vouchers.gui.admin.VouchersAdminGUI;
@@ -35,16 +36,28 @@ public final class VouchersCommand extends Command {
 	}
 
 	@Override
-	protected ReturnType execute(CommandSender sender, String... args) {
-		if (sender instanceof final Player player)
+	protected ReturnType execute(CommandContext context) {
+		if (context.isPlayer()) {
+			final Player player = context.getPlayer();
 			Vouchers.getGuiManager().showGUI(player, new VouchersAdminGUI(player));
+		}
 
 		return ReturnType.SUCCESS;
 	}
 
 	@Override
-	protected List<String> tab(CommandSender sender, String... args) {
+	protected ReturnType execute(CommandSender sender, String... args) {
+		return execute(new CommandContext(sender, args, getSubCommands().get(0)));
+	}
+
+	@Override
+	protected List<String> tab(CommandContext context) {
 		return null;
+	}
+
+	@Override
+	protected List<String> tab(CommandSender sender, String... args) {
+		return tab(new CommandContext(sender, args, getSubCommands().get(0)));
 	}
 
 	@Override

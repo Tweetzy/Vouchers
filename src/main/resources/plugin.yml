@@ -8,8 +8,6 @@ api-version: 1.16
 libraries:
   - com.google.code.gson:gson:2.8.6
 
-depend:
-  - PlaceholderAPI
-
 softdepend:
   - Vault
+  - PlaceholderAPI
