@@ -8,15 +8,15 @@
 
     <name>Vouchers</name>
     <description>An easy to use voucher plugin</description>
-    <version>4.4.0</version>
+    <version>4.5.0</version>
     <packaging>jar</packaging>
 
     <properties>
         <author>Kiran Hart</author>
         <jarName>${project.name}</jarName>
         <main.class>${project.groupId}.${project.artifactId}.${project.name}</main.class>
-        <java.version>16</java.version>
-        <flight.version>3.44.0</flight.version>
+        <java.version>25</java.version>
+        <flight.version>3.46.0</flight.version>
         <flight.path>ca.tweetzy</flight.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -114,7 +114,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
+            <version>1.18.38</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
@@ -149,16 +150,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.38</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.1-SNAPSHOT</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
