@@ -8,15 +8,15 @@
 
     <name>Vouchers</name>
     <description>An easy to use voucher plugin</description>
-    <version>4.5.0</version>
+    <version>4.6.0</version>
     <packaging>jar</packaging>
 
     <properties>
         <author>Kiran Hart</author>
         <jarName>${project.name}</jarName>
         <main.class>${project.groupId}.${project.artifactId}.${project.name}</main.class>
-        <java.version>25</java.version>
-        <flight.version>3.46.0</flight.version>
+        <java.version>21</java.version>
+        <flight.version>3.48.0</flight.version>
         <flight.path>ca.tweetzy</flight.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
